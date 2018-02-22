@@ -1,0 +1,100 @@
+buildscript {
+	repositories {
+		mavenLocal()
+	}
+}
+
+plugins {
+	id "java"
+  id "maven-publish"
+	id "com.jfrog.bintray" version "1.8.0"
+
+	// ml-gradle is used for deploying a test application so that this project itself can be tested
+	id "com.marklogic.ml-gradle" version "3.4.1"
+
+	// Used to generate a license report
+	id "com.github.jk1.dependency-license-report" version "0.3.11"
+}
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+repositories {
+	jcenter()
+	mavenCentral()
+}
+
+dependencies {
+	compile "com.marklogic:marklogic-client-api:4.0.3.1"
+
+	testCompile "junit:junit:4+"
+}
+
+// Defines a configuration for the MarkLogic modules; used by the modulesZip task below
+configurations {
+	modules
+}
+
+
+jar {
+	baseName "ml-unit-test-client"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier "sources"
+	from sourceSets.main.allJava
+}
+
+task modulesZip(type: Zip) {
+	description = "Zip up the ml-unit-test MarkLogic modules into a package that can be published"
+	from("src/main/ml-modules") {
+		into("ml-unit-test/ml-modules")
+	}
+	destinationDir file("build/libs")
+	baseName "ml-unit-test"
+}
+
+// Define the artifacts, in addition to the jar registered by the "java" plugin
+artifacts {
+	modules modulesZip
+}
+
+// Setup publishing of both a jar (containing the src/main/java code) and the modules zip
+// Can eventually include a test jar (containing some src/test/java code) if desired
+// Run "gradle publishtomavenlocal" to publish these locally
+publishing {
+	publications {
+		mainJava(MavenPublication) {
+			from components.java
+			artifactId "ml-unit-test-client"
+		}
+		sourcesJava(MavenPublication) {
+			from components.java
+			artifactId "ml-unit-test-client"
+			artifact sourcesJar
+		}
+		mainModules(MavenPublication) {
+			artifactId "ml-unit-test"
+			artifact modulesZip
+		}
+	}
+}
+
+if (project.hasProperty("myBintrayUser")) {
+	bintray {
+		user = myBintrayUser
+		key = myBintrayKey
+		publications = ["mainJava", "sourcesJava", "mainModules"]
+		pkg {
+			repo = "maven"
+			name = project.name
+			licenses = ["Apache-2.0"]
+			vcsUrl = "https://github.com/rjrudin/" + project.name + ".git"
+			version {
+				name = project.version
+				released = new Date()
+			}
+		}
+	}
+}
+

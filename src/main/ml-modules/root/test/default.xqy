@@ -15,7 +15,9 @@ limitations under the License.
 :)
 xquery version "1.0-ml";
 
-import module namespace helper="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy", "/test/test-controller.xqy";
+import module namespace helper="http://marklogic.com/roxy/test-helper"
+	at "/test/test-helper.xqy", "/test/test-controller.xqy";
+import module namespace coverage="http://marklogic.com/roxy/test-coverage" at "/test/test-coverage.xqy";
 
 declare namespace t="http://marklogic.com/roxy/test";
 
@@ -27,9 +29,10 @@ declare function local:run() {
 	let $run-suite-teardown as xs:boolean := xdmp:get-request-field("runsuiteteardown", "") eq "true"
 	let $run-teardown as xs:boolean := xdmp:get-request-field("runteardown", "") eq "true"
 	let $format as xs:string := xdmp:get-request-field("format", "xml")
+	let $calculate-coverage as xs:boolean := xdmp:get-request-field("calculatecoverage", "") eq "true"
 	return
 		if ($suite) then
-			let $result := helper:run-suite($suite, $tests, $run-suite-teardown, $run-teardown)
+			let $result := helper:run-suite($suite, $tests, $run-suite-teardown, $run-teardown, $calculate-coverage)
 			return
 				if ($format eq "junit") then
 					helper:format-junit($result)
@@ -41,6 +44,32 @@ declare function local:run() {
 declare function local:list()
 {
 	helper:list()
+};
+
+(:~
+ : Generate the code coverage report
+ :)
+declare function local:coverage-report()
+{
+  let $test-results := xdmp:get-request-body("xml")
+	let $format := xdmp:get-request-field("format", "html")
+	let $params := map:new(( map:entry("test-dir", xdmp:get-request-field("/test/suites/")) ))
+	let $coverage-summary := coverage:summary($test-results/*)
+	return
+		xdmp:xslt-invoke("/test/xslt/coverage/report/" || $format || ".xsl", $coverage-summary)
+};
+
+(:~
+ : Generate view of module coverage
+ :)
+declare function local:coverage-module()
+{
+	let $module as xs:string := xdmp:get-request-field("module")
+	let $format as xs:string := xdmp:get-request-field("format", "html")
+	let $wanted as xs:integer* := for $line in xs:NMTOKENS(xdmp:get-request-field("wanted")) return xs:integer($line)
+	let $covered as xs:integer* := for $line in xs:NMTOKENS(xdmp:get-request-field("covered")) return xs:integer($line)
+	return
+		coverage:module-view($module, $format, $wanted, $covered)
 };
 
 (:~
@@ -86,7 +115,6 @@ declare function local:main() {
 							<th>Failed</th>
 						</tr>
 					</thead>
-
 					<tbody>
 						{
 							for $suite at $index in helper:list()/t:suite
@@ -101,7 +129,6 @@ declare function local:main() {
 												<img class="tests-toggle-minus" src="img/arrow-down.gif"/>
 												{fn:data($suite/@path)} <span class="spinner"><img src="img/spinner.gif"/><b>Running...</b></span>
 											</div>
-
 										</td>
 										<td>{fn:count($suite/t:tests/t:test)}</td>
 										<td class="tests-run">-</td>
@@ -130,11 +157,13 @@ declare function local:main() {
 											</div>
 										</td>
 									</tr>
-
 								)
 						}
 					</tbody>
 				</table>
+
+				<div id="coverage-report"></div>
+
 				<table cellspacing="0" cellpadding="0" >
 					<thead>
 						<tr>
@@ -147,6 +176,9 @@ declare function local:main() {
 						</tr>
 						<tr>
 							<td><label for="runteardown">Run Teardown after each test</label><input id="runteardown" type="checkbox" checked="checked"/></td>
+						</tr>
+						<tr>
+							<td><label for="calculatecoverage">Calculate Coverage</label><input id="calculatecoverage" type="checkbox" checked="checked"/></td>
 						</tr>
 					</tbody>
 				</table>

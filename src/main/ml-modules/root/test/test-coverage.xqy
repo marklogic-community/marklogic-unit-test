@@ -70,49 +70,70 @@ declare private function cover:_task-cancel-safe(
   try {
     (:TODO is this a good idea, or a bad idea??:)
     for $breakpoint in dbg:breakpoints($id) return dbg:clear($id, $breakpoint),
-    xdmp:request-cancel(xdmp:host(), xdmp:server("TaskServer"), $id) }
+    dbg:detach($id),
+    if (fn:empty(dbg:wait($id, 10))) then
+      fn:error(xs:QName("FAILED-TO-CANCEL"), "unable to cancel a debugging request")
+    else ()
+    (: xdmp:request-cancel(xdmp:host(), xdmp:server("TaskServer"), $id) :)
+  }
   catch ($ex) {
     if ($ex/error:code eq 'XDMP-NOREQUEST') then ()
-    else xdmp:rethrow() }
+    else xdmp:rethrow()
+  }
 };
 
+(:
+ : @param $request  the ID of a debug request
+ : @param $uri  URI of a module whose coverage we are observing
+ : @param $limit  maximum number of lines we'll try to observe
+ : @param $results-map  map:map containing line numbers
+ :)
 declare private function cover:_prepare-from-request(
     $request as xs:unsignedLong,
     $uri as xs:string,
     $limit as xs:integer,
     $results-map as map:map)
 {
-  helper:log(text {'cover:_prepare-from-request', ('request', $request, 'module', $uri)}),
   try {
-    let $lines-map := map:get($results-map, $uri)[2]
-    (: Semi-infinite loop, to be broken using DBG-LINE.
-     : This avoids stack overflow errors.
-     :)
-    for $line in 1 to $limit
-    (: We only need to break once per line, but we set a breakpoint
-     : on every expression to maximize the odds of seeing that line.
-     : But dbg:line will return the same expression more than once,
-     : at the start of a module or when it sees an expression
-     : that covers multiple lines. So we call dbg:expr for the right info.
-     : Faster to loop once and call dbg:expr many extra times,
-     : or gather all unique expr-ids and then loop again?
-     : Because of the loop-break technique, one loop is easier.
-     :)
-    for $expr-id in dbg:line($request, $uri, $line)
-    let $set := dbg:break($request, $expr-id)
-    let $expr := dbg:expr($request, $expr-id)
-    let $key := $expr/dbg:line/fn:string()
-    where fn:not(map:get($lines-map, $key))
-    return cover:_put($lines-map, $key),
+    let $wanted-lines-map := map:get($results-map, $uri)[2]
+    return
+      if (fn:count(map:keys($wanted-lines-map)) > 0) then
+        (: We've already gathered information on these lines :)
+        ()
+      else (
+        helper:log(text {'cover:_prepare-from-request', ('request', $request, 'module', $uri)}),
+        (: Semi-infinite loop, to be broken using DBG-LINE.
+         : This avoids stack overflow errors.
+         :)
+        for $line in 1 to $limit
+        (: We only need to break once per line, but we set a breakpoint
+         : on every expression to maximize the odds of seeing that line.
+         : But dbg:line will return the same expression more than once,
+         : at the start of a module or when it sees an expression
+         : that covers multiple lines. So we call dbg:expr for the right info.
+         : Faster to loop once and call dbg:expr many extra times,
+         : or gather all unique expr-ids and then loop again?
+         : Because of the loop-break technique, one loop is easier.
+         :)
+        for $expr-id in dbg:line($request, $uri, $line)
+        let $set := dbg:break($request, $expr-id)
+        let $expr := dbg:expr($request, $expr-id)
+        let $key := $expr/dbg:line/fn:string()
+        where fn:not(map:get($wanted-lines-map, $key))
+        return cover:_put($wanted-lines-map, $key),
 
-    (: We should always hit EOF and DBG-LINE before this.
-     : Tell the caller that we could not do it.
-     :)
-    cover:_task-cancel-safe($request),
-    fn:error((), 'UNIT-TEST-TOOBIG', ('Module is too large for code coverage limit:', $limit))
+        (: We should always hit EOF and DBG-LINE before this.
+         : Tell the caller that we could not do it.
+         :)
+        cover:_task-cancel-safe($request),
+        fn:error((), 'UNIT-TEST-TOOBIG', ('Module is too large for code coverage limit:', $limit))
+      )
   } catch ($ex) {
     if ($ex/error:code = "DBG-LINE") then ()
-    else if ($ex/error:code = ("DBG-MODULEDNE", "DBG-REQUESTRECORD", "XDMP-MODNOTFOUND")) then
+    else if ($ex/error:code = "DBG-MODULEDNE") then
+      (: Modules are not visible to this request unless they are used by the initiating main module. :)
+      ()
+    else if ($ex/error:code = ("DBG-REQUESTRECORD", "XDMP-MODNOTFOUND")) then
       helper:log("Error executing " || $uri || " " || ($ex/*:code))
     else
       (
@@ -125,6 +146,10 @@ declare private function cover:_prepare-from-request(
 
 (:~
  : This function prepares code coverage information for the specified modules.
+ :
+ : @return map:map where the keys are module URIs and the values are a pair of maps. The first map's keys are the
+ :                 lines that have code coverage (empty after this function); the second's keys are the lines that
+ :                 we want to have covered.
  :)
 declare private function cover:_prepare(
     $coverage-modules as xs:string+,
@@ -226,7 +251,8 @@ declare function cover:results(
 (:~
  : Return a list of the XQuery modules eligible for code coverage.
 :)
-declare function list-coverage-modules() as xs:string* {
+declare function list-coverage-modules() as xs:string*
+{
   let $database-id as xs:unsignedLong := xdmp:modules-database()
   let $modules-root as xs:string := xdmp:modules-root()
   let $module-extensions as xs:string* := (".xqy", ".xqe", ".xq", ".xquery")

@@ -178,7 +178,7 @@ declare function local:main() {
 							<td><label for="runteardown">Run Teardown after each test</label><input id="runteardown" type="checkbox" checked="checked"/></td>
 						</tr>
 						<tr>
-							<td><label for="calculatecoverage">Calculate Coverage</label><input id="calculatecoverage" type="checkbox" checked="checked"/></td>
+							<td><label for="calculatecoverage">Calculate Coverage</label><input id="calculatecoverage" type="checkbox" /></td>
 						</tr>
 					</tbody>
 				</table>

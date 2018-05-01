@@ -89,10 +89,16 @@ public class TestManager extends ResourceManager {
 	 * @return a JUnitTestSuite capturing the results of running the given suite name
 	 */
 	public JUnitTestSuite runSuite(String suite) {
+		return runSuite(suite, true, true);
+	}
+
+	public JUnitTestSuite runSuite(String suite, boolean runTeardown, boolean runSuiteTeardown) {
 		RequestParameters params = new RequestParameters();
 		params.add("func", "run");
 		params.add("suite", suite);
 		params.add("format", "junit");
+		params.add("runsuiteteardown", String.valueOf(runSuiteTeardown));
+		params.add("runteardown", String.valueOf(runTeardown));
 		String xml = getServices().post(params, (AbstractWriteHandle) null, new StringHandle()).get();
 		return unitTestXmlParser.parseJUnitTestSuiteResult(xml);
 	}

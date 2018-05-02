@@ -131,7 +131,7 @@ declare function run-suite(
 			helper:log(" - invoking tests"),
 			for $test in $tests
 			return
-        run($suite, $test, fn:concat($TEST-SUITES-ROOT, $suite, "/", $test), $run-teardown, $coverage),
+				run($suite, $test, fn:concat($TEST-SUITES-ROOT, $suite, "/", $test), $run-teardown, $coverage),
 
 			if ($run-suite-teardown eq fn:true()) then
 				run-setup-teardown(fn:false(), $suite)
@@ -163,7 +163,7 @@ declare function run(
 	let $result :=
 		try {
 			if (fn:not($setup/@type = "fail")) then
-			  (: Avoid returning result of helper:log :)
+				(: Avoid returning result of helper:log :)
 				let $_ := helper:log("    ...running")
 				return
 					if (fn:empty($coverage)) then xdmp:invoke($module)
@@ -174,8 +174,8 @@ declare function run(
 			helper:fail($ex)
 		}
 	(: If we had a .sjs test module, we may get arrays back. Convert the array
-   : of results to a sequence of results.
-   :)
+	 : of results to a sequence of results.
+	 :)
 	let $result :=
 		(
 			for $value in $result

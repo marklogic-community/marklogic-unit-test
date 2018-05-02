@@ -74,7 +74,6 @@ declare private function cover:_task-cancel-safe(
     if (fn:empty(dbg:wait($id, 10))) then
       fn:error(xs:QName("FAILED-TO-CANCEL"), "unable to cancel a debugging request")
     else ()
-    (: xdmp:request-cancel(xdmp:host(), xdmp:server("TaskServer"), $id) :)
   }
   catch ($ex) {
     if ($ex/error:code eq 'XDMP-NOREQUEST') then ()

@@ -1,19 +1,38 @@
 /**
-* Copyright 2012-2015 MarkLogic Corporation
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-**/
+ * Copyright 2012-2018 MarkLogic Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ *  The use of the Apache License does not indicate that this project is
+ * affiliated with the Apache Software Foundation.
+ *
+ * Code adapted from xray
+ * https://github.com/robwhitby/xray/tree/v2.1
+ *
+ * Modifications copyright (c) 2018 MarkLogic Corporation
+ **/
 var queue = [];
+var coverage = $.parseXML("<test:tests xmlns:test='http://marklogic.com/roxy/test'/>");
+
+function resetCoverage() {
+  'use strict';
+
+  var tests = coverage.documentElement;
+  while (tests.firstChild) {
+    tests.removeChild(tests.firstChild);
+  }
+  $('#coverage-report').empty();
+}
 
 function disableParent(item, parentClass) {
   'use strict';
@@ -25,7 +44,6 @@ function disableParent(item, parentClass) {
   else {
     li.addClass('disabled');
   }
-
 }
 
 function runNextTest() {
@@ -89,7 +107,34 @@ function runNextTest() {
       time: ''
     });
 
+    coverageReport(coverage);
   }
+}
+
+function coverageReport() {
+    'use strict';
+    var $coverageReport = $('#coverage-report');
+    var calculateCoverage = $('#calculatecoverage').prop('checked');
+    if (calculateCoverage) {
+        $.ajax({
+            url: 'default.xqy?func=coverage-report&format=html',
+            type: "POST",
+            cache: false,
+            data: (new XMLSerializer()).serializeToString(coverage),
+            contentType: "text/xml",
+            processData: false,
+            dataType: 'html',
+            success: function (data) {
+                $coverageReport.empty();
+                $coverageReport.append(data);
+            },
+            error: function (data) {
+                resetCoverage();
+            }
+        });
+    } else {
+        $coverageReport.empty();
+    }
 }
 
 function renderError(error) {
@@ -229,6 +274,8 @@ function suiteSuccess(parent, xml) {
   var spinner = parent.find('span.spinner');
   spinner.hide();
 
+  coverage.documentElement.appendChild(xml.documentElement);
+
   runNextTest();
 }
 
@@ -256,6 +303,7 @@ function runSuite(suite) {
 
   var suiteTearDown = $('#runsuiteteardown').prop('checked');
   var tearDown = $('#runteardown').prop('checked');
+  var calculateCoverage = $('#calculatecoverage').prop('checked');
   var spinner = parent.find('span.spinner');
   spinner.show();
 
@@ -267,7 +315,8 @@ function runSuite(suite) {
       suite: suite,
       tests: tests.join(','),
       runsuiteteardown: suiteTearDown,
-      runteardown: tearDown
+      runteardown: tearDown,
+      calculatecoverage: calculateCoverage
     },
     dataType: 'xml',
     success: function(data) {
@@ -289,12 +338,11 @@ function run() {
   $('td.failed').text('-');
   $('td.passed').text('-');
   $('div.failure').remove();
-
+  resetCoverage();
   queue = [];
   $('input.cb:checked').each(function(){
     queue.push(this.value);
   });
-
 
   if (queue.length > 0) {
     $('#failed-count').text('Running...');
@@ -309,12 +357,12 @@ function cancel() {
   'use strict';
 
   queue.length = 0;
+  resetCoverage();
   $('#failed-count').text('Stopping tests...');
   $('.canceltests').hide();
 }
 
 $(document).ready(function(){
-
   'use strict';
 
   $.extend($.gritter.options, {

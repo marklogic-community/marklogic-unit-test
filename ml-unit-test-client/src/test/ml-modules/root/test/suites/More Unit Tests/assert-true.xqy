@@ -25,9 +25,6 @@ test:assert-true((fn:true(), fn:true())),
 test:assert-throws-error(xdmp:function(xs:QName("local:case1")), "ASSERT-TRUE-FAILED"),
 test:assert-throws-error(xdmp:function(xs:QName("local:case2")), "ASSERT-TRUE-FAILED"),
 
-(: Causing this one to fail on purpose :)
-test:assert-true(fn:false(), "test"),
-
 test:assert-true((fn:true(), fn:true()), "test"),
 test:assert-throws-error(xdmp:function(xs:QName("local:case3")), "ASSERT-TRUE-FAILED"),
 test:assert-throws-error(xdmp:function(xs:QName("local:case4")), "ASSERT-TRUE-FAILED")

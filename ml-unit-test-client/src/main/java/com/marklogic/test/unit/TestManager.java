@@ -14,6 +14,14 @@ import java.util.List;
  */
 public class TestManager extends ResourceManager {
 
+	public final static String FORMAT_JUNIT = "junit";
+
+	/**
+	 * The "none" format means that the XML will be returned from the ml-unit-test endpoint without any additional
+	 * formatting applied to it.
+	 */
+	public final static String FORMAT_NONE = "";
+
 	private ServiceResponseUnmarshaller unitTestXmlParser;
 
 	public TestManager(DatabaseClient client) {
@@ -59,9 +67,21 @@ public class TestManager extends ResourceManager {
 	 * @return
 	 */
 	public TestSuiteResult run(TestModule testModule) {
-		RequestParameters params = new RequestParameters();
-		params.add("func", "run");
-		params.add("suite", testModule.getSuite());
+		return run(testModule, true, true);
+	}
+
+	/**
+	 *
+	 * Run a single test module. This is intended to be used in a parameterized JUnit test, where each test
+	 * module is intended to correspond to a separate JUnit test.
+	 *
+	 * @param testModule
+	 * @param runTeardown
+	 * @param runSuiteTeardown
+	 * @return
+	 */
+	public TestSuiteResult run(TestModule testModule, boolean runTeardown, boolean runSuiteTeardown) {
+		RequestParameters params = buildRequestParameters(testModule.getSuite(), FORMAT_NONE, runTeardown, runSuiteTeardown);
 
 		String test = testModule.getTest();
 		if (test != null) {
@@ -76,10 +96,20 @@ public class TestManager extends ResourceManager {
 	 * @return a JUnitTestSuite for every suite found in the modules database
 	 */
 	public List<JUnitTestSuite> runAllSuites() {
+		return runAllSuites(true, true);
+	}
+
+	/**
+	 *
+	 * @param runTeardown
+	 * @param runSuiteTeardown
+	 * @return a JUnitTestSuite for every suite found in the modules database
+	 */
+	public List<JUnitTestSuite> runAllSuites(boolean runTeardown, boolean runSuiteTeardown) {
 		List<String> suiteNames = listSuites();
 		List<JUnitTestSuite> suites = new ArrayList<>();
 		for (String suiteName : suiteNames) {
-			suites.add(runSuite(suiteName));
+			suites.add(runSuite(suiteName, runTeardown, runSuiteTeardown));
 		}
 		return suites;
 	}
@@ -89,12 +119,23 @@ public class TestManager extends ResourceManager {
 	 * @return a JUnitTestSuite capturing the results of running the given suite name
 	 */
 	public JUnitTestSuite runSuite(String suite) {
+		return runSuite(suite, true, true);
+	}
+
+	public JUnitTestSuite runSuite(String suite, boolean runTeardown, boolean runSuiteTeardown) {
+		RequestParameters params = buildRequestParameters(suite, FORMAT_JUNIT, runTeardown, runSuiteTeardown);
+		String xml = getServices().post(params, (AbstractWriteHandle) null, new StringHandle()).get();
+		return unitTestXmlParser.parseJUnitTestSuiteResult(xml);
+	}
+
+	protected RequestParameters buildRequestParameters(String suite, String format, boolean runTeardown, boolean runSuiteTeardown) {
 		RequestParameters params = new RequestParameters();
 		params.add("func", "run");
 		params.add("suite", suite);
-		params.add("format", "junit");
-		String xml = getServices().post(params, (AbstractWriteHandle) null, new StringHandle()).get();
-		return unitTestXmlParser.parseJUnitTestSuiteResult(xml);
+		params.add("format", format);
+		params.add("runsuiteteardown", String.valueOf(runSuiteTeardown));
+		params.add("runteardown", String.valueOf(runTeardown));
+		return params;
 	}
 
 	public void setUnitTestXmlParser(ServiceResponseUnmarshaller unitTestXmlParser) {

@@ -556,7 +556,8 @@ declare function helper:log($items as item()*)
 declare function helper:list-from-database(
   $database as xs:unsignedLong,
   $root as xs:string,
-  $suite as xs:string?)
+  $suite as xs:string?,
+  $file-type as xs:string)
 as xs:string*
 {
   xdmp:eval(
@@ -567,7 +568,7 @@ as xs:string*
       if ($ex/error:code ne "XDMP-URILXCNNOTFOUND") then xdmp:rethrow()
       else xdmp:directory($PATH, "infinity")/xdmp:node-uri(.) }',
     (xs:QName('PATH'),
-      fn:concat($root, 'test/suites/', ($suite, '')[1])),
+      fn:concat($root, 'test/', $file-type, '/', ($suite, '')[1])),
     <options xmlns="xdmp:eval"><database>{$database}</database></options>)
 };
 

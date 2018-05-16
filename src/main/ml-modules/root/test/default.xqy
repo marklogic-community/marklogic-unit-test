@@ -34,8 +34,8 @@ declare function local:run() {
 		if ($suite) then
 			let $result := helper:run-suite($suite, $tests, $run-suite-teardown, $run-teardown, $calculate-coverage)
 			return
-				if ($format eq "junit") then
-					helper:format-junit($result)
+				if ($format) then
+					helper:format($result, $format, $suite)
 				else
 					$result
 		else ()

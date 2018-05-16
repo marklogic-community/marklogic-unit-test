@@ -1,5 +1,5 @@
 <!-- 
-    Convert default ml-uni-test report XML output to valid JUnit report XML
+    Convert default ml-unit-test report XML output to valid JUnit report XML
 -->
 <xsl:stylesheet version="2.0" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 

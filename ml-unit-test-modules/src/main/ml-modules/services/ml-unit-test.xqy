@@ -38,8 +38,8 @@ declare private function run($params as map:map)
 		if ($suite) then
 			let $result := helper:run-suite($suite, $tests, $run-suite-teardown, $run-teardown)
 			return
-				if ($format eq "junit") then
-					helper:format-junit($result)
+				if ($format) then
+					helper:format($result, $format, $suite)
 				else
 					$result
 		else ()

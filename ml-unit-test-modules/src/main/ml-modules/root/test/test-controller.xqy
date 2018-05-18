@@ -14,8 +14,11 @@ import module namespace helper = "http://marklogic.com/roxy/test-helper" at "/te
 declare namespace t="http://marklogic.com/roxy/test";
 
 declare variable $FS-PATH as xs:string := if (xdmp:platform() eq "winnt") then "\" else "/";
-
+declare variable $XSL-PATTERN as xs:string := "\.xslt?$";
 declare variable $TEST-SUITES-ROOT := "/test/suites/";
+declare variable $db-id as xs:unsignedLong := xdmp:modules-database();
+declare variable $root as xs:string := xdmp:modules-root();
+
 
 (:
  : Returns a list of the available tests. This list is magically computed based on the modules
@@ -29,13 +32,11 @@ declare function list()
 	)
 	return
 		element t:tests {
-			let $db-id as xs:unsignedLong := xdmp:modules-database()
-			let $root as xs:string := xdmp:modules-root()
 			let $suites as xs:string* :=
 				if ($db-id = 0) then
 					xdmp:filesystem-directory(fn:concat($root, $FS-PATH, "test/suites"))/dir:entry[dir:type = "directory" and fn:not(dir:filename = $suite-ignore-list)]/dir:filename
 				else
-					let $uris := helper:list-from-database($db-id, $root, ())
+					let $uris := helper:list-from-database($db-id, $root, (), 'suites')
 					return
 						fn:distinct-values(
 							for $uri in $uris
@@ -43,31 +44,55 @@ declare function list()
 							where $path ne "" and fn:not(fn:contains($path, "/")) and fn:not($path = $suite-ignore-list)
 							return
 								$path)
-			for $suite as xs:string in $suites
-			let $tests as xs:string* :=
+			let $main-formats as xs:string* :=
 				if ($db-id = 0) then
-					xdmp:filesystem-directory(fn:concat($root, $FS-PATH, "test/suites/", $suite))/dir:entry[dir:type = "file" and fn:not(dir:filename = $test-ignore-list)]/dir:filename[fn:ends-with(., ".xqy") or fn:ends-with(., ".sjs")]
+					xdmp:filesystem-directory(fn:concat($root, $FS-PATH, "test/formats"))/dir:entry[dir:type = "file" and fn:not(dir:filename = $test-ignore-list)]/dir:filename[fn:matches(., $XSL-PATTERN)]
 				else
-					let $uris := helper:list-from-database($db-id, $root, fn:concat($suite, '/'))
+					let $uris := helper:list-from-database($db-id, $root, (), 'formats')
 					return
 						fn:distinct-values(
 							for $uri in $uris
-							let $path := fn:replace($uri, fn:concat($root, "test/suites/", $suite, "/"), "")
-							where $path ne "" and fn:not(fn:contains($path, "/")) and fn:not($path = $test-ignore-list) and (fn:ends-with($path, ".xqy") or fn:ends-with($path, ".sjs"))
+							let $path := fn:replace($uri, fn:concat($root, "test/formats/"), "")
+							where $path ne "" and fn:not(fn:contains($path, "/")) and fn:not($path = $test-ignore-list) and (fn:matches($path, $XSL-PATTERN))
 							return
 								$path)
-			where $tests
-			return
-				element t:suite {
-					attribute path {$suite},
-					element t:tests {
-						for $test in $tests
+			return (
+				for $suite as xs:string in $suites
+				let $tests as xs:string* :=
+					if ($db-id = 0) then
+						xdmp:filesystem-directory(fn:concat($root, $FS-PATH, "test/suites/", $suite))/dir:entry[dir:type = "file" and fn:not(dir:filename = $test-ignore-list)]/dir:filename[fn:ends-with(., ".xqy") or fn:ends-with(., ".sjs")]
+					else
+						let $uris := helper:list-from-database(
+							$db-id, $root, fn:concat($suite, '/'), 'suites')
 						return
-							element t:test {
-								attribute path {$test}
+							fn:distinct-values(
+								for $uri in $uris
+								let $path := fn:replace($uri, fn:concat($root, "test/suites/", $suite, "/"), "")
+								where $path ne "" and fn:not(fn:contains($path, "/")) and fn:not($path = $test-ignore-list) and (fn:ends-with($path, ".xqy") or fn:ends-with($path, ".sjs"))
+								return
+									$path)
+				where $tests
+				return
+					element t:suite {
+						attribute path {$suite},
+						element t:tests {
+							for $test in $tests
+							return
+								element t:test {
+									attribute path {$test}
+								}
+						}
+					},
+				if ($main-formats) then
+					element t:formats {
+						for $main-format in $main-formats
+						return
+							element t:format {
+								attribute path {$main-format}
 							}
 					}
-				}
+				else ()
+			)
 		}
 };
 
@@ -93,23 +118,23 @@ declare function run-tests() {
  : Execute the suite tests with the options specified. Default behavior is not to calculate code coverage.
  :)
 declare function run-suite(
-		$suite as xs:string,
-		$tests as xs:string*,
-		$run-suite-teardown as xs:boolean,
-		$run-teardown as xs:boolean)
+	$suite as xs:string,
+	$tests as xs:string*,
+	$run-suite-teardown as xs:boolean,
+	$run-teardown as xs:boolean)
 {
-		run-suite($suite, $tests, $run-suite-teardown, $run-teardown, fn:false())
+	run-suite($suite, $tests, $run-suite-teardown, $run-teardown, fn:false())
 };
 
 (:~
  : Execute the suite tests with the options specified.
  :)
 declare function run-suite(
-		$suite as xs:string,
-		$tests as xs:string*,
-		$run-suite-teardown as xs:boolean,
-		$run-teardown as xs:boolean,
-		$calculate-coverage as xs:boolean)
+	$suite as xs:string,
+	$tests as xs:string*,
+	$run-suite-teardown as xs:boolean,
+	$run-teardown as xs:boolean,
+	$calculate-coverage as xs:boolean)
 {
 	let $start-time := xdmp:elapsed-time()
 	let $tests as xs:string* :=
@@ -117,7 +142,7 @@ declare function run-suite(
 		else list()/t:suite[@path eq $suite]/t:tests/t:test/@path
 	let $coverage :=
 		if ($calculate-coverage) then
-			(: TODO: should we exclude the test modules from what is covered?
+		(: TODO: should we exclude the test modules from what is covered?
 					i.e. cover:list-coverage-modules()[fn:not(fn:starts-with(., $TEST-SUITES-ROOT))]
 			:)
 			cover:prepare(cover:list-coverage-modules(), $tests ! fn:concat($TEST-SUITES-ROOT, $suite, "/", .))
@@ -151,11 +176,11 @@ declare function run-suite(
 };
 
 declare function run(
-		$suite as xs:string,
-		$name as xs:string,
-		$module as xs:string,
-		$run-teardown as xs:boolean,
-		$coverage as map:map?)
+	$suite as xs:string,
+	$name as xs:string,
+	$module as xs:string,
+	$run-teardown as xs:boolean,
+	$coverage as map:map?)
 {
 	helper:log(text { "    TEST:", $name }),
 	let $start-time := xdmp:elapsed-time()
@@ -163,7 +188,7 @@ declare function run(
 	let $result :=
 		try {
 			if (fn:not($setup/@type = "fail")) then
-				(: Avoid returning result of helper:log :)
+			(: Avoid returning result of helper:log :)
 				let $_ := helper:log("    ...running")
 				return
 					if (fn:empty($coverage)) then xdmp:invoke($module)
@@ -202,6 +227,32 @@ declare function run(
 			else cover:results($coverage, $result),
 			$teardown
 		}
+};
+
+
+declare function format($result as element(), $format as xs:string, $suite as xs:string)
+{
+	if ($format eq "junit") then
+		format-junit($suite)
+	else
+		let $format-uris :=
+			if ($db-id = 0) then
+				xdmp:filesystem-directory(fn:concat($root, $FS-PATH, "test/formats"))/dir:entry[dir:type = "file"]/dir:filename[fn:matches(., $XSL-PATTERN)]
+			else
+				helper:list-from-database($db-id, $root, (), 'formats')
+		let $xsl-match :=
+			for $uri in $format-uris
+			return
+				if (fn:matches(fn:tokenize($uri, '/')[fn:last()], '^' || $format || $XSL-PATTERN)) then $uri
+				else ()
+		return
+			if ($xsl-match) then
+				let $xsl := $xsl-match[1]
+				let $params := map:map()
+				let $_ := map:put($params, "hostname", fn:tokenize(xdmp:get-request-header("Host"), ":")[1])
+				let $_ := map:put($params, "timestamp", fn:current-dateTime())
+				return xdmp:xslt-invoke($xsl, $result, $params)/element()
+			else $result
 };
 
 

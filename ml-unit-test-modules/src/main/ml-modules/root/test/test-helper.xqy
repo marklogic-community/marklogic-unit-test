@@ -28,7 +28,7 @@ declare option xdmp:mapping "false";
 
 declare variable $helper:PREVIOUS_LINE_FILE as xs:string :=
   try {
-   fn:error(xs:QName("boom"), "")
+    fn:error(xs:QName("boom"), "")
   }
   catch($ex) {
     fn:concat($ex/error:stack/error:frame[3]/error:uri, " : Line ", $ex/error:stack/error:frame[3]/error:line)
@@ -36,7 +36,7 @@ declare variable $helper:PREVIOUS_LINE_FILE as xs:string :=
 
 declare variable $helper:__LINE__ as xs:int :=
   try {
-   fn:error(xs:QName("boom"), "")
+    fn:error(xs:QName("boom"), "")
   }
   catch($ex) {
     $ex/error:stack/error:frame[2]/error:line
@@ -45,7 +45,7 @@ declare variable $helper:__LINE__ as xs:int :=
 declare variable $helper:__CALLER_FILE__  := helper:get-caller() ;
 
 declare function helper:get-caller()
-  as xs:string
+as xs:string
 {
   try { fn:error((), "ROXY-BOOM") }
   catch ($ex) {
@@ -58,19 +58,19 @@ declare function helper:get-caller()
 };
 
 declare function helper:get-test-file($filename as xs:string)
-  as document-node()
+as document-node()
 {
   helper:get-test-file($filename, "text", "force-unquote")
 };
 
 declare function helper:get-test-file($filename as xs:string, $format as xs:string?)
-  as document-node()
+as document-node()
 {
   helper:get-test-file($filename, $format, ())
 };
 
 declare function helper:get-test-file($filename as xs:string, $format as xs:string?, $unquote as xs:string?)
-  as document-node()
+as document-node()
 {
   helper:get-modules-file(
     fn:replace(
@@ -89,9 +89,9 @@ declare function helper:load-test-file($filename as xs:string, $database-id as x
       }
       catch($ex) {
         xdmp:filesystem-directory-create(cvt:basepath($uri),
-                    <options xmlns="xdmp:filesystem-directory-create">
-                      <create-parents>true</create-parents>
-                    </options>)
+          <options xmlns="xdmp:filesystem-directory-create">
+            <create-parents>true</create-parents>
+          </options>)
       }
     return
       xdmp:save($uri, helper:get-test-file($filename))
@@ -103,11 +103,11 @@ declare function helper:load-test-file($filename as xs:string, $database-id as x
       declare variable $file as node() external;
       xdmp:document-insert($uri, $file)
     ',
-    (xs:QName("uri"), $uri,
-     xs:QName("file"), helper:get-test-file($filename)),
-    <options xmlns="xdmp:eval">
-      <database>{$database-id}</database>
-    </options>)
+      (xs:QName("uri"), $uri,
+      xs:QName("file"), helper:get-test-file($filename)),
+      <options xmlns="xdmp:eval">
+        <database>{$database-id}</database>
+      </options>)
 };
 
 declare function helper:build-uri(
@@ -116,7 +116,7 @@ declare function helper:build-uri(
 {
   fn:string-join(
     (fn:replace($base, "(.*)/$", "$1"),
-     fn:replace($suffix, "^/(.*)", "$1")),
+    fn:replace($suffix, "^/(.*)", "$1")),
     "/")
 };
 
@@ -438,17 +438,17 @@ declare private function helper:assert-throws-error_($function as xdmp:function,
       else if ($size eq 1) then
         xdmp:apply($function, json:array-values($params[1]))
       else if ($size eq 2) then
-        xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]))
-      else if ($size eq 3) then
-        xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]))
-      else if ($size eq 4) then
-        xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]))
-      else if ($size eq 5) then
-        xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]), json:array-values($params[5]))
-      else if ($size eq 6) then
-        xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]), json:array-values($params[5]), json:array-values($params[6]))
-      else (: arbitrary fall-back :)
-        xdmp:apply($function, json:array-values($params))
+          xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]))
+        else if ($size eq 3) then
+            xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]))
+          else if ($size eq 4) then
+              xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]))
+            else if ($size eq 5) then
+                xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]), json:array-values($params[5]))
+              else if ($size eq 6) then
+                  xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]), json:array-values($params[5]), json:array-values($params[6]))
+                else (: arbitrary fall-back :)
+                  xdmp:apply($function, json:array-values($params))
       ,
       fn:error(xs:QName("ASSERT-THROWS-ERROR-FAILED"), "It did not throw an error")
     }
@@ -459,9 +459,9 @@ declare private function helper:assert-throws-error_($function as xdmp:function,
         if ($ex/error:code eq $error-code or $ex/error:name eq $error-code) then
           helper:success()
         else
-        (
-          fn:error(xs:QName("ASSERT-THROWS-ERROR-FAILED"), fn:concat("Error code was: ", $ex/error:code, " not: ", $error-code))
-        )
+          (
+            fn:error(xs:QName("ASSERT-THROWS-ERROR-FAILED"), fn:concat("Error code was: ", $ex/error:code, " not: ", $error-code))
+          )
       else
         helper:success()
     }
@@ -505,23 +505,23 @@ declare function helper:delete-all-xml() {
 declare function helper:wait-for-doc($pattern, $sleep) {
   if (xdmp:eval(fn:concat("cts:uri-match('", $pattern, "')"))) then ()
   else
-  (
-    xdmp:sleep($sleep),
-    helper:wait-for-doc($pattern, $sleep)
-  )
+    (
+      xdmp:sleep($sleep),
+      helper:wait-for-doc($pattern, $sleep)
+    )
 };
 
 declare function helper:wait-for-truth($truth as xs:string, $sleep) {
   if (xdmp:eval($truth)) then ()
   else
-  (
-    xdmp:sleep($sleep),
-    helper:wait-for-truth($truth, $sleep)
-  )
+    (
+      xdmp:sleep($sleep),
+      helper:wait-for-truth($truth, $sleep)
+    )
 };
 
 declare function helper:wait-for-taskserver($sleep) {
-  (: do the sleep first. on some super awesome computers the check for active
+(: do the sleep first. on some super awesome computers the check for active
      tasks can return 0 before they have a change to queue up :)
   helper:log(fn:concat("Waiting ", $sleep, " msec for taskserver..")),
   xdmp:sleep($sleep),
@@ -544,7 +544,7 @@ declare function helper:wait-for-taskserver($sleep) {
 declare function helper:sleep($msec as xs:unsignedInt) as empty-sequence() {
   xdmp:eval('declare variable $msec as xs:unsignedInt external;
              xdmp:sleep($msec)',
-            (xs:QName("msec"), $msec))
+    (xs:QName("msec"), $msec))
 };
 
 declare function helper:log($items as item()*)
@@ -556,7 +556,8 @@ declare function helper:log($items as item()*)
 declare function helper:list-from-database(
   $database as xs:unsignedLong,
   $root as xs:string,
-  $suite as xs:string?)
+  $suite as xs:string?,
+  $file-type as xs:string)
 as xs:string*
 {
   xdmp:eval(
@@ -567,7 +568,7 @@ as xs:string*
       if ($ex/error:code ne "XDMP-URILXCNNOTFOUND") then xdmp:rethrow()
       else xdmp:directory($PATH, "infinity")/xdmp:node-uri(.) }',
     (xs:QName('PATH'),
-      fn:concat($root, 'test/suites/', ($suite, '')[1])),
+    fn:concat($root, 'test/', $file-type, '/', ($suite, '')[1])),
     <options xmlns="xdmp:eval"><database>{$database}</database></options>)
 };
 

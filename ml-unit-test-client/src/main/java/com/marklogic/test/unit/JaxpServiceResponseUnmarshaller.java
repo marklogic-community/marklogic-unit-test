@@ -31,14 +31,16 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 		List<TestModule> testModules = new ArrayList<>();
 		for (int i = 0; i < kids.getLength(); i++) {
 			Node suiteNode = kids.item(i);
-			String suite = suiteNode.getAttributes().getNamedItem("path").getTextContent();
-			NodeList testsNodes = suiteNode.getChildNodes();
-			for (int j = 0; j < testsNodes.getLength(); j++) {
-				NodeList testNodes = testsNodes.item(j).getChildNodes();
-				for (int k = 0; k < testNodes.getLength(); k++) {
-					Node testNode = testNodes.item(k);
-					String test = testNode.getAttributes().getNamedItem("path").getTextContent();
-					testModules.add(new TestModule(test, suite));
+			if ("suite".equals(suiteNode.getLocalName())) {
+				String suite = suiteNode.getAttributes().getNamedItem("path").getTextContent();
+				NodeList testsNodes = suiteNode.getChildNodes();
+				for (int j = 0; j < testsNodes.getLength(); j++) {
+					NodeList testNodes = testsNodes.item(j).getChildNodes();
+					for (int k = 0; k < testNodes.getLength(); k++) {
+						Node testNode = testNodes.item(k);
+						String test = testNode.getAttributes().getNamedItem("path").getTextContent();
+						testModules.add(new TestModule(test, suite));
+					}
 				}
 			}
 		}

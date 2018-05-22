@@ -230,10 +230,10 @@ declare function run(
 };
 
 
-declare function format($result as element(), $format as xs:string, $suite as xs:string)
+declare function format($result as element(), $format as xs:string, $suite-name as xs:string)
 {
 	if ($format eq "junit") then
-		format-junit($suite)
+		format-junit($result)
 	else
 		let $format-uris :=
 			if ($db-id = 0) then
@@ -256,17 +256,17 @@ declare function format($result as element(), $format as xs:string, $suite as xs
 };
 
 
-declare function format-junit($suite as element())
+declare function format-junit($result as element())
 {
 	element testsuite {
 		attribute errors {"0"},
-		attribute failures {fn:data($suite/@failed)},
+		attribute failures {fn:data($result/@failed)},
 		attribute hostname {fn:tokenize(xdmp:get-request-header("Host"), ":")[1]},
-		attribute name {fn:data($suite/@name)},
-		attribute tests {fn:data($suite/@total)},
-		attribute time {fn:data($suite/@time)},
+		attribute name {fn:data($result/@name)},
+		attribute tests {fn:data($result/@total)},
+		attribute time {fn:data($result/@time)},
 		attribute timestamp {""},
-		for $test in $suite/t:test
+		for $test in $result/t:test
 		return
 			element testcase {
 				attribute classname {fn:data($test/@name)},

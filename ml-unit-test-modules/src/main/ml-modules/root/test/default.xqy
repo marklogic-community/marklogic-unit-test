@@ -16,7 +16,7 @@ limitations under the License.
 xquery version "1.0-ml";
 
 import module namespace helper="http://marklogic.com/roxy/test-helper"
-	at "/test/test-helper.xqy", "/test/test-controller.xqy";
+at "/test/test-helper.xqy", "/test/test-controller.xqy";
 import module namespace coverage="http://marklogic.com/roxy/test-coverage" at "/test/test-coverage.xqy";
 
 declare namespace t="http://marklogic.com/roxy/test";
@@ -51,7 +51,7 @@ declare function local:list()
  :)
 declare function local:coverage-report()
 {
-  let $test-results := xdmp:get-request-body("xml")
+	let $test-results := xdmp:get-request-body("xml")
 	let $format := xdmp:get-request-field("format", "html")
 	let $params := map:new(( map:entry("test-dir", xdmp:get-request-field("/test/suites/")) ))
 	let $coverage-summary := coverage:summary($test-results/*)

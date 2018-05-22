@@ -1,12 +1,6 @@
-buildscript {
-	repositories {
-		mavenLocal()
-	}
-}
-
 plugins {
 	id "java"
-  id "maven-publish"
+	id "maven-publish"
 	id "com.jfrog.bintray" version "1.8.0"
 
 	// ml-gradle is used for deploying a test application so that this project itself can be tested
@@ -30,33 +24,9 @@ dependencies {
 	testCompile "junit:junit:4+"
 }
 
-// Defines a configuration for the MarkLogic modules; used by the modulesZip task below
-configurations {
-	modules
-}
-
-
-jar {
-	baseName "ml-unit-test-client"
-}
-
 task sourcesJar(type: Jar, dependsOn: classes) {
 	classifier "sources"
 	from sourceSets.main.allJava
-}
-
-task modulesZip(type: Zip) {
-	description = "Zip up the ml-unit-test MarkLogic modules into a package that can be published"
-	from("src/main/ml-modules") {
-		into("ml-unit-test/ml-modules")
-	}
-	destinationDir file("build/libs")
-	baseName "ml-unit-test"
-}
-
-// Define the artifacts, in addition to the jar registered by the "java" plugin
-artifacts {
-	modules modulesZip
 }
 
 // Setup publishing of both a jar (containing the src/main/java code) and the modules zip
@@ -73,10 +43,6 @@ publishing {
 			artifactId "ml-unit-test-client"
 			artifact sourcesJar
 		}
-		mainModules(MavenPublication) {
-			artifactId "ml-unit-test"
-			artifact modulesZip
-		}
 	}
 }
 
@@ -84,7 +50,7 @@ if (project.hasProperty("myBintrayUser")) {
 	bintray {
 		user = myBintrayUser
 		key = myBintrayKey
-		publications = ["mainJava", "sourcesJava", "mainModules"]
+		publications = ["mainJava", "sourcesJava"]
 		pkg {
 			repo = "maven"
 			name = project.name

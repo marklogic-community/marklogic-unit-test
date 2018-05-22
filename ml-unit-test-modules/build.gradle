@@ -1,0 +1,66 @@
+plugins {
+	id "java"
+  id "maven-publish"
+	id "com.jfrog.bintray" version "1.8.0"
+}
+
+// Defines a configuration for the MarkLogic modules; used by the modulesZip task below
+configurations {
+	modules
+}
+
+task sourcesJar(type: Jar) {
+	description = "Create a jar of the modules to meet jcenter's requirements for publishing"
+	classifier "sources"
+	from "src/main/ml-modules"
+	destinationDir file("build/libs")
+}
+
+task modulesJar(type: Jar) {
+	description = "Jar up the ml-unit-test MarkLogic modules into a package that can be published"
+	from("src/main/ml-modules") {
+		into("ml-unit-test-modules/ml-modules")
+	}
+	destinationDir file("build/libs")
+	baseName "ml-unit-test-modules"
+}
+
+// Define the artifacts, in addition to the jar registered by the "java" plugin
+artifacts {
+	modules modulesJar
+}
+
+// Setup publishing of both a jar (containing the src/main/java code) and the modules zip
+// Can eventually include a test jar (containing some src/test/java code) if desired
+// Run "gradle publishtomavenlocal" to publish these locally
+publishing {
+	publications {
+		sourcesJava(MavenPublication) {
+			artifactId "ml-unit-test-modules"
+			artifact sourcesJar
+		}
+		mainModules(MavenPublication) {
+			artifactId "ml-unit-test-modules"
+			artifact modulesJar
+		}
+	}
+}
+
+if (project.hasProperty("myBintrayUser")) {
+	bintray {
+		user = myBintrayUser
+		key = myBintrayKey
+		publications = ["sourcesJava", "mainModules"]
+		pkg {
+			repo = "maven"
+			name = project.name
+			licenses = ["Apache-2.0"]
+			vcsUrl = "https://github.com/rjrudin/" + project.name + ".git"
+			version {
+				name = project.version
+				released = new Date()
+			}
+		}
+	}
+}
+

@@ -142,10 +142,15 @@ declare function run-suite(
 		else list()/t:suite[@path eq $suite]/t:tests/t:test/@path
 	let $coverage :=
 		if ($calculate-coverage) then
-		(: TODO: should we exclude the test modules from what is covered?
-					i.e. cover:list-coverage-modules()[fn:not(fn:starts-with(., $TEST-SUITES-ROOT))]
-			:)
-			cover:prepare(cover:list-coverage-modules(), $tests ! fn:concat($TEST-SUITES-ROOT, $suite, "/", .))
+			(
+				run-setup-teardown(fn:true(), $suite),
+				let $coverage-modules := cover:list-coverage-modules()[fn:not(fn:starts-with(., $TEST-SUITES-ROOT))]
+				let $test-modules :=	$tests ! fn:concat($TEST-SUITES-ROOT, $suite, "/", .)
+			  return cover:prepare($coverage-modules, $test-modules),
+				if ($run-suite-teardown eq fn:true()) then
+					run-setup-teardown(fn:false(), $suite)
+				else ()
+			)
 		else ()
 	let $results :=
 		element t:run {

@@ -7,15 +7,15 @@ let $j0 := xdmp:to-json(xdmp:from-json-string(
 ))
 
 let $j1 := xdmp:to-json(xdmp:from-json-string(
-  '{"PersonNameType":{"PersonSurName":"JONES","PersonGivenName":"LINDSEY"}}'
+  '{"PersonNameType":{"PersonSurName":"JONES","PersonGivenName":"LINDSEY"},"charges":[1,true,"a",null]}'
 ))
 
 let $j2 := xdmp:to-json(xdmp:from-json-string(
-  '{"PersonNameType":{"PersonSurName":"JONES","PersonGivenName":"LINDSEY"}}'
+  '{"PersonNameType":{"PersonSurName":"JONES","PersonGivenName":"LINDSEY"},"charges":[1,true,"a",null]}'
 ))
 
 let $j3 := xdmp:to-json(xdmp:from-json-string(
-  '{"PersonNameType":{"PersonGivenName":"LINDSEY", "PersonSurName":"JONES"}}'
+  '{"PersonNameType":{"PersonGivenName":"LINDSEY", "PersonSurName":"JONES"},"charges":[1,true,"a",null]}'
 ))
 
 let $j4 :=
@@ -24,6 +24,12 @@ let $j4 :=
   let $_ := map:put($pnt, "PersonGivenName", "LINDSEY")
   let $_ := map:put($pnt, "PersonSurName","JONES")
   let $_ := map:put($o, "PersonNameType", $pnt)
+  let $a := json:array()
+  let $_ := json:array-push($a, 1)
+  let $_ := json:array-push($a, fn:true())
+  let $_ := json:array-push($a, "a")
+  let $_ := json:array-push($a, ())
+  let $_ := map:put($o, "charges", $a)
   return $o
 
 let $j5 :=
@@ -32,6 +38,12 @@ let $j5 :=
   let $_ := map:put($pnt, "PersonGivenName", "LINDSEY")
   let $_ := map:put($pnt, "PersonSurName","JONES")
   let $_ := map:put($o, "PersonNameType", $pnt)
+  let $a := json:array()
+  let $_ := json:array-push($a, 1)
+  let $_ := json:array-push($a, fn:true())
+  let $_ := json:array-push($a, "a")
+  let $_ := json:array-push($a, ())
+  let $_ := map:put($o, "charges", $a)
   return $o
 
 return xdmp:eager((

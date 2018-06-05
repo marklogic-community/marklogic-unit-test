@@ -325,6 +325,16 @@ declare function helper:assert-equal-json-recursive($object1, $object2) as xs:bo
         return
           helper:assert-equal-json-recursive($v1, $v2)
       return $counts-equal and fn:not($maps-equal = fn:false())
+    case json:array return
+      let $counts-equal := fn:count($object1) = fn:count($object2)
+      let $items-equal :=
+        let $o1 := json:array-values($object1)
+        let $o2 := json:array-values($object2)
+        for $item at $i in $o1
+        return
+          helper:assert-equal-json-recursive($item, $o2[$i])
+      return
+        $counts-equal and fn:not($items-equal = fn:false())
     default return
       $object1 = $object2
 };

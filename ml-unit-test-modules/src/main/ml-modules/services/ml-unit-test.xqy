@@ -34,9 +34,10 @@ declare private function run($params as map:map)
 	let $run-suite-teardown as xs:boolean := map:get($params, "runsuiteteardown") eq "true"
 	let $run-teardown as xs:boolean := map:get($params, "runteardown") eq "true"
 	let $format as xs:string := (map:get($params, "format"), "xml")[1]
+	let $calculate-coverage as xs:boolean := map:get($params, "calculatecoverage") eq "true"
 	return
 		if ($suite) then
-			let $result := helper:run-suite($suite, $tests, $run-suite-teardown, $run-teardown)
+			let $result := helper:run-suite($suite, $tests, $run-suite-teardown, $run-teardown, $calculate-coverage)
 			return
 				if ($format) then
 					helper:format($result, $format, $suite)

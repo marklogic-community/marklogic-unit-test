@@ -68,8 +68,8 @@ declare private function cover:_task-cancel-safe(
     $id as xs:unsignedLong)
 {
   try {
-    (:TODO is this a good idea, or a bad idea??:)
-    for $breakpoint in dbg:breakpoints($id) return dbg:clear($id, $breakpoint),
+    for $breakpoint in dbg:breakpoints($id)
+    return dbg:clear($id, $breakpoint),
     dbg:detach($id),
     if (fn:empty(dbg:wait($id, 10))) then
       fn:error(xs:QName("FAILED-TO-CANCEL"), "unable to cancel a debugging request")
@@ -220,23 +220,27 @@ declare function cover:results(
   let $do :=
     (: Populate the coverage maps from the profiler output. :)
     for $expr in $results[. instance of element(prof:report)]/prof:histogram/prof:expression[prof:uri = $modules]
-    let $module := map:get($results-map, $expr/prof:uri)[1]
-    let $key := $expr/prof:line/fn:string()
-    where fn:not(map:get($module, $key))
-    return cover:_put($module, $key)
+    let $covered := map:get($results-map, $expr/prof:uri)[1]
+    let $line := $expr/prof:line/fn:string()
+    return cover:_put-new($covered, $line)
 
   for $uri in $modules
   let $seq := map:get($results-map, $uri)
   let $covered := $seq[1]
   let $wanted := $seq[2]
+  let $difference := $covered - $wanted
   let $assert := (
-    if (map:count($covered - $wanted) eq 0) then ()
+    if (map:count($difference) eq 0) then ()
     else
-      helper:log(
-        fn:string-join(
+      (
+        helper:log(
+          fn:string-join(
             ('cover:results',
             ($uri, "more coverage than expected: lines = ",
-            map:keys($covered - $wanted)), 'warning'), " ")) )
+            map:keys($difference)), 'warning'), " ")),
+        map:keys($difference) ! cover:_put($wanted, .)
+      )
+  )
   order by $uri
   return
     element t:coverage {

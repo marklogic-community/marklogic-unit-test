@@ -67,7 +67,7 @@ public class TestManager extends ResourceManager {
 	 * @return
 	 */
 	public TestSuiteResult run(TestModule testModule) {
-		return run(testModule, true, true);
+		return run(testModule, true, true, false);
 	}
 
 	/**
@@ -78,10 +78,11 @@ public class TestManager extends ResourceManager {
 	 * @param testModule
 	 * @param runTeardown
 	 * @param runSuiteTeardown
+	 * @param calculateCoverage
 	 * @return
 	 */
-	public TestSuiteResult run(TestModule testModule, boolean runTeardown, boolean runSuiteTeardown) {
-		RequestParameters params = buildRequestParameters(testModule.getSuite(), FORMAT_NONE, runTeardown, runSuiteTeardown);
+	public TestSuiteResult run(TestModule testModule, boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
+		RequestParameters params = buildRequestParameters(testModule.getSuite(), FORMAT_NONE, runTeardown, runSuiteTeardown, calculateCoverage);
 
 		String test = testModule.getTest();
 		if (test != null) {
@@ -96,20 +97,21 @@ public class TestManager extends ResourceManager {
 	 * @return a JUnitTestSuite for every suite found in the modules database
 	 */
 	public List<JUnitTestSuite> runAllSuites() {
-		return runAllSuites(true, true);
+		return runAllSuites(true, true, false);
 	}
 
 	/**
 	 *
 	 * @param runTeardown
 	 * @param runSuiteTeardown
+	 * @param calculateCoverage
 	 * @return a JUnitTestSuite for every suite found in the modules database
 	 */
-	public List<JUnitTestSuite> runAllSuites(boolean runTeardown, boolean runSuiteTeardown) {
+	public List<JUnitTestSuite> runAllSuites(boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
 		List<String> suiteNames = listSuites();
 		List<JUnitTestSuite> suites = new ArrayList<>();
 		for (String suiteName : suiteNames) {
-			suites.add(runSuite(suiteName, runTeardown, runSuiteTeardown));
+			suites.add(runSuite(suiteName, runTeardown, runSuiteTeardown, calculateCoverage));
 		}
 		return suites;
 	}
@@ -119,22 +121,31 @@ public class TestManager extends ResourceManager {
 	 * @return a JUnitTestSuite capturing the results of running the given suite name
 	 */
 	public JUnitTestSuite runSuite(String suite) {
-		return runSuite(suite, true, true);
+		return runSuite(suite, true, true, false);
 	}
 
-	public JUnitTestSuite runSuite(String suite, boolean runTeardown, boolean runSuiteTeardown) {
-		RequestParameters params = buildRequestParameters(suite, FORMAT_JUNIT, runTeardown, runSuiteTeardown);
+	/**
+	 *
+	 * @param suite
+	 * @param runTeardown
+	 * @param runSuiteTeardown
+	 * @param calculateCoverage
+	 * @return
+	 */
+	public JUnitTestSuite runSuite(String suite, boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
+		RequestParameters params = buildRequestParameters(suite, FORMAT_JUNIT, runTeardown, runSuiteTeardown, calculateCoverage);
 		String xml = getServices().post(params, (AbstractWriteHandle) null, new StringHandle()).get();
 		return unitTestXmlParser.parseJUnitTestSuiteResult(xml);
 	}
 
-	protected RequestParameters buildRequestParameters(String suite, String format, boolean runTeardown, boolean runSuiteTeardown) {
+	protected RequestParameters buildRequestParameters(String suite, String format, boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
 		RequestParameters params = new RequestParameters();
 		params.add("func", "run");
 		params.add("suite", suite);
 		params.add("format", format);
 		params.add("runsuiteteardown", String.valueOf(runSuiteTeardown));
 		params.add("runteardown", String.valueOf(runTeardown));
+		params.add("calculatecoverage", String.valueOf(calculateCoverage));
 		return params;
 	}
 

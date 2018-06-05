@@ -303,50 +303,40 @@ declare function helper:assert-equal-xml($expected, $actual) {
       helper:assert-true(fn:false(), ("unsupported type in $actual : ", xdmp:path($actual)))
 };
 
-declare function helper:assert-equal-json($expected, $actual) {
-  typeswitch ($actual)
-    case document-node() return
-      typeswitch ($expected)
-        case document-node() return
-          helper:assert-equal-json($expected/node(), $actual/node())
-        default return
-          helper:assert-equal-json($expected, $actual/node())
-    case object-node() return
-      typeswitch ($expected)
-        case object-node() return
-          let $_ := helper:assert-equal(fn:count($expected/*), fn:count($actual/*), ("mismatched object key/value count ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
-          return for $item at $i in $actual/* return
-            let $exp := $expected/*[$i]
-            let $_ := helper:assert-equal(fn:name($exp), fn:name($item), ("mismatched object key name ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
-            return helper:assert-equal-json($exp, $item)
-        default return
-          helper:assert-true(fn:false(), ("type mismatch ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
-    case number-node() return
-      typeswitch ($expected)
-        case number-node() return
-          helper:assert-equal($expected/fn:data(), $actual/fn:data(), ("mismatched number node ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
-        default return
-          helper:assert-true(fn:false(), ("type mismatch ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
-    case boolean-node() return
-      typeswitch ($expected)
-        case boolean-node() return
-          helper:assert-equal($expected/fn:data(), $actual/fn:data(), ("mismatched boolean node ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
-        default return
-          helper:assert-true(fn:false(), ("type mismatch ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
-    case null-node() return
-      typeswitch ($expected)
-        case null-node() return
-          helper:assert-true(fn:true()) (: success! :)
-        default return
-          helper:assert-true(fn:false(), ("type mismatch ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
-    case text() return
-      typeswitch ($expected)
-        case text() return
-          helper:assert-equal($expected, $actual, ("mismatched text node ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
-        default return
-          helper:assert-true(fn:false(), ("type mismatch ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
+declare function helper:assert-equal-json($expected as map:map, $actual as map:map) {
+  let $equal := helper:assert-equal-json-recursive($expected, $actual)
+  return
+    if ($equal) then helper:success()
+    else
+      fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed", ($expected, $actual))
+};
+
+declare function helper:assert-equal-json-recursive($object1, $object2) as xs:boolean
+{
+  typeswitch($object1)
+    case map:map return
+      let $k1 := map:keys($object1)
+      let $k2 := map:keys($object2)
+      let $counts-equal := fn:count($k1) eq fn:count($k2)
+      let $maps-equal :=
+        for $key in map:keys($object1)
+        let $v1 := map:get($object1, $key)
+        let $v2 := map:get($object2, $key)
+        return
+          helper:assert-equal-json-recursive($v1, $v2)
+      return $counts-equal and fn:not($maps-equal = fn:false())
+    case json:array return
+      let $counts-equal := fn:count($object1) = fn:count($object2)
+      let $items-equal :=
+        let $o1 := json:array-values($object1)
+        let $o2 := json:array-values($object2)
+        for $item at $i in $o1
+        return
+          helper:assert-equal-json-recursive($item, $o2[$i])
+      return
+        $counts-equal and fn:not($items-equal = fn:false())
     default return
-      fn:error(xs:QName("INVALID-ARG"), "Unsupported JSON type.")
+      $object1 = $object2
 };
 
 declare function helper:assert-true($supposed-truths as xs:boolean*) {

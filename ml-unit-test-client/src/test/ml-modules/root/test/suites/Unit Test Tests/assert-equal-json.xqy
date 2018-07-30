@@ -4,19 +4,19 @@ declare option xdmp:mapping "false";
 
 let $j0 := xdmp:to-json(xdmp:from-json-string(
   '{"PersonNameType":{"PersonSurName":"SMITH","PersonGivenName":"LINDSEY"}}'
-))
+))/node()
 
 let $j1 := xdmp:to-json(xdmp:from-json-string(
   '{"PersonNameType":{"PersonSurName":"JONES","PersonGivenName":"LINDSEY"},"charges":[1,true,"a",null]}'
-))
+))/node()
 
 let $j2 := xdmp:to-json(xdmp:from-json-string(
   '{"PersonNameType":{"PersonSurName":"JONES","PersonGivenName":"LINDSEY"},"charges":[1,true,"a",null]}'
-))
+))/node()
 
 let $j3 := xdmp:to-json(xdmp:from-json-string(
   '{"PersonNameType":{"PersonGivenName":"LINDSEY", "PersonSurName":"JONES"},"charges":[1,true,"a",null]}'
-))
+))/node()
 
 let $j4 :=
   let $o := json:object()
@@ -51,8 +51,12 @@ return xdmp:eager((
   test:assert-equal-json($j1, $j3),
   test:assert-equal-json($j2, $j3),
   test:assert-equal-json($j4, $j5),
-  test:assert-equal-json($j2, $j4),
-  test:assert-equal-json($j2, $j5),
+  test:assert-throws-error(function() {
+    test:assert-equal-json($j2, $j4)
+  }, "ASSERT-EQUAL-JSON-FAILED"),
+  test:assert-throws-error(function() {
+    test:assert-equal-json($j2, $j5)
+  }, "ASSERT-EQUAL-JSON-FAILED"),
   test:assert-throws-error(function() {
     test:assert-equal-json($j0, $j5)
   }, "ASSERT-EQUAL-JSON-FAILED")

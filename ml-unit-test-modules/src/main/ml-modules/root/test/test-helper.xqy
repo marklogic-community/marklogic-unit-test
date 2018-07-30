@@ -344,8 +344,13 @@ declare function helper:assert-equal-json($expected, $actual) {
       fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed ($actual does not consist of arrays)", ($expected, $actual))
   else if ($expected instance of document-node()) then
     if ($actual instance of document-node()) then 
-      (: TODO - compare documents :)
-      ()
+      if (fn:count($expected) = fn:count($actual)) then
+        if (helper:assert-equal-json-recursive($expected/node(), $actual/node())) then 
+          helper:success()
+        else
+          fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed (documents not equal)", ($expected, $actual))
+      else
+        fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed (different counts of documents)", ($expected, $actual))
     else
       fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed ($actual is not a document)", ($expected, $actual))
   else

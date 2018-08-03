@@ -234,6 +234,17 @@ function suiteSuccess(parent, xml) {
           error = $(this).text();
         }
         errors.push(error);
+        
+        if ($(this).parent().attr('name') == 'suite-setup.xqy') {
+          var setupModule = parent.next().find('li.tests.setup-module-hidden');
+          setupModule.removeClass('setup-module-hidden');
+          setupModule.addClass('setup-module-visible');
+        }
+        if ($(this).parent().attr('name') == 'suite-teardown.xqy') {
+          var teardownModule = parent.next().find('li.tests.teardown-module-hidden');
+          teardownModule.removeClass('teardown-module-hidden');
+          teardownModule.addClass('teardown-module-visible');
+        }
       }
 
     });
@@ -339,6 +350,11 @@ function run() {
   $('td.passed').text('-');
   $('div.failure').remove();
   resetCoverage();
+  $('li.tests.setup-module-visible').addClass('setup-module-hidden');
+  $('li.tests').removeClass('setup-module-visible');
+  $('li.tests.teardown-module-visible').addClass('teardown-module-hidden');
+  $('li.tests').removeClass('teardown-module-visible');
+
   queue = [];
   $('input.cb:checked').each(function(){
     queue.push(this.value);

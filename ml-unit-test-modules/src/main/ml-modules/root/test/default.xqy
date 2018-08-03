@@ -141,9 +141,9 @@ declare function local:main() {
 												<div class="wrapper"><input class="check-all-tests" type="checkbox" checked="checked"/>Run All Tests</div>
 												<ul class="tests">
 													{
-														for $test in $suite/t:tests/t:test
+														for $test in (<t:test path="suite-setup.xqy"/>, $suite/t:tests/t:test, <t:test path="suite-teardown.xqy"/>)
 														return
-															<li class="tests">
+															<li class="tests {if (fn:ends-with($test/@path, 'setup.xqy')) then 'setup-module-hidden' else if (fn:ends-with($test/@path, 'teardown.xqy')) then 'teardown-module-hidden' else ()}">
 																{
 																	if ($test/@path = "suite-setup.xqy" or $test/@path = "suite-teardown.xqy" or $test/@path = "suiteSetup.sjs" or $test/@path = "suiteTeardown.sjs") then
 																		<input type="hidden" value="{fn:data($test/@path)}"/>

@@ -359,3 +359,7 @@ img.minus {
 .disabled {
   color: #bbb;
 }
+
+.setup-module-hidden, .teardown-module-hidden {
+  display: none; 
+}

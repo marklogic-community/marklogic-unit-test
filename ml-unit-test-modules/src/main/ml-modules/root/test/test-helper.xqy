@@ -363,7 +363,15 @@ declare function helper:assert-equal-json-recursive($object1, $object2) as xs:bo
   typeswitch($object1)
     case map:map return
       let $k1 := map:keys($object1)
-      let $k2 := map:keys($object2)
+      let $k2 :=
+        if ($object2 instance of map:map) then
+          map:keys($object2)
+        else
+          fn:error(
+            xs:QName("ASSERT-EQUAL-JSON-FAILED"),
+            "Assert Equal Json failed: comparing map to non-map",
+            ($object1, $object2)
+          )
       let $counts-equal := fn:count($k1) eq fn:count($k2)
       let $maps-equal :=
         for $key in map:keys($object1)
@@ -376,7 +384,15 @@ declare function helper:assert-equal-json-recursive($object1, $object2) as xs:bo
       let $counts-equal := fn:count($object1) = fn:count($object2)
       let $items-equal :=
         let $o1 := json:array-values($object1)
-        let $o2 := json:array-values($object2)
+        let $o2 :=
+          if ($object2 instance of json:array) then
+            json:array-values($object2)
+          else
+            fn:error(
+              xs:QName("ASSERT-EQUAL-JSON-FAILED"),
+              "Assert Equal JSON failed: comparing json:array to non-array",
+              ($object1, $object2)
+            )
         for $item at $i in $o1
         return
           helper:assert-equal-json-recursive($item, $o2[$i])
@@ -384,7 +400,15 @@ declare function helper:assert-equal-json-recursive($object1, $object2) as xs:bo
         $counts-equal and fn:not($items-equal = fn:false())
     case object-node() return
       let $m1 := fn:data($object1)
-      let $m2 := fn:data($object2)
+      let $m2 := 
+        if ($object2 instance of object-node()) then
+          fn:data($object2)
+        else
+          fn:error(
+            xs:QName("ASSERT-EQUAL-JSON-FAILED"),
+            "Assert Equal JSON failed: comparing object-node to non-object-node",
+            ($object1, $object2)
+          )
       let $k1 := map:keys($m1)
       let $k2 := map:keys($m2)
       let $counts-equal := fn:count($k1) eq fn:count($k2)
@@ -656,4 +680,20 @@ declare function helper:remove-modules-directories($dirs as xs:string*)
         <database>{xdmp:modules-database()}</database>
       </options>)
   else ()
+};
+
+(: unquote text and get the actual doc content, but without tabs and newlines. convenience function. :)
+declare function helper:unquote($doc-text as xs:string)
+   as document-node()
+ {
+  let $doc := fn:head(xdmp:unquote($doc-text))
+  return helper:strip-blanks($doc)
+};
+
+declare function helper:strip-blanks($n as node()) {
+  typeswitch($n)
+  case document-node() return document{$n/node() ! helper:strip-blanks(.)}
+  case element() return element{node-name($n)} {$n/@*, $n/node() ! helper:strip-blanks(.)}
+  case text() return if (fn:normalize-space($n) eq '') then () else $n
+ default return $n
 };

@@ -218,9 +218,13 @@ declare function helper:assert-at-least-one-equal($expected as item()*, $actual 
 
 declare private function helper:are-these-equal($expected as item()*, $actual as item()*) {
   if (fn:count($expected) eq fn:count($actual)) then
-    fn:count((for $item at $i in $expected
-    return
-      fn:deep-equal($item, $actual[$i]))[. = fn:true()]) eq fn:count($expected)
+    if ($expected instance of json:array and $actual instance of json:array) then
+      helper:assert-equal-json-recursive($expected, $actual)
+    else
+      fn:count((
+        for $item at $i in $expected
+        return
+          fn:deep-equal($item, $actual[$i]))[. = fn:true()]) eq fn:count($expected)
   else
     fn:false()
 };
@@ -303,12 +307,55 @@ declare function helper:assert-equal-xml($expected, $actual) {
       helper:assert-true(fn:false(), ("unsupported type in $actual : ", xdmp:path($actual)))
 };
 
-declare function helper:assert-equal-json($expected as map:map, $actual as map:map) {
-  let $equal := helper:assert-equal-json-recursive($expected, $actual)
-  return
-    if ($equal) then helper:success()
+declare function helper:assert-equal-json($expected, $actual) {
+  if ($expected instance of object-node()*) then
+    if ($actual instance of object-node()*) then
+      if (fn:count($expected) = fn:count($actual)) then
+        if (helper:assert-equal-json-recursive($expected, $actual)) then 
+          helper:success()
+        else
+          fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed", ($expected, $actual))
+      else
+        fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed (different counts of objects)", ($expected, $actual))
     else
-      fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed", ($expected, $actual))
+      (: $actual is not object-node()* :)
+      fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed ($actual does not consist of objects)", ($expected, $actual))
+  else if ($expected instance of map:map*) then
+    if ($actual instance of map:map*) then 
+      if (fn:count($expected) = fn:count($actual)) then
+        if (helper:assert-equal-json-recursive($expected, $actual)) then 
+          helper:success()
+        else
+          fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed", ($expected, $actual))
+      else
+        fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed (different counts of objects)", ($expected, $actual))
+    else
+      fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed ($actual does not consist of objects)", ($expected, $actual))
+  else if ($expected instance of array-node()*) then
+    if ($actual instance of array-node()*) then 
+      if (fn:count($expected) = fn:count($actual)) then
+        if (helper:assert-equal-json-recursive($expected, $actual)) then 
+          helper:success()
+        else
+          fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed", ($expected, $actual))
+      else
+        fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed (different counts of arrays)", ($expected, $actual))
+    else
+      fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed ($actual does not consist of arrays)", ($expected, $actual))
+  else if ($expected instance of document-node()) then
+    if ($actual instance of document-node()) then 
+      if (fn:count($expected) = fn:count($actual)) then
+        if (helper:assert-equal-json-recursive($expected/node(), $actual/node())) then 
+          helper:success()
+        else
+          fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed (documents not equal)", ($expected, $actual))
+      else
+        fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed (different counts of documents)", ($expected, $actual))
+    else
+      fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed ($actual is not a document)", ($expected, $actual))
+  else
+    (: scalar values :)
+    helper:assert-equal($expected, $actual)
 };
 
 declare function helper:assert-equal-json-recursive($object1, $object2) as xs:boolean
@@ -335,6 +382,19 @@ declare function helper:assert-equal-json-recursive($object1, $object2) as xs:bo
           helper:assert-equal-json-recursive($item, $o2[$i])
       return
         $counts-equal and fn:not($items-equal = fn:false())
+    case object-node() return
+      let $m1 := fn:data($object1)
+      let $m2 := fn:data($object2)
+      let $k1 := map:keys($m1)
+      let $k2 := map:keys($m2)
+      let $counts-equal := fn:count($k1) eq fn:count($k2)
+      let $maps-equal :=
+        for $key in map:keys($m1)
+        let $v1 := map:get($m1, $key)
+        let $v2 := map:get($m2, $key)
+        return
+          helper:assert-equal-json-recursive($v1, $v2)
+      return $counts-equal and fn:not($maps-equal = fn:false())
     default return
       $object1 = $object2
 };

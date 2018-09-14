@@ -7,7 +7,9 @@ permalink: /docs/loading-data
 
 ## Loading Data
 
-The Roxy Unit Test framework simplifies loading data for your tests. Files to be loaded can be placed in a sub-directory of your test suite called `test-data`. The test helper provides a function which will automatically use this directory as the location of test files to be loaded.
+*TODO: replace Roxy content with ml-unit-test*
+
+ML Unit Test simplifies loading data for your tests. Files to be loaded can be placed in a sub-directory of your test suite called `test-data`. The test helper provides a function which will automatically use this directory as the location of test files to be loaded.
 
      test:load-data-file(<name-of-file-to-be-loaded-without-path>,database id, <URI>)
 
@@ -20,10 +22,11 @@ The database id can be determined by using the API `xdmp:database()`. You can al
 
 This should be included in the appropriate suite or test setup xquery file. In the corresponding teardown, remove the data files by referring to the URI.
 
-   `let $name := "/test-article.xml"
-   return
-       xdmp:document-delete($name)`
-
+```
+let $name := "/test-article.xml"
+return
+  xdmp:document-delete($name)`
+```
 
 When loading data you 
 * create the data in the `test-data` subdir mentioned above

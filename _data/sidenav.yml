@@ -1,7 +1,7 @@
 main:
   - { url: '/', text: 'Getting Started' }
   - { url: '/include/', text: 'How to Include ML Unit Test in Your Project' }
-  - { url: '/how-to-use/', text: 'How do I Use it?' }
+  - { url: '/running/', text: 'How to Run Your Tests' }
   - {
     url: '/docs/',
     text: 'Docs',
@@ -14,4 +14,5 @@ main:
       { url: '/docs/transactional/', text: 'Transactional Unit Tests' }
     ]
   }
+  - { url: '/good-tests/', text: 'Guidelines for Writing Good Tests' }
   - { absurl: 'https://github.com/marklogic-community/ml-unit-test', text: 'ML Unit Test on GitHub' }

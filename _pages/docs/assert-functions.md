@@ -6,7 +6,10 @@ permalink: /docs/assertions
 ---
 
 ## Assert Functions
-The testing component has a [helper library](https://github.com/marklogic/roxy/blob/master/src/test/test-helper.xqy) that provides several assert functions:
+
+*TODO: check whether this list is up to date*
+
+The testing component has a [helper library](https://github.com/marklogic-community/ml-unit-test/blob/master/ml-unit-test-modules/src/main/ml-modules/root/test/test-helper.xqy) that provides several assert functions:
 * assert-true($supposed-truths as xs:boolean\*)
 * assert-true($supposed-truths as xs:boolean\*, $msg as item()\*)
 * assert-false($supposed-falsehoods as xs:boolean\*)
@@ -26,11 +29,14 @@ The testing component has a [helper library](https://github.com/marklogic/roxy/b
 
 It is good practice to use a specific assert function. So rather than:
 
-    test:assert-equal(fn:true(), $actual)`
+```xquery
+test:assert-equal(fn:true(), $actual)`
+```
 
 use this instead:
 
-    test:assert-true($actual)`
+```xquery
+test:assert-true($actual)`
+```
 
 Using specific asserts makes your intentions more clear to developers who read your test code. 
-

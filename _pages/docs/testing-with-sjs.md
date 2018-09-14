@@ -7,68 +7,101 @@ permalink: /docs/testing-with-sjs
 
 # Testing with Server-side JavaScript
 
-Roxy can unit test XQuery with XQuery, SJS with XQuery, and SJS with SJS. (TODO) No testing XQuery with SJS yet. The examples below assume that /lib/simple.sjs exports a function called addOne(). 
+You can use ML Unit Test to test library modules written in SJS or in XQuery. 
 
-    module.exports = {
-      addOne: addOne
-    };
+Your tests need to return the results of calling assertion functions. To do this with JavaScript tests, build an array
+of assertion results and return the array. Note that this needs to be a flat array -- that is, an array of assertion
+results, not an array of arrays of assertion results. 
 
-    function addOne(value) {
-      return value + 1;
-    }
+The assertion functions compare expected results with the actual results. If the result of calling the function that 
+you're testing is complex enough to warrant multiple assertions, a convention is to hold the results in a variable 
+called `actual`. This makes it clear to those reading your tests exactly what is being tested. 
+
+## Testing JavaScript with JavaScript
+
+Here's an example of testing a JavaScript module with a JavaScript test. Assume that the module `fibonacci.sjs` exposes a
+function called `getFibbed` that returns a specified number of values from the Fibonacci sequence. The function takes
+two parameters: the index of the first number in the sequence to return and the number of values to return. The values 
+are to be returned in an array. The index is one-based. 
+
+```javascript
+const test = require('/test/test-helper.xqy');
+const fib = require('/lib/fibonacci.sjs');
+
+let assertions = [];
+
+// Scenario 1: start at the beginning, get back a few numbers
+
+let actual = fib.getFibbed(1, 4);
+
+assertions.push(
+  test.assertEqual(4, actual.length),
+  test.assertEqual(1, actual[0]),
+  test.assertEqual(1, actual[1]),
+  test.assertEqual(2, actual[2]),
+  test.assertEqual(3, actual[3])
+);
+
+// Scenario 2: start later in the sequence
+
+let actual = fib.getFibbed(3, 3);
+
+assertions.push(
+  test.assertEqual(3, actual.length),
+  test.assertEqual(2, actual[0]),
+  test.assertEqual(3, actual[1]),
+  test.assertEqual(5, actual[2])
+);
+
+assertions
+```
+
+Note that the last line returns the `assertions` array. 
+
+### Testing For Expected Errors
+
+*TODO*
 
 ## Testing XQuery using SJS
 
-TODO
+ML Unit Test also allows you to test XQuery library modules with JavaScript. If the `getFibbed` function above was 
+written in XQuery, the code to test it is very similar. In the library module `/lib/fibonacci.xqy`, the function was
+likely called `get-fibbed` and exists in some namespace. JavaScript modules can `require` XQuery modules to load them.
+The namespace is essentially ignored, and names are converted from "worm case" (`get-fibbed`) to camel case 
+(`getFibbed`). Thus the testing code is nearly identical, except that the required module has a `.xqy` extension. 
 
+```javascript
+const test = require('/test/test-helper.xqy');
+const fib = require('/lib/fibonacci.xqy');
 
-## Testing Server-side JavaScript with Server-side JavaScript
+let assertions = [];
 
-There are a couple differences when using SJS to test SJS code. Below is an example. 
+// Scenario 1: start at the beginning, get back a few numbers
 
-    var test = require('/test/test-helper.xqy');
-    var simple = require('/lib/simple.sjs');
+let actual = fib.getFibbed(1, 4);
 
-    function addOnePlusOne() {
-      var actual = simple.addOne(1);
-      return [
-        test.assertEqual(2, actual),
-        test.assertNotEqual(5, actual)
-      ];
-    };
+assertions.push(
+  test.assertEqual(4, actual.length),
+  test.assertEqual(1, actual[0]),
+  test.assertEqual(1, actual[1]),
+  test.assertEqual(2, actual[2]),
+  test.assertEqual(3, actual[3])
+);
 
-    function addOnePlusTwo() {
-      var actual = simple.addOne(2);
-      return test.assertEqual(3, actual);
-    };
+// Scenario 2: start later in the sequence
 
-    [].concat(
-      addOnePlusOne(),
-      addOnePlusTwo()
-    )
+let actual = fib.getFibbed(3, 3);
 
-We use `require` to import both the XQuery library module with the testing functions and the SJS module that defines the function we want to test. 
+assertions.push(
+  test.assertEqual(3, actual.length),
+  test.assertEqual(2, actual[0]),
+  test.assertEqual(3, actual[1]),
+  test.assertEqual(5, actual[2])
+);
 
-Two things to note: first, wrap your tests in [Immediately Invoked Function Expressions](http://en.wikipedia.org/wiki/Immediately-invoked_function_expression), or else call them explicitly after defining them. Although a function name is not technically necessary in an IIFE, it's useful when looking at the stack trace if a test fails. Either way, you must return the assert results and capture them. (Otherwise, the counts of successes and failures will be inaccurate.) 
+assertions
+```
 
-Second, as with XQuery-based tests, you must return the results of the assert functions in order to get test counts. If you use more than one assert with a test, put them in an array. Note that you need a flat array, hence the use of `[].concat`. 
+### Testing For Expected Errors
 
-If you use IIFE, you can structure it like this: 
-
-    let results = (function testOne() {
-      // do stuff
-      return [
-        test.assert...(...),
-        test.assert...(...)
-      ];
-    })();
-
-    results = results.concat(
-      (function testTwo() {
-        // do stuff
-        return [
-          test.assert...(...),
-          test.assert...(...)
-        ]
-      })();
-    );
+*TODO*

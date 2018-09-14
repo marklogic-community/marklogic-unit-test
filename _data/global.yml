@@ -1,0 +1,5 @@
+# Site Settings
+title: 'Smart Mastering'
+description: 'A Smart Mastering framework for MarkLogic'
+odh_icon: '/images/smart-mastering.svg'
+sm_version: '1.0.0'    # latest

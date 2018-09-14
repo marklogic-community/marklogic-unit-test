@@ -1,0 +1,9 @@
+.asset-cache
+.gradle
+build
+.idea
+.tmp
+*.iml
+gradle-local.properties
+_site
+.jekyll-metadata

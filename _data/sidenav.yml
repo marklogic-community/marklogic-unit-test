@@ -1,31 +1,17 @@
 main:
   - { url: '/', text: 'Getting Started' }
-  - { url: '/how-does-it-work/', text: 'How Does it Work?' }
+  - { url: '/include/', text: 'How to Include ML Unit Test in Your Project' }
   - { url: '/how-to-use/', text: 'How do I Use it?' }
   - {
     url: '/docs/',
     text: 'Docs',
     childPages: [
-      { url: '/docs/rest/', text: 'REST API' },
-      { url: '/docs/libraries/', text: 'Libraries' },
-      {
-        url: '/docs/matching-options/',
-        text: 'Matching Options',
-        childPages: [
-          { url: '/docs/custom-match-algorithms/', text: 'Custom Matching Algorithms' },
-          { url: '/docs/custom-actions/', text: 'Custom Actions' }
-        ]
-      },
-      {
-        url: '/docs/merging-options/',
-        text: 'Merging Options',
-        childPages: [
-          { url: '/docs/custom-merge-algorithms/', text: 'Custom Merging Algorithms' }
-        ]
-      },
-      { url: '/docs/security/', text: 'Security' }
+      { url: '/docs/conventions/', text: 'Filename Conventions' },
+      { url: '/docs/loading-data/', text: 'Loading Data' },
+      { url: '/docs/testing-with-sjs/', text: 'Testing With JavaScript' },
+      { url: '/docs/testing-with-xquery/', text: 'Testing With XQuery' },
+      { url: '/docs/assertions/', text: 'Assert Functions' },
+      { url: '/docs/transactional/', text: 'Transactional Unit Tests' }
     ]
   }
-  - { url: '/faqs/', text: 'FAQs' }
-  - { url: '/troubleshooting/', text: 'Troubleshooting' }
   - { absurl: 'https://github.com/marklogic-community/ml-unit-test', text: 'ML Unit Test on GitHub' }

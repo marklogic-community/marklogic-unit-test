@@ -7,7 +7,7 @@ permalink: /
 
 # ML Unit Test
 
-## What is Ml Unit Test
+## What is ML Unit Test
 ML Unit Test is a testing component that was originally part of the Roxy project. This component enables you to build 
 unit tests that are written in and can test against both XQuery and Server-side JavaScript. Unit testing provides 
 several benefits:

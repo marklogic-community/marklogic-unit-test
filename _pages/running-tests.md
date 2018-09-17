@@ -2,7 +2,7 @@
 layout: inner
 title: How to Run Your Tests
 lead_text: ''
-permalink: /running
+permalink: /running/
 ---
 
 # Running Unit Tests

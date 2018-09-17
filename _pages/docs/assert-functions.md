@@ -2,7 +2,7 @@
 layout: inner
 title: Assert Functions
 lead_text: ''
-permalink: /docs/assertions
+permalink: /docs/assertions/
 ---
 
 ## Assert Functions

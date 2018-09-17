@@ -2,7 +2,7 @@
 layout: inner
 title: Transactional Unit Tests
 lead_text: ''
-permalink: /docs/transactional
+permalink: /docs/transactional/
 ---
 
 # Transactional Unit Tests

@@ -2,7 +2,7 @@
 layout: inner
 title: Filename Conventions
 lead_text: ''
-permalink: /docs/conventions
+permalink: /docs/conventions/
 ---
 
 ## Filename Conventions

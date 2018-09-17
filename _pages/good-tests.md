@@ -2,7 +2,7 @@
 layout: inner
 title: Writing Good Tests
 lead_text: ''
-permalink: /good-tests
+permalink: /good-tests/
 ---
 
 # Writing Good Tests

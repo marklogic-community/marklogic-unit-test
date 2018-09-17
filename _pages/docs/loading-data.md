@@ -2,7 +2,7 @@
 layout: inner
 title: Loading Data
 lead_text: ''
-permalink: /docs/loading-data
+permalink: /docs/loading-data/
 ---
 
 ## Loading Data

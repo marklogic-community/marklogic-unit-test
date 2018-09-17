@@ -2,7 +2,7 @@
 layout: inner
 title: Testing With XQuery
 lead_text: ''
-permalink: /docs/testing-with-xquery
+permalink: /docs/testing-with-xquery/
 ---
 
 # Testing With XQuery

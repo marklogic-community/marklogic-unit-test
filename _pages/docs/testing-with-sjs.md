@@ -2,7 +2,7 @@
 layout: inner
 title: Testing With Server-side JavaScript
 lead_text: ''
-permalink: /docs/testing-with-sjs
+permalink: /docs/testing-with-sjs/
 ---
 
 # Testing with Server-side JavaScript

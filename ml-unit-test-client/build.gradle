@@ -64,4 +64,49 @@ if (project.hasProperty("myBintrayUser")) {
 	}
 }
 
+task createHttpCredentials(type: com.marklogic.gradle.task.MarkLogicTask) {
+  def client = getAppConfig().newAppServicesDatabaseClient("Security")
+  String xquery = """
+xquery version "1.0-ml";
+
+import module namespace sec = "http://marklogic.com/xdmp/security"
+      at "/MarkLogic/security.xqy";
+
+declare option xdmp:mapping "false";
+
+try {
+  sec:remove-credential("ml-unit-test-credentials")
+} catch (\$e) {()};
+
+xquery version "1.0-ml";
+
+import module namespace sec = "http://marklogic.com/xdmp/security"
+      at "/MarkLogic/security.xqy";
+
+declare option xdmp:mapping "false";
+
+sec:create-credential(
+   "ml-unit-test-credentials",
+   "Credentials for ML Rest Helper Calls",
+   "${mlUsername}",
+   "${mlPassword}",
+   (),
+   (),
+   fn:false(),
+   sec:uri-credential-target("http://localhost:${mlRestPort}/.*","digest"),
+   xdmp:default-permissions()
+)
+""";
+  try {
+    String result
+    result = client.newServerEval().xquery(xquery).evalAs(String.class);
+    if (result != null) {
+      println result
+    }
+  } finally {
+    client.release()
+  }
+}
+
+mlPostDeploy.dependsOn createHttpCredentials
 tasks.test.dependsOn mlDeploy

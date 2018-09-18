@@ -7,7 +7,7 @@ permalink: /running/
 
 # Running Unit Tests
 ML Unit Test provides a few options about how to run your tests. Before running your tests, you need to load the 
-configuration you set up (see [How to Include ML Unit Test](./include/)). 
+configuration you set up (see [How to Include ML Unit Test](../include/)).
 
 First, deploy the application:
 

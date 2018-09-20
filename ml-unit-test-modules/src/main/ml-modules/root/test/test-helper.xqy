@@ -311,7 +311,7 @@ declare function helper:assert-equal-json($expected, $actual) {
   if ($expected instance of object-node()*) then
     if ($actual instance of object-node()*) then
       if (fn:count($expected) = fn:count($actual)) then
-        if (helper:assert-equal-json-recursive($expected, $actual)) then 
+        if (helper:assert-equal-json-recursive($expected, $actual)) then
           helper:success()
         else
           fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed", ($expected, $actual))
@@ -321,9 +321,9 @@ declare function helper:assert-equal-json($expected, $actual) {
       (: $actual is not object-node()* :)
       fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed ($actual does not consist of objects)", ($expected, $actual))
   else if ($expected instance of map:map*) then
-    if ($actual instance of map:map*) then 
+    if ($actual instance of map:map*) then
       if (fn:count($expected) = fn:count($actual)) then
-        if (helper:assert-equal-json-recursive($expected, $actual)) then 
+        if (helper:assert-equal-json-recursive($expected, $actual)) then
           helper:success()
         else
           fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed", ($expected, $actual))
@@ -332,9 +332,9 @@ declare function helper:assert-equal-json($expected, $actual) {
     else
       fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed ($actual does not consist of objects)", ($expected, $actual))
   else if ($expected instance of array-node()*) then
-    if ($actual instance of array-node()*) then 
+    if ($actual instance of array-node()*) then
       if (fn:count($expected) = fn:count($actual)) then
-        if (helper:assert-equal-json-recursive($expected, $actual)) then 
+        if (helper:assert-equal-json-recursive($expected, $actual)) then
           helper:success()
         else
           fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed", ($expected, $actual))
@@ -343,9 +343,9 @@ declare function helper:assert-equal-json($expected, $actual) {
     else
       fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed ($actual does not consist of arrays)", ($expected, $actual))
   else if ($expected instance of document-node()) then
-    if ($actual instance of document-node()) then 
+    if ($actual instance of document-node()) then
       if (fn:count($expected) = fn:count($actual)) then
-        if (helper:assert-equal-json-recursive($expected/node(), $actual/node())) then 
+        if (helper:assert-equal-json-recursive($expected/node(), $actual/node())) then
           helper:success()
         else
           fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed (documents not equal)", ($expected, $actual))
@@ -400,7 +400,7 @@ declare function helper:assert-equal-json-recursive($object1, $object2) as xs:bo
         $counts-equal and fn:not($items-equal = fn:false())
     case object-node() return
       let $m1 := fn:data($object1)
-      let $m2 := 
+      let $m2 :=
         if ($object2 instance of object-node()) then
           fn:data($object2)
         else
@@ -541,26 +541,60 @@ declare private function helper:assert-throws-error_($function as xdmp:function,
     }
 };
 
+declare variable $local-url as xs:string := xdmp:get-request-protocol() || "://localhost:" || xdmp:get-request-port();
+declare variable $helper:DEFAULT_HTTP_OPTIONS := element xdmp-http:options {
+  let $credential-id := xdmp:invoke-function(function() {
+      xdmp:apply(xdmp:function(xs:QName('sec:credential-get-id'), "/MarkLogic/security.xqy"), "ml-unit-test-credentials")
+    }, map:entry("database", xdmp:security-database()))
+  return
+    element xdmp-http:credential-id {$credential-id}
+};
+
 declare function helper:easy-url($url) as xs:string
 {
   if (fn:starts-with($url, "http")) then $url
   else
-    fn:concat("http://localhost:", xdmp:get-request-port(), if (fn:starts-with($url, "/")) then () else "/", $url)
+    fn:concat($local-url, if (fn:starts-with($url, "/")) then "" else "/", $url)
 };
 
-declare function helper:http-get($url as xs:string, $options as node()?)
+declare function helper:http-get($url as xs:string, $options as item()? (:as (element(xdmp-http:options)|map:map)?:))
 {
-  let $uri :=
-    if (fn:starts-with($url, "http")) then $url
-    else
-      fn:concat("http://localhost:", xdmp:get-request-port(), if (fn:starts-with($url, "/")) then () else "/", $url)
+  let $uri := helper:easy-url($url)
   return
     xdmp:http-get($uri, $options)
 };
 
-declare function helper:assert-http-get-status($url as xs:string, $options as element(xdmp-http:options), $status-code)
+declare function helper:assert-http-get-status($url as xs:string, $options as item()? (:as (element(xdmp-http:options)|map:map)?:), $status-code)
 {
   let $response := helper:http-get($url, $options)
+  return
+    test:assert-equal($status-code, fn:data($response[1]/*:code))
+};
+
+declare function helper:http-post($url as xs:string, $options as item()? (:as (element(xdmp-http:options)|map:map)?:), $data as node()?)
+{
+  let $uri := helper:easy-url($url)
+  return
+    xdmp:http-post($uri, $options, $data)
+};
+
+declare function helper:assert-http-post-status($url as xs:string, $options as item()? (:as (element(xdmp-http:options)|map:map)?:), $data as node()?, $status-code)
+{
+  let $response := helper:http-post($url, $options, $data)
+  return
+    test:assert-equal($status-code, fn:data($response[1]/*:code))
+};
+
+declare function helper:http-put($url as xs:string, $options as item()? (:as (element(xdmp-http:options)|map:map)?:), $data as node()?)
+{
+  let $uri := helper:easy-url($url)
+  return
+    xdmp:http-put($uri, $options, $data)
+};
+
+declare function helper:assert-http-put-status($url as xs:string, $options as item()? (:as (element(xdmp-http:options)|map:map)?:), $data as node()?, $status-code)
+{
+  let $response := helper:http-put($url, $options, $data)
   return
     test:assert-equal($status-code, fn:data($response[1]/*:code))
 };

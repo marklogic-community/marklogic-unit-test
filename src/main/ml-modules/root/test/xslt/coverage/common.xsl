@@ -32,7 +32,7 @@
 
   <xsl:template name="html-head">
     <head>
-      <title>ml-unit-test</title>
+      <title>marklogic-unit-test</title>
       <link rel="stylesheet" type="text/css" href="css/coverage.css" />
     </head>
   </xsl:template>

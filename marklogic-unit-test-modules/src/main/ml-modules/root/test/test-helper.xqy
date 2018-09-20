@@ -544,7 +544,7 @@ declare private function helper:assert-throws-error_($function as xdmp:function,
 declare variable $local-url as xs:string := xdmp:get-request-protocol() || "://localhost:" || xdmp:get-request-port();
 declare variable $helper:DEFAULT_HTTP_OPTIONS := element xdmp-http:options {
   let $credential-id := xdmp:invoke-function(function() {
-      xdmp:apply(xdmp:function(xs:QName('sec:credential-get-id'), "/MarkLogic/security.xqy"), "ml-unit-test-credentials")
+      xdmp:apply(xdmp:function(xs:QName('sec:credential-get-id'), "/MarkLogic/security.xqy"), "marklogic-unit-test-credentials")
     }, map:entry("database", xdmp:security-database()))
   return
     element xdmp-http:credential-id {$credential-id}

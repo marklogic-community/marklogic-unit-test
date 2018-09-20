@@ -1,1 +1,1 @@
-include "ml-unit-test-modules", "ml-unit-test-client"
+include "marklogic-unit-test-modules", "marklogic-unit-test-client"

@@ -1,6 +1,6 @@
-# Contributing to ml-unit-test
+# Contributing to marklogic-unit-test
 
-ml-unit-test welcomes new contributors. This document will guide you through 
+marklogic-unit-test welcomes new contributors. This document will guide you through 
 the process.
 
  - [Question or Problem?](#question)
@@ -31,22 +31,22 @@ information will increase the chances of your issue being dealt with quickly:
 
 * **Overview of the Issue** - if an error is being thrown a stack trace helps
 * **Motivation for or Use Case** - explain why this is a bug for you
-* **ml-unit-test Version** - is it a named version or from our dev branch
+* **marklogic-unit-test Version** - is it a named version or from our dev branch
 * **Operating System** - Mac, windows? details help
 * **Suggest a Fix** - if you can't fix the bug yourself, perhaps you can point to what might be
   causing the problem (line of code or commit)
 
 ### Submitting a Pull Request
 
-#### Fork ml-unit-test
+#### Fork marklogic-unit-test
 
-Fork the project [on GitHub](https://github.com/marklogic-community/ml-unit-test/fork) and clone
+Fork the project [on GitHub](https://github.com/marklogic-community/marklogic-unit-test/fork) and clone
 your copy.
 
 ```sh
-$ git clone git@github.com:username/ml-unit-test.git
-$ cd ml-unit-test
-$ git remote add upstream git://github.com/marklogic-community/ml-unit-test.git
+$ git clone git@github.com:username/marklogic-unit-test.git
+$ cd marklogic-unit-test
+$ git remote add upstream git://github.com/marklogic-community/marklogic-unit-test.git
 ```
 
 All bug fixes and new features go into the dev branch.
@@ -118,17 +118,17 @@ $ git rebase upstream/dev
 
 #### Test your code
 
-We are working hard to improve ml-unit-test's testing. If you add new functions
-then please write unit tests in `ml-unit-test-client/src/test/ml-modules/root/test/suites/`. 
+We are working hard to improve marklogic-unit-test's testing. If you add new functions
+then please write unit tests in `marklogic-unit-test-client/src/test/ml-modules/root/test/suites/`. 
 When finished, verify that the self-test works.
 
-To deploy the ml-unit-test project by itself, run the following commands:
+To deploy the marklogic-unit-test project by itself, run the following commands:
 
-- cd ml-unit-test-client
+- cd marklogic-unit-test-client
 - gradle mlDeploy
 
 That process will create an application server on port 8090 (create a file
-ml-unit-test-client/gradle-local.properties and copy the `mlRestPort` property 
+marklogic-unit-test-client/gradle-local.properties and copy the `mlRestPort` property 
 to change the port.)
 
 ##### Running Tests in the GUI
@@ -137,7 +137,7 @@ Point a browser to http://localhost:8090/test/.
 
 ##### Running Tests with Gradle
 
-From the `ml-unit-test-client` directory, run `gradle test`. 
+From the `marklogic-unit-test-client` directory, run `gradle test`. 
 
 Make sure that all tests pass. Please, do not submit patches that fail.
 
@@ -149,7 +149,7 @@ $ git push origin my-feature-branch
 
 #### Submit the pull request
 
-Go to https://github.com/username/ml-unit-test and select your feature branch. 
+Go to https://github.com/username/marklogic-unit-test and select your feature branch. 
 Click the 'Pull Request' button and fill out the form.
 
 Pull requests are usually reviewed within a few days. If you get comments that 
@@ -189,5 +189,5 @@ from the main (upstream) repository:
     git pull --ff upstream dev
     ```
 
-[issue tracker]: https://github.com/marklogic/ml-unit-test/issues
+[issue tracker]: https://github.com/marklogic/marklogic-unit-test/issues
 [.editorconfig]: http://editorconfig.org/

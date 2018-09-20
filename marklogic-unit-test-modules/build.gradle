@@ -17,12 +17,12 @@ task sourcesJar(type: Jar) {
 }
 
 task modulesJar(type: Jar) {
-	description = "Jar up the ml-unit-test MarkLogic modules into a package that can be published"
+	description = "Jar up the marklogic-unit-test MarkLogic modules into a package that can be published"
 	from("src/main/ml-modules") {
-		into("ml-unit-test-modules/ml-modules")
+		into("marklogic-unit-test-modules/ml-modules")
 	}
 	destinationDir file("build/libs")
-	baseName "ml-unit-test-modules"
+	baseName "marklogic-unit-test-modules"
 }
 
 // Define the artifacts, in addition to the jar registered by the "java" plugin
@@ -36,11 +36,11 @@ artifacts {
 publishing {
 	publications {
 		sourcesJava(MavenPublication) {
-			artifactId "ml-unit-test-modules"
+			artifactId "marklogic-unit-test-modules"
 			artifact sourcesJar
 		}
 		mainModules(MavenPublication) {
-			artifactId "ml-unit-test-modules"
+			artifactId "marklogic-unit-test-modules"
 			artifact modulesJar
 		}
 	}
@@ -52,10 +52,11 @@ if (project.hasProperty("myBintrayUser")) {
 		key = myBintrayKey
 		publications = ["sourcesJava", "mainModules"]
 		pkg {
-			repo = "maven"
+			repo = "Maven"
 			name = project.name
+			userOrg = 'marklogic-community'
 			licenses = ["Apache-2.0"]
-			vcsUrl = "https://github.com/rjrudin/" + project.name + ".git"
+			vcsUrl = "https://github.com/marklogic-community/" + project.name + ".git"
 			version {
 				name = project.version
 				released = new Date()

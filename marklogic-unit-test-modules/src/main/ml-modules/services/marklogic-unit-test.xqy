@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-module namespace resource = "http://marklogic.com/rest-api/resource/ml-unit-test";
+module namespace resource = "http://marklogic.com/rest-api/resource/marklogic-unit-test";
 
 import module namespace helper = "http://marklogic.com/roxy/test-helper" at "/test/test-controller.xqy";
 

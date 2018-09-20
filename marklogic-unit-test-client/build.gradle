@@ -36,11 +36,11 @@ publishing {
 	publications {
 		mainJava(MavenPublication) {
 			from components.java
-			artifactId "ml-unit-test-client"
+			artifactId "marklogic-unit-test-client"
 		}
 		sourcesJava(MavenPublication) {
 			from components.java
-			artifactId "ml-unit-test-client"
+			artifactId "marklogic-unit-test-client"
 			artifact sourcesJar
 		}
 	}
@@ -55,7 +55,7 @@ if (project.hasProperty("myBintrayUser")) {
 			repo = "maven"
 			name = project.name
 			licenses = ["Apache-2.0"]
-			vcsUrl = "https://github.com/rjrudin/" + project.name + ".git"
+			vcsUrl = "https://github.com/marklogic-community/" + project.name + ".git"
 			version {
 				name = project.version
 				released = new Date()
@@ -75,7 +75,7 @@ import module namespace sec = "http://marklogic.com/xdmp/security"
 declare option xdmp:mapping "false";
 
 try {
-  sec:remove-credential("ml-unit-test-credentials")
+  sec:remove-credential("marklogic-unit-test-credentials")
 } catch (\$e) {()};
 
 xquery version "1.0-ml";
@@ -86,7 +86,7 @@ import module namespace sec = "http://marklogic.com/xdmp/security"
 declare option xdmp:mapping "false";
 
 sec:create-credential(
-   "ml-unit-test-credentials",
+   "marklogic-unit-test-credentials",
    "Credentials for ML Rest Helper Calls",
    "${mlUsername}",
    "${mlPassword}",

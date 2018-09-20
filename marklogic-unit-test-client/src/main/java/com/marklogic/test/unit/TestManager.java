@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Provides methods for talking to the ml-unit-test REST extension.
+ * Provides methods for talking to the marklogic-unit-test REST extension.
  */
 public class TestManager extends ResourceManager {
 
 	public final static String FORMAT_JUNIT = "junit";
 
 	/**
-	 * The "none" format means that the XML will be returned from the ml-unit-test endpoint without any additional
+	 * The "none" format means that the XML will be returned from the marklogic-unit-test endpoint without any additional
 	 * formatting applied to it.
 	 */
 	public final static String FORMAT_NONE = "";
@@ -31,7 +31,7 @@ public class TestManager extends ResourceManager {
 	public TestManager(DatabaseClient client, ServiceResponseUnmarshaller unitTestXmlParser) {
 		super();
 		this.unitTestXmlParser = unitTestXmlParser;
-		client.init("ml-unit-test", this);
+		client.init("marklogic-unit-test", this);
 	}
 
 	/**

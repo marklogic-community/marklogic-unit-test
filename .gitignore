@@ -4,3 +4,8 @@
 .DS_Store
 build
 out
+.classpath
+.settings
+.project
+marklogic-unit-test-client/bin/
+gradle-local.properties

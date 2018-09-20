@@ -52,8 +52,9 @@ if (project.hasProperty("myBintrayUser")) {
 		key = myBintrayKey
 		publications = ["sourcesJava", "mainModules"]
 		pkg {
-			repo = "maven"
+			repo = "Maven"
 			name = project.name
+			userOrg = 'marklogic-community'
 			licenses = ["Apache-2.0"]
 			vcsUrl = "https://github.com/marklogic-community/" + project.name + ".git"
 			version {

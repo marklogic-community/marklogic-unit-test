@@ -10,13 +10,25 @@ provides a few new features:
 To try this out locally, check out the [ml-gradle example project](https://github.com/marklogic-community/ml-gradle/tree/dev/examples/unit-test-project). 
 You can use that project's build.gradle file as an example of how to use marklogic-unit-test in your own project.
 
-## Publishing
+## Releasing
+
+To do a release:
+
+1. Increment the `version` property in `{PROJECT}/gradle.properties`
+2. In `{PROJECT}/`, run `github_changelog_generator --token $your-github-token --future-release v1.0.0`
+
+If running on Windows, you'll need to use different cache file paths, such as `--cache-file C:\tmp\github-changelog-http-cache --cache-log C:\tmp\github-changelog-logger.log`. 
+
+3. Commit the CHANGELOG.md
+4. Push changes to GitHub
+5. Do a PR to bring changes from the develop branch onto master
+6. Follow steps at https://help.github.com/articles/creating-releases/. 
+
+### Publishing to bintray
 
 To publish this project, you need to publish both marklogic-unit-test-modules and marklogic-unit-test-client. 
 
-1. In `{PROJECT}/gradle.properties`:
-  - Increment the `version` property
-  - Add these properties to your  `myBintrayUser`, `myBintrayKey`
+1. In `{PROJECT}/gradle.properties`, add these properties `myBintrayUser`, `myBintrayKey`
 2. `cd marklogic-unit-test-client`
 3. `gradle bintrayUpload`
 4. `cd ../marklogic-unit-test-modules`

@@ -1,0 +1,329 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>Transactional Unit Tests - ML Unit Test</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/marklogic-unit-test/favicon.ico">
+    <meta name="application-name" content="ML Unit Test - A Unit Test framework for MarkLogic">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-6638631-15', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1879746318909687'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1879746318909687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+    <link type="text/css" rel="stylesheet" href="/marklogic-unit-test/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/marklogic-unit-test">
+                  <span class="logo">
+                    <img src="/marklogic-unit-test/images/logo-marklogic.svg" width="180px" height="38px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  ML Unit Test
+                  <img src="/marklogic-unit-test/images/marklogic-unit-test.svg" width="36x" height="36px">
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-unit-test/">Getting Started</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic-community/marklogic-unit-test">GitHub</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-3 hide-small">
+          <div class="panel panel-default">
+  <div class="panel-heading">Navigation</div>
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-unit-test/">Getting Started</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-unit-test/include/">How to Include MarkLogic Unit Test in Your Project</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-unit-test/running/">How to Run Your Tests</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-unit-test/docs/">Docs</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-unit-test/docs/conventions/">Filename Conventions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-unit-test/docs/loading-data/">Loading Data</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-unit-test/docs/testing-with-sjs/">Testing With JavaScript</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-unit-test/docs/testing-with-xquery/">Testing With XQuery</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-unit-test/docs/assertions/">Assert Functions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item active"  >
+    
+    <a href="/marklogic-unit-test/docs/transactional/">Transactional Unit Tests</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-unit-test/good-tests/">Guidelines for Writing Good Tests</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic-community/marklogic-unit-test">MarkLogic Unit Test on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-9">
+          <h1 id="transactional-unit-tests">Transactional Unit Tests</h1>
+
+<p><em>TODO: best practice check; differences for SJS?</em></p>
+
+<p>Sometimes your unit tests will need to commit a transaction and check the results. Here’s how to go about it.</p>
+
+<p>Scenario: suppose you have <code class="highlighter-rouge">tag-lib.xqy</code>, which manages tags in your documents. In <code class="highlighter-rouge">tag-lib.xqy</code>, you have 
+<code class="highlighter-rouge">tag:add($docid, $tag)</code>, which will add the tag to the matching document if the tag isn’t already there, and do nothing 
+if it already is.</p>
+
+<h2 id="the-problem">The problem</h2>
+<p>In your unit test, you call the <code class="highlighter-rouge">tag:add()</code> function and update the target document. The problem is that the change 
+won’t be visible until the transaction completes, as discussed <a href="http://docs.marklogic.com/guide/app-dev/transactions#id_85012">in the Application Developer’s Guide</a>. 
+To be an effective test, we need to check that the results were written correctly.</p>
+
+<h2 id="solutions">Solutions</h2>
+
+<p>We’ll assume we have a suite called tag-lib (<code class="highlighter-rouge">src/test/suites/tag-lib/</code>) and that we’ll test the <code class="highlighter-rouge">tag:add</code> function in 
+<code class="highlighter-rouge">add.xqy</code>.</p>
+
+<h3 id="first-approach-setupxqy">First Approach: setup.xqy</h3>
+<p>The first approach is to create a document in <code class="highlighter-rouge">setup.xqy</code> (a simple <code class="highlighter-rouge">xdmp:document-insert</code> with a fixed URL and a basic 
+sample document). You’ll use <code class="highlighter-rouge">setup.xqy</code> instead of <code class="highlighter-rouge">suite-setup.xqy</code>, because <code class="highlighter-rouge">setup.xqy</code> will be run before each test, 
+overwriting the result of your change.</p>
+
+<p>In your test module, <code class="highlighter-rouge">add.xqy</code>, you’ll import <code class="highlighter-rouge">tag-lib.xqy</code> and call the <code class="highlighter-rouge">tag:add</code> function. If all goes well, the 
+document will get updated with the new tag. In order to see it, we need to end the transaction and start a new one. We 
+can use the semicolon operator for this.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(: tag.xqy :)
+import module namespace tag = "http://marklogic.com/roxy/tag-lib" at "/app/modules/tag-lib.xqy";
+tag:add("/test1.xml", "tag1")
+
+;
+
+import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
+test:assert-exists(fn:doc("/test1.xml")/doc/meta/tags/tag[./text() = "tag1"]`
+</code></pre></div></div>
+
+<p>(Note that to isolate knowledge of how tags are stored, you might want to use a tag module function to retrieve it. The tradeoff is that if the retrieving function breaks, it will look like <code class="highlighter-rouge">add()</code> doesn’t work either.)</p>
+
+<p>Anyway, the semicolon ends one transaction, allowing the change to be fully committed. Then in the second transaction 
+(after the semicolon), we can check whether or not it worked.</p>
+
+<h3 id="second-approach-test-specific-setup-and-teardown">Second approach: test-specific setup and teardown</h3>
+<p>The first approach sets up data for all tests. You might have a test that needs data that are different from the of 
+the test suite, and thus you don’t want to put it into setup.xqy (or suite-setup.xqy). This second pattern shows you 
+how to do this.</p>
+
+<p>In a nutshell, you’ll use four transactions (three semicolons) within your test module: setup, test, verify, and teardown.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(: add.xqy
+  : setup
+  :)
+xdmp:document-insert("/test1.xml", 
+  &lt;doc&gt;
+    &lt;meta&gt;
+      &lt;tags/&gt;
+    &lt;/meta&gt;
+  &lt;/doc&gt;)
+
+;
+
+(: test :)
+import module namespace tag = "http://marklogic.com/roxy/tag-lib" at "/app/modules/tag-lib.xqy";
+
+try {
+  tag:add("/test1.xml", "tag1")
+} catch ($e) {
+  xdmp:log("tag:add() threw an exception: " || xdmp:quote($e))
+}
+
+;
+
+(: verify :)
+import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
+
+try {
+  test:assert-exists(fn:doc("/test1.xml")/doc/meta/tags/tag[./text() = "tag1"])
+} catch ($e) {
+  if (fn:matches($e/error:name, "ASSERT-.*-FAILED")) then
+    xdmp:rethrow()
+  else
+    xdmp:log("tag:add() verification threw an exception: " || xdmp:quote($e))
+}
+
+;
+
+(: teardown :)
+xdmp:document-delete("/test1.xml")
+</code></pre></div></div>
+
+<p>Note the try/catches in the test and verify stages. The reason for these is that if an exception were thrown and not 
+caught, the teardown section would not get run, polluting your test database with something that’s not supposed to be 
+there. If one of the assertions fails, that will trigger an exception. If the exception is a failed assertion, we need 
+to rethrow to make sure the results get counted. Otherwise, everything can look okay even when there is a failing test.</p>
+
+<p><em>Note from Dave Cassel: this second approach can be a bit error prone, with mistakes leading to quietly failing tests. Based on that, I’d use the first approach whenever possible.</em></p>
+
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2016-2018 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/marklogic-unit-test/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/marklogic-unit-test/assets/bundle.js" id="1"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79716597-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
+

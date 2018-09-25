@@ -7,3 +7,6 @@ build
 gradle-local.properties
 _site
 .jekyll-metadata
+.project
+.settings
+.vscode

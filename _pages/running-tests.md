@@ -13,7 +13,7 @@ First, deploy the application:
 
     gradle mlDeploy
     
-This will deploy the application along with the ml-unit-test modules. 
+This will deploy the application along with the marklogic-unit-test modules. 
 
 The examples below assume that your test application server is on port 8042. 
 
@@ -41,7 +41,7 @@ At this time, ml-gradle runs all test suites; there is not way to specify runnin
 
 ## Running from REST
 
-You can also access the ml-unit-test REST endpoints directly: http://localhost:8042/v1/resources/ml-unit-test
+You can also access the marklogic-unit-test REST endpoints directly: http://localhost:8042/v1/resources/marklogic-unit-test
 
 The response will look like this:
 
@@ -76,7 +76,7 @@ will execute the requested tests. The following parameters control the test run:
 *TODO*
 
 This project includes the Gradle Java plugin, which allows you to run tests under src/test/java. This project includes
-an example of a JUnit Parameterized test that invokes each ml-unit-test module separately - you can try it like this:
+an example of a JUnit Parameterized test that invokes each marklogic-unit-test module separately - you can try it like this:
 
     gradle test
 

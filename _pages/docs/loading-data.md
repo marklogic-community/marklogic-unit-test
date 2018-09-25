@@ -7,9 +7,9 @@ permalink: /docs/loading-data/
 
 ## Loading Data
 
-*TODO: replace Roxy content with ml-unit-test*
+*TODO: replace Roxy content with marklogic-unit-test*
 
-ML Unit Test simplifies loading data for your tests. Files to be loaded can be placed in a sub-directory of your test suite called `test-data`. The test helper provides a function which will automatically use this directory as the location of test files to be loaded.
+MarkLogic Unit Test simplifies loading data for your tests. Files to be loaded can be placed in a sub-directory of your test suite called `test-data`. The test helper provides a function which will automatically use this directory as the location of test files to be loaded.
 
     test:load-data-file(<name-of-file-to-be-loaded-without-path>,database id, <URI>)
 

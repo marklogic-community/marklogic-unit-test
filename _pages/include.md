@@ -9,31 +9,32 @@ permalink: /include/
 
 ML Unit Test is built to make it easy to include in projects that use [ml-gradle](https://github.com/marklogic-community/ml-gradle). 
 
-## Enabling ml-unit-test in an ml-gradle project 
+## Enabling marklogic-unit-test in an ml-gradle project
 
-Using ml-unit-test requires two additions to the `build.gradle` file, as described below.
+Using marklogic-unit-test requires two additions to the `build.gradle` file, as described below.
 
-First, ml-gradle includes an "mlUnitTest" task, which depends on the ml-unit-test-client JAR file. ml-gradle does not
-include this by default (not every ml-gradle user will use ml-unit-test), so it must be added to the buildscript:
+First, ml-gradle includes an "mlUnitTest" task, which depends on the marklogic-unit-test-client JAR file. ml-gradle 
+does not include this by default (not every ml-gradle user will use marklogic-unit-test), so it must be added to the 
+buildscript:
 
     buildscript {
       repositories {
         jcenter()
       }
       dependencies {
-        classpath "com.marklogic:ml-unit-test-client:0.11.1"
+        classpath "com.marklogic:marklogic-unit-test-client:0.12.0"
       }
     }
 
-Next, the ml-unit-test framework is depended on and installed as an "mlRestApi" dependency (the "mlRestApi" configuration
-is a feature of ml-gradle for depending on packages of MarkLogic modules):
+Next, the marklogic-unit-test framework is depended on and installed as an "mlRestApi" dependency (the "mlRestApi" 
+configuration is a feature of ml-gradle for depending on packages of MarkLogic modules):
 
     repositories {
       jcenter()
     }
       
     dependencies {
-      mlRestApi "com.marklogic:ml-unit-test-modules:0.11.1"
+      mlRestApi "com.marklogic:marklogic-unit-test-modules:0.12.0"
     }
 
 ## Configuring which server mlUnitTest connects to 

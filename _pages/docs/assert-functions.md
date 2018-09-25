@@ -9,7 +9,7 @@ permalink: /docs/assertions/
 
 *TODO: check whether this list is up to date*
 
-The testing component has a [helper library](https://github.com/marklogic-community/ml-unit-test/blob/master/ml-unit-test-modules/src/main/ml-modules/root/test/test-helper.xqy) that provides several assert functions:
+The testing component has a [helper library](https://github.com/marklogic-community/marklogic-unit-test/blob/master/marklogic-unit-test-modules/src/main/ml-modules/root/test/test-helper.xqy) that provides several assert functions:
 * assert-true($supposed-truths as xs:boolean\*)
 * assert-true($supposed-truths as xs:boolean\*, $msg as item()\*)
 * assert-false($supposed-falsehoods as xs:boolean\*)

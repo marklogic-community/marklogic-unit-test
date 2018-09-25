@@ -34,7 +34,7 @@ jekyll serve
 
 Open the docs website at the server address displayed in the terminal, e.g.: 
 
-`http://127.0.0.1:4000/ml-unit-test/`
+`http://127.0.0.1:4000/marklogic-unit-test/`
 
 ### Making Content Changes
 

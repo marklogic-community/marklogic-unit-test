@@ -1,5 +1,5 @@
 # Site Settings
 title: 'ML Unit Test'
 description: 'A Unit Test framework for MarkLogic'
-odh_icon: '/images/ml-unit-test.svg'
+odh_icon: '/images/marklogic-unit-test.svg'
 sm_version: '1.0.0'    # latest

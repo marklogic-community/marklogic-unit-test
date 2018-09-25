@@ -17,7 +17,7 @@ several benefits:
 - Testing ensures that new code does not reintroduce old bugs
 - Unit tests allow you to easily automate the tedious job of careful testing
 
-ml-unit-test includes the original Roxy unit test framework for MarkLogic and provides a few new features:
+marklogic-unit-test includes the original Roxy unit test framework for MarkLogic and provides a few new features:
 
 1. A REST endpoint for listing and running unit tests
 1. A small Java library for integrating MarkLogic unit tests into existing test frameworks like JUnit
@@ -26,15 +26,15 @@ ml-unit-test includes the original Roxy unit test framework for MarkLogic and pr
 ## How Do I get Started?
 
 To try this out locally, check out the ml-gradle example project. You can use that project's build.gradle file as an 
-example of how to use ml-unit-test in your own project.
+example of how to use marklogic-unit-test in your own project.
 
 ## How Do I Ask a Question or Send Feedback?
 
 ### Have a question?
 Someone else might have already asked.
 1. Look at our [Stack Overflow Questions](https://stackoverflow.com/questions/tagged/marklogic)
-1. Look at our [GitHub Issues](https://github.com/marklogic-community/ml-unit-test/issues)
+1. Look at our [GitHub Issues](https://github.com/marklogic-community/marklogic-unit-test/issues)
 1. Still can't find an answer? Use the [#marklogic tag on StackOverflow](https://stackoverflow.com/questions/ask?tags=marklogic) to ask us.
 
 ### Found a bug? Have a comment?
-[File an issue on Github](https://github.com/marklogic-community/ml-unit-test/issues/new) and we will see it.
+[File an issue on Github](https://github.com/marklogic-community/marklogic-unit-test/issues/new) and we will see it.

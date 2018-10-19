@@ -82,7 +82,7 @@ public class TestManager extends ResourceManager {
 	 * @return
 	 */
 	public TestSuiteResult run(TestModule testModule, boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
-		RequestParameters params = buildRequestParameters(testModule.getSuite(), FORMAT_NONE, runTeardown, runSuiteTeardown, calculateCoverage);
+		RequestParameters params = buildRequestParameters(testModule.getSuite(), null, FORMAT_NONE, runTeardown, runSuiteTeardown, calculateCoverage);
 
 		String test = testModule.getTest();
 		if (test != null) {
@@ -108,18 +108,30 @@ public class TestManager extends ResourceManager {
 	 * @return a JUnitTestSuite for every suite found in the modules database
 	 */
 	public List<JUnitTestSuite> runAllSuites(boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
-		List<String> suiteNames = listSuites();
-		List<JUnitTestSuite> suites = new ArrayList<>();
-		for (String suiteName : suiteNames) {
-			suites.add(runSuite(suiteName, runTeardown, runSuiteTeardown, calculateCoverage));
-		}
-		return suites;
+	  return runAllSuites(null, runTeardown, runSuiteTeardown, calculateCoverage);
 	}
 
-	/**
-	 * @param suite
-	 * @return a JUnitTestSuite capturing the results of running the given suite name
-	 */
+  /**
+   * @param tests
+   * @param runTeardown
+   * @param runSuiteTeardown
+   * @param calculateCoverage
+   * @return
+   */
+  public List<JUnitTestSuite> runAllSuites(String tests, boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
+    List<String> suiteNames = listSuites();
+    List<JUnitTestSuite> suites = new ArrayList<>();
+    for (String suiteName : suiteNames) {
+      JUnitTestSuite suite = runSuite(suiteName, tests, FORMAT_JUNIT, runTeardown, runSuiteTeardown, calculateCoverage);
+      suites.add(suite);
+    }
+    return suites;
+  }
+
+    /**
+	   * @param suite
+	   * @return a JUnitTestSuite capturing the results of running the given suite name
+	   */
 	public JUnitTestSuite runSuite(String suite) {
 		return runSuite(suite, true, true, false);
 	}
@@ -133,15 +145,40 @@ public class TestManager extends ResourceManager {
 	 * @return
 	 */
 	public JUnitTestSuite runSuite(String suite, boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
-		RequestParameters params = buildRequestParameters(suite, FORMAT_JUNIT, runTeardown, runSuiteTeardown, calculateCoverage);
-		String xml = getServices().post(params, (AbstractWriteHandle) null, new StringHandle()).get();
-		return unitTestXmlParser.parseJUnitTestSuiteResult(xml);
+	  return runSuite(suite, null, FORMAT_JUNIT, runTeardown, runSuiteTeardown, calculateCoverage);
 	}
 
-	protected RequestParameters buildRequestParameters(String suite, String format, boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
+  /**
+   *
+   * @param suite
+   * @param tests
+   * @param format
+   * @param runTeardown
+   * @param runSuiteTeardown
+   * @param calculateCoverage
+   * @return
+   */
+  public JUnitTestSuite runSuite(String suite, String tests, String format, boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
+    RequestParameters params = buildRequestParameters(suite, tests, format, runTeardown, runSuiteTeardown, calculateCoverage);
+    String xml = getServices().post(params, (AbstractWriteHandle) null, new StringHandle()).get();
+    return unitTestXmlParser.parseJUnitTestSuiteResult(xml);
+  }
+
+  /**
+   *
+   * @param suite
+   * @param tests
+   * @param format
+   * @param runTeardown
+   * @param runSuiteTeardown
+   * @param calculateCoverage
+   * @return
+   */
+	protected RequestParameters buildRequestParameters(String suite, String tests, String format, boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
 		RequestParameters params = new RequestParameters();
 		params.add("func", "run");
 		params.add("suite", suite);
+		params.add("tests", tests);
 		params.add("format", format);
 		params.add("runsuiteteardown", String.valueOf(runSuiteTeardown));
 		params.add("runteardown", String.valueOf(runTeardown));

@@ -2,7 +2,9 @@ package com.marklogic.test.unit;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,17 +14,31 @@ import java.util.List;
  */
 public class RunSuiteTest extends Assert {
 
-	@Test
-	public void test() {
-		DatabaseClient databaseClient = DatabaseClientFactory.newClient("localhost", 8090,
-			new DatabaseClientFactory.DigestAuthContext("admin", "admin"));
+  private DatabaseClient databaseClient;
 
-		try {
-			List<JUnitTestSuite> suites = new TestManager(databaseClient).runAllSuites();
-			String report = new DefaultJUnitTestReporter().reportOnJUnitTestSuites(suites);
-			System.out.println(report);
-		} finally {
-			databaseClient.release();
-		}
-	}
+  @Before
+  public void setup() {
+    databaseClient = DatabaseClientFactory.newClient("localhost", 8090,
+      new DatabaseClientFactory.DigestAuthContext("admin", "admin"));
+  }
+
+  @After
+  public void teardown() {
+    databaseClient.release();
+  }
+
+  @Test
+  public void test() {
+    List<JUnitTestSuite> suites = new TestManager(databaseClient).runAllSuites();
+    String report = new DefaultJUnitTestReporter().reportOnJUnitTestSuites(suites);
+    System.out.println(report);
+  }
+
+  @Test
+  public void runTestsInSuite() {
+    List<JUnitTestSuite> suites =
+      new TestManager(databaseClient).runAllSuites("assert-not-equal", true, true, false);
+    String report = new DefaultJUnitTestReporter().reportOnJUnitTestSuites(suites);
+    System.out.println(report);
+  }
 }

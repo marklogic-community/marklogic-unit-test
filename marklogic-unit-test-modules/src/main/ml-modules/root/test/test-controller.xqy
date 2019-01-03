@@ -32,7 +32,7 @@ declare function list()
 	return
 		element t:tests {
 			let $suites as xs:string* :=
-        let $uris := helper:list-from-database($db-id, $root, (), 'suites')
+        let $uris := helper:list-from-database($db-id, $root || "test/suites/")
         return
           fn:distinct-values(
             for $uri in $uris
@@ -41,7 +41,7 @@ declare function list()
             return
               $path)
 			let $main-formats as xs:string* :=
-        let $uris := helper:list-from-database($db-id, $root, (), 'formats')
+        let $uris := helper:list-from-database($db-id, $root || "test/formats/")
         return
           fn:distinct-values(
             for $uri in $uris
@@ -52,8 +52,7 @@ declare function list()
 			return (
 				for $suite as xs:string in $suites
 				let $tests as xs:string* :=
-          let $uris := helper:list-from-database(
-            $db-id, $root, fn:concat($suite, '/'), 'suites')
+          let $uris := helper:list-from-database($db-id, $root || "test/suites/" || $suite)
           return
             fn:distinct-values(
               for $uri in $uris
@@ -230,7 +229,7 @@ declare function format($result as element(), $format as xs:string, $suite-name 
 	if ($format eq "junit") then
 		format-junit($result)
 	else
-		let $format-uris := helper:list-from-database($db-id, $root, (), 'formats')
+		let $format-uris := helper:list-from-database($db-id, $root || "test/formats/")
 		let $xsl-match :=
 			for $uri in $format-uris
 			return

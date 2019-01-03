@@ -26,6 +26,8 @@ declare namespace xdmp-http="xdmp:http";
 
 declare option xdmp:mapping "false";
 
+declare variable $helper:DIRECTORY-SEPARATOR as xs:string := if (xdmp:platform() eq "winnt") then "\" else "/";
+
 declare variable $helper:PREVIOUS_LINE_FILE as xs:string :=
   try {
     fn:error(xs:QName("boom"), "")
@@ -668,16 +670,33 @@ declare function helper:list-from-database(
   $file-type as xs:string)
 as xs:string*
 {
-  xdmp:eval(
-    'xquery version "1.0-ml";
-    declare variable $PATH as xs:string external;
-    try { cts:uris((), (), cts:directory-query($PATH, "infinity")) }
-    catch ($ex) {
-      if ($ex/error:code ne "XDMP-URILXCNNOTFOUND") then xdmp:rethrow()
-      else xdmp:directory($PATH, "infinity")/xdmp:node-uri(.) }',
-    (xs:QName('PATH'),
-    fn:concat($root, 'test/', $file-type, '/', ($suite, '')[1])),
-    <options xmlns="xdmp:eval"><database>{$database}</database></options>)
+  if ($database = 0) then
+    helper:list-from-filesystem(fn:string-join(($root, "test", $file-type, $suite), $helper:DIRECTORY-SEPARATOR))
+  else
+    xdmp:eval(
+      'xquery version "1.0-ml";
+      declare variable $PATH as xs:string external;
+      try { cts:uris((), (), cts:directory-query($PATH, "infinity")) }
+      catch ($ex) {
+        if ($ex/error:code ne "XDMP-URILXCNNOTFOUND") then xdmp:rethrow()
+        else xdmp:directory($PATH, "infinity")/xdmp:node-uri(.) }',
+      (xs:QName('PATH'),
+      fn:concat($root, 'test/', $file-type, '/', ($suite, '')[1])),
+      <options xmlns="xdmp:eval"><database>{$database}</database></options>)
+};
+
+declare function helper:list-from-filesystem($path as xs:string)
+as xs:string*
+{
+  let $path := fn:replace($path, "(/|\\)", $helper:DIRECTORY-SEPARATOR)
+  for $entry in xdmp:filesystem-directory($path)/dir:entry
+    return
+      if ($entry/dir:type = "directory") then
+        helper:list-from-filesystem($entry/dir:pathname)
+      else if ($entry/dir:type = "file") then
+        $entry/dir:pathname
+      else
+        ()
 };
 
 (:

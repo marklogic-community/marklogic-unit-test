@@ -23,11 +23,11 @@ xquery version "1.0-ml";
  :
  : Modifications copyright (c) 2018 MarkLogic Corporation
  :)
-module namespace cover="http://marklogic.com/roxy/test-coverage";
+module namespace cover="http://marklogic.com/test/coverage";
 
-import module namespace helper = "http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
-declare namespace t = "http://marklogic.com/roxy/test";
-declare default element namespace "http://marklogic.com/roxy/test";
+import module namespace helper = "http://marklogic.com/test/unit" at "/test/test-helper.xqy";
+declare namespace test = "http://marklogic.com/test/unit";
+declare default element namespace "http://marklogic.com/test/unit";
 
 declare option xdmp:mapping "false";
 
@@ -239,7 +239,7 @@ declare function cover:results(
             map:keys($covered - $wanted)), 'warning'), " ")) )
   order by $uri
   return
-    element t:coverage {
+    element test:coverage {
       attribute uri { $uri },
       cover:_result('wanted', $wanted),
       cover:_result('covered', $covered),
@@ -320,7 +320,7 @@ declare function cover:summary(
 
     let $map := map:map()
     let $do :=
-      for $coverage in $tests/t:suite/t:test/t:coverage
+      for $coverage in $tests/test:suite/test:test/test:coverage
       let $uri := $coverage/@uri/fn:string()
       let $old := map:get($map, $uri)
       let $coverage-tuple := (
@@ -346,7 +346,7 @@ declare function cover:summary(
     let $covered-count := fn:sum( for $uri in $uris return map:count(map:get($map, $uri)[1]) )
     let $wanted-count := fn:sum( for $uri in $uris return map:count(map:get($map, $uri)[2]) )
     return
-      element t:coverage-summary {
+      element test:coverage-summary {
         attribute wanted-count { $wanted-count },
         attribute covered-count { $covered-count },
         attribute missing-count { $wanted-count - $covered-count },
@@ -357,7 +357,7 @@ declare function cover:summary(
         let $wanted := $coverage-tuple[2]
         order by $uri
         return
-          element t:module-coverage {
+          element test:module-coverage {
             attribute uri { $uri },
             cover:_result('wanted', $wanted),
             cover:_result('covered', $covered),
@@ -392,7 +392,7 @@ declare function cover:module-view-xml(
     $covered as map:map,
     $missing as map:map)
 {
-  element t:module {
+  element test:module {
     attribute uri { $module },
     attribute covered { map:count($covered) },
     attribute wanted { map:count($wanted) },
@@ -400,7 +400,7 @@ declare function cover:module-view-xml(
     for $i at $x in $lines
     let $key := fn:string($x)
     return
-      element t:line {
+      element test:line {
         attribute number { $x },
         attribute state {
           if (map:get($covered, $key)) then 'covered'

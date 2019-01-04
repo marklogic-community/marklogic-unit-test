@@ -24,7 +24,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:error="http://marklogic.com/xdmp/error"
                 xmlns:prof="http://marklogic.com/xdmp/profile"
-                xmlns:test="http://marklogic.com/roxy/test"
+                xmlns:test="http://marklogic.com/test/unit"
                 xmlns:xdmp="http://marklogic.com/xdmp"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 version="2.0"

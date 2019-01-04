@@ -22,7 +22,7 @@
  * Modifications copyright (c) 2018 MarkLogic Corporation
  **/
 var queue = [];
-var coverage = $.parseXML("<test:tests xmlns:test='http://marklogic.com/roxy/test'/>");
+var coverage = $.parseXML("<test:tests xmlns:test='http://marklogic.com/test/unit'/>");
 
 function resetCoverage() {
   'use strict';
@@ -234,7 +234,7 @@ function suiteSuccess(parent, xml) {
           error = $(this).text();
         }
         errors.push(error);
-        
+
         if ($(this).parent().attr('name') == 'suite-setup.xqy') {
           var setupModule = parent.next().find('li.tests.setup-module-hidden');
           setupModule.removeClass('setup-module-hidden');

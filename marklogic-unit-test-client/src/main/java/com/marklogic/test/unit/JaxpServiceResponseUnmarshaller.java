@@ -31,8 +31,10 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 		List<TestModule> testModules = new ArrayList<>();
 		for (int i = 0; i < kids.getLength(); i++) {
 			Node suiteNode = kids.item(i);
+			String namespaceUri = suiteNode.getNamespaceURI();
+			String localname = suiteNode.getLocalName();
 			// getLocalName returns null, have to compare against getNodeName to ensure we have a suite
-			if ("t:suite".equals(suiteNode.getNodeName())) {
+			if ("test:suite".equals(suiteNode.getNodeName())) {
 				String suite = suiteNode.getAttributes().getNamedItem("path").getTextContent();
 				NodeList testsNodes = suiteNode.getChildNodes();
 				for (int j = 0; j < testsNodes.getLength(); j++) {

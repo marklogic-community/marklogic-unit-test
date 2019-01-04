@@ -1,9 +1,9 @@
 
 // Given two JSON objects or arrays, determine whether they are the same.
 
-const test = require("/test/test-helper.xqy");
+const test = require("/test/assert.xqy");
 
-let j0 = 
+let j0 =
   {
     "PersonNameType":{
       "PersonSurName":"SMITH",
@@ -11,13 +11,13 @@ let j0 =
     }
   };
 
-let j1 = 
+let j1 =
   {
     "PersonNameType":{
       "PersonSurName":"JONES",
       "PersonGivenName":"LINDSEY"
     },
-    "charges": [1,true,"a",null] 
+    "charges": [1,true,"a",null]
   };
 
 let j2 =
@@ -32,7 +32,7 @@ let j2 =
 let j3 =
   {
     "PersonNameType":{
-      "PersonGivenName":"LINDSEY", 
+      "PersonGivenName":"LINDSEY",
       "PersonSurName":"JONES"
     },
     "charges": [1,true,"a",null]
@@ -57,9 +57,9 @@ let j5 =
   };
 
 /**
- * test.assertEqualJson expects an xdmp:function, but a JS function is not one of those. 
- * @param f 
- * @param msg 
+ * test.assertEqualJson expects an xdmp:function, but a JS function is not one of those.
+ * @param f
+ * @param msg
  */
 function assertThrowsError(f, msg)
 {
@@ -86,7 +86,7 @@ function assertThrowsError(f, msg)
   assertThrowsError(
     function() {
       test.assertEqualJson(j0, j5)
-    }, 
+    },
     "ASSERT-EQUAL-JSON-FAILED"
   )
 ]

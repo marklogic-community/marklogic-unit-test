@@ -33,44 +33,51 @@ declare function list()
 		"suite-setup.xqy", "suite-teardown.xqy", "suiteSetup.sjs", "suiteTeardown.sjs"
 	) ! map:entry(., .))
 
-  let $suites as xs:string* := fn:distinct-values(
-    let $uris := helper:list-from-database($db-id, $root || "test/suites/")
-    for $uri in $uris
-    let $path := fn:replace(cvt:basepath($uri), fn:concat($root, "test/suites/?"), "")
-    where $path ne "" and fn:not(fn:contains($path, "/")) and fn:empty(map:get($suite-ignore-list, $path))
-    return $path
-  )
+  let $suites := map:map()
+
+  let $_ :=
+    for $uri in helper:list-from-database($db-id, $root || "test/suites/")
+      let $test-path := fn:replace($uri, fn:concat($root, "test/suites/?"), "")
+      let $suite-path := cvt:basepath($test-path)
+      let $test-name := fn:replace($test-path, $suite-path || "(\\|/)?", "")
+      let $suite-is-valid :=
+        $suite-path ne ""
+          and fn:not(fn:contains($suite-path, "/"))
+          and fn:empty(map:get($suite-ignore-list, $suite-path))
+      let $test-is-valid :=
+        $test-name ne ""
+          and fn:not(fn:contains($test-name, "/"))
+          and fn:empty(map:get($test-ignore-list, $test-name))
+          and fn:matches($test-name, "(\.sjs|\.xqy)$")
+      where $suite-is-valid and $test-is-valid
+      return map:put($suites, $suite-path, (map:get($suites, $suite-path), $test-name))
 
   let $main-formats as xs:string* := fn:distinct-values(
-    let $uris := helper:list-from-database($db-id, $root || "test/formats/")
-    for $uri in $uris
+    for $uri in helper:list-from-database($db-id, $root || "test/formats/")
       let $path := fn:replace($uri, fn:concat($root, "test/formats/"), "")
       where $path ne "" and fn:not(fn:contains($path, "/")) and fn:empty(map:get($test-ignore-list, $path)) and (fn:matches($path, $XSL-PATTERN))
       return $path
   )
-
 	return
 		element t:tests {
-				for $suite as xs:string in $suites
-				let $tests as xs:string* := fn:distinct-values(
-          let $uris := helper:list-from-database($db-id, $root || "test/suites/" || $suite)
-          for $uri in $uris
-            let $path := fn:replace($uri, fn:concat($root, "test/suites/", $suite, "/"), "")
-            where $path ne "" and fn:not(fn:contains($path, "/")) and fn:empty(map:get($test-ignore-list, $path)) and (fn:ends-with($path, ".xqy") or fn:ends-with($path, ".sjs"))
-            return $path
-        )
-				where $tests
-				return
-					element t:suite {
-						attribute path {$suite},
-						element t:tests {
-							for $test in $tests
-							return
-								element t:test {
-									attribute path {$test}
-								}
-						}
-					},
+				for $suite as xs:string in map:keys($suites)
+          let $tests as xs:string* :=
+            for $test-name in map:get($suites, $suite)
+              order by $test-name
+              return $test-name
+          where $tests
+          order by $suite
+          return
+            element t:suite {
+              attribute path {$suite},
+              element t:tests {
+                for $test in $tests
+                return
+                  element t:test {
+                    attribute path {$test}
+                  }
+              }
+            },
 				if ($main-formats) then
 					element t:formats {
 						for $main-format in $main-formats

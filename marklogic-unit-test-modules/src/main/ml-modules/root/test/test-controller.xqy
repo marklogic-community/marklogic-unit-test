@@ -24,42 +24,41 @@ declare variable $root as xs:string := xdmp:modules-root();
  :)
 declare function list()
 {
-	let $suite-ignore-list := (".svn", "CVS", ".DS_Store", "Thumbs.db", "thumbs.db", "test-data")
-	let $test-ignore-list := (
+	let $suite-ignore-list := map:new((
+    ".svn", "CVS", ".DS_Store", "Thumbs.db", "thumbs.db", "test-data"
+  ) ! map:entry(., .))
+
+  let $test-ignore-list := map:new((
 		"setup.xqy", "teardown.xqy", "setup.sjs", "teardown.sjs",
 		"suite-setup.xqy", "suite-teardown.xqy", "suiteSetup.sjs", "suiteTeardown.sjs"
-	)
+	) ! map:entry(., .))
+
+  let $suites as xs:string* := fn:distinct-values(
+    let $uris := helper:list-from-database($db-id, $root || "test/suites/")
+    for $uri in $uris
+    let $path := fn:replace(cvt:basepath($uri), fn:concat($root, "test/suites/?"), "")
+    where $path ne "" and fn:not(fn:contains($path, "/")) and fn:empty(map:get($suite-ignore-list, $path))
+    return $path
+  )
+
+  let $main-formats as xs:string* := fn:distinct-values(
+    let $uris := helper:list-from-database($db-id, $root || "test/formats/")
+    for $uri in $uris
+      let $path := fn:replace($uri, fn:concat($root, "test/formats/"), "")
+      where $path ne "" and fn:not(fn:contains($path, "/")) and fn:empty(map:get($test-ignore-list, $path)) and (fn:matches($path, $XSL-PATTERN))
+      return $path
+  )
+
 	return
 		element t:tests {
-			let $suites as xs:string* :=
-        let $uris := helper:list-from-database($db-id, $root || "test/suites/")
-        return
-          fn:distinct-values(
-            for $uri in $uris
-            let $path := fn:replace(cvt:basepath($uri), fn:concat($root, "test/suites/?"), "")
-            where $path ne "" and fn:not(fn:contains($path, "/")) and fn:not($path = $suite-ignore-list)
-            return
-              $path)
-			let $main-formats as xs:string* :=
-        let $uris := helper:list-from-database($db-id, $root || "test/formats/")
-        return
-          fn:distinct-values(
-            for $uri in $uris
-            let $path := fn:replace($uri, fn:concat($root, "test/formats/"), "")
-            where $path ne "" and fn:not(fn:contains($path, "/")) and fn:not($path = $test-ignore-list) and (fn:matches($path, $XSL-PATTERN))
-            return
-              $path)
-			return (
 				for $suite as xs:string in $suites
-				let $tests as xs:string* :=
+				let $tests as xs:string* := fn:distinct-values(
           let $uris := helper:list-from-database($db-id, $root || "test/suites/" || $suite)
-          return
-            fn:distinct-values(
-              for $uri in $uris
-              let $path := fn:replace($uri, fn:concat($root, "test/suites/", $suite, "/"), "")
-              where $path ne "" and fn:not(fn:contains($path, "/")) and fn:not($path = $test-ignore-list) and (fn:ends-with($path, ".xqy") or fn:ends-with($path, ".sjs"))
-              return
-                $path)
+          for $uri in $uris
+            let $path := fn:replace($uri, fn:concat($root, "test/suites/", $suite, "/"), "")
+            where $path ne "" and fn:not(fn:contains($path, "/")) and fn:empty(map:get($test-ignore-list, $path)) and (fn:ends-with($path, ".xqy") or fn:ends-with($path, ".sjs"))
+            return $path
+        )
 				where $tests
 				return
 					element t:suite {
@@ -81,7 +80,6 @@ declare function list()
 							}
 					}
 				else ()
-			)
 		}
 };
 

@@ -25,7 +25,7 @@ declare variable $root as xs:string := xdmp:modules-root();
 declare function list()
 {
 	let $suite-ignore-list := map:new((
-    ".svn", "CVS", ".DS_Store", "Thumbs.db", "thumbs.db", "test-data"
+    ".svn", "CVS", ".DS_Store", "Thumbs.db", "thumbs.db", "test-data", "test-lib"
   ) ! map:entry(., .))
 
   let $test-ignore-list := map:new((

@@ -1,1 +1,0 @@
-xdmp:log("Suite teardown")

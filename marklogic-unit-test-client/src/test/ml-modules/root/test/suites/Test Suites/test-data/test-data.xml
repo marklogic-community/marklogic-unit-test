@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  This is the directory where test data would live.  Our suite scanner will not look for tests in any directory called
+  test-data.
+ -->
+<xml/>

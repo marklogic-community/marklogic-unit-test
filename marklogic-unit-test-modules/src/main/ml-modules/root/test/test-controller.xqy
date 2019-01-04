@@ -24,11 +24,11 @@ declare variable $root as xs:string := xdmp:modules-root();
  :)
 declare function list()
 {
-	let $suite-ignore-list := map:new((
+	let $directories-to-ignore := map:new((
     ".svn", "CVS", ".DS_Store", "Thumbs.db", "thumbs.db", "test-data", "test-lib"
   ) ! map:entry(., .))
 
-  let $test-ignore-list := map:new((
+  let $files-to-ignore := map:new((
 		"setup.xqy", "teardown.xqy", "setup.sjs", "teardown.sjs",
 		"suite-setup.xqy", "suite-teardown.xqy", "suiteSetup.sjs", "suiteTeardown.sjs"
 	) ! map:entry(., .))
@@ -40,22 +40,25 @@ declare function list()
       let $test-path := fn:replace($uri, fn:concat($root, "test/suites/?"), "")
       let $suite-path := cvt:basepath($test-path)
       let $test-name := fn:replace($test-path, $suite-path || "(\\|/)?", "")
+
       let $suite-is-valid :=
-        $suite-path ne ""
-          and fn:not(fn:contains($suite-path, "/"))
-          and fn:empty(map:get($suite-ignore-list, $suite-path))
+        let $path-not-in-ignored-directory :=
+          fn:empty(fn:tokenize($suite-path, "(\\|/)") ! map:get($directories-to-ignore, .))
+        return $suite-path and $path-not-in-ignored-directory
+
       let $test-is-valid :=
-        $test-name ne ""
-          and fn:not(fn:contains($test-name, "/"))
-          and fn:empty(map:get($test-ignore-list, $test-name))
+        $test-name
+          and fn:not(fn:contains($test-name, "(\\|/)"))
+          and fn:empty(map:get($files-to-ignore, $test-name))
           and fn:matches($test-name, "(\.sjs|\.xqy)$")
+
       where $suite-is-valid and $test-is-valid
       return map:put($suites, $suite-path, (map:get($suites, $suite-path), $test-name))
 
   let $main-formats as xs:string* := fn:distinct-values(
     for $uri in helper:list-from-database($db-id, $root || "test/formats/")
       let $path := fn:replace($uri, fn:concat($root, "test/formats/"), "")
-      where $path ne "" and fn:not(fn:contains($path, "/")) and fn:empty(map:get($test-ignore-list, $path)) and (fn:matches($path, $XSL-PATTERN))
+      where $path ne "" and fn:not(fn:contains($path, "/")) and fn:empty(map:get($files-to-ignore, $path)) and (fn:matches($path, $XSL-PATTERN))
       return $path
   )
 	return

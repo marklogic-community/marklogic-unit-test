@@ -13,7 +13,6 @@ import module namespace helper = "http://marklogic.com/roxy/test-helper" at "/te
 
 declare namespace t="http://marklogic.com/roxy/test";
 
-declare variable $FS-PATH as xs:string := if (xdmp:platform() eq "winnt") then "\" else "/";
 declare variable $XSL-PATTERN as xs:string := "\.xslt?$";
 declare variable $TEST-SUITES-ROOT := "/test/suites/";
 declare variable $db-id as xs:unsignedLong := xdmp:modules-database();
@@ -25,64 +24,63 @@ declare variable $root as xs:string := xdmp:modules-root();
  :)
 declare function list()
 {
-	let $suite-ignore-list := (".svn", "CVS", ".DS_Store", "Thumbs.db", "thumbs.db", "test-data")
-	let $test-ignore-list := (
+	let $directories-to-ignore := map:new((
+    ".svn", "CVS", ".DS_Store", "Thumbs.db", "thumbs.db", "test-data", "lib"
+  ) ! map:entry(., .))
+
+  let $files-to-ignore := map:new((
 		"setup.xqy", "teardown.xqy", "setup.sjs", "teardown.sjs",
 		"suite-setup.xqy", "suite-teardown.xqy", "suiteSetup.sjs", "suiteTeardown.sjs"
-	)
+	) ! map:entry(., .))
+
+  let $suites := map:map()
+
+  let $_ :=
+    for $uri in helper:list-from-database($db-id, $root || "test/suites/")
+      let $test-path := fn:replace($uri, fn:concat($root, "test/suites/?"), "")
+      let $suite-path := cvt:basepath($test-path)
+      let $test-name := fn:replace($test-path, $suite-path || "(\\|/)?", "")
+
+      let $suite-is-valid :=
+        let $path-not-in-ignored-directory :=
+          fn:empty(fn:tokenize($suite-path, "(\\|/)") ! map:get($directories-to-ignore, .))
+        return $suite-path and $path-not-in-ignored-directory
+
+      let $test-is-valid :=
+        $test-name
+          and fn:not(fn:contains($test-name, "(\\|/)"))
+          and fn:empty(map:get($files-to-ignore, $test-name))
+          and fn:matches($test-name, "(\.sjs|\.xqy)$")
+
+      where $suite-is-valid and $test-is-valid
+      return map:put($suites, $suite-path, (map:get($suites, $suite-path), $test-name))
+
+  let $main-formats as xs:string* := fn:distinct-values(
+    for $uri in helper:list-from-database($db-id, $root || "test/formats/")
+      let $path := fn:replace($uri, fn:concat($root, "test/formats/"), "")
+      where $path ne "" and fn:not(fn:contains($path, "/")) and fn:empty(map:get($files-to-ignore, $path)) and (fn:matches($path, $XSL-PATTERN))
+      return $path
+  )
 	return
 		element t:tests {
-			let $suites as xs:string* :=
-				if ($db-id = 0) then
-					xdmp:filesystem-directory(fn:concat($root, $FS-PATH, "test/suites"))/dir:entry[dir:type = "directory" and fn:not(dir:filename = $suite-ignore-list)]/dir:filename
-				else
-					let $uris := helper:list-from-database($db-id, $root, (), 'suites')
-					return
-						fn:distinct-values(
-							for $uri in $uris
-							let $path := fn:replace(cvt:basepath($uri), fn:concat($root, "test/suites/?"), "")
-							where $path ne "" and fn:not(fn:contains($path, "/")) and fn:not($path = $suite-ignore-list)
-							return
-								$path)
-			let $main-formats as xs:string* :=
-				if ($db-id = 0) then
-					xdmp:filesystem-directory(fn:concat($root, $FS-PATH, "test/formats"))/dir:entry[dir:type = "file" and fn:not(dir:filename = $test-ignore-list)]/dir:filename[fn:matches(., $XSL-PATTERN)]
-				else
-					let $uris := helper:list-from-database($db-id, $root, (), 'formats')
-					return
-						fn:distinct-values(
-							for $uri in $uris
-							let $path := fn:replace($uri, fn:concat($root, "test/formats/"), "")
-							where $path ne "" and fn:not(fn:contains($path, "/")) and fn:not($path = $test-ignore-list) and (fn:matches($path, $XSL-PATTERN))
-							return
-								$path)
-			return (
-				for $suite as xs:string in $suites
-				let $tests as xs:string* :=
-					if ($db-id = 0) then
-						xdmp:filesystem-directory(fn:concat($root, $FS-PATH, "test/suites/", $suite))/dir:entry[dir:type = "file" and fn:not(dir:filename = $test-ignore-list)]/dir:filename[fn:ends-with(., ".xqy") or fn:ends-with(., ".sjs")]
-					else
-						let $uris := helper:list-from-database(
-							$db-id, $root, fn:concat($suite, '/'), 'suites')
-						return
-							fn:distinct-values(
-								for $uri in $uris
-								let $path := fn:replace($uri, fn:concat($root, "test/suites/", $suite, "/"), "")
-								where $path ne "" and fn:not(fn:contains($path, "/")) and fn:not($path = $test-ignore-list) and (fn:ends-with($path, ".xqy") or fn:ends-with($path, ".sjs"))
-								return
-									$path)
-				where $tests
-				return
-					element t:suite {
-						attribute path {$suite},
-						element t:tests {
-							for $test in $tests
-							return
-								element t:test {
-									attribute path {$test}
-								}
-						}
-					},
+				for $suite as xs:string in map:keys($suites)
+          let $tests as xs:string* :=
+            for $test-name in map:get($suites, $suite)
+              order by $test-name
+              return $test-name
+          where $tests
+          order by $suite
+          return
+            element t:suite {
+              attribute path {$suite},
+              element t:tests {
+                for $test in $tests
+                return
+                  element t:test {
+                    attribute path {$test}
+                  }
+              }
+            },
 				if ($main-formats) then
 					element t:formats {
 						for $main-format in $main-formats
@@ -92,7 +90,6 @@ declare function list()
 							}
 					}
 				else ()
-			)
 		}
 };
 
@@ -240,11 +237,7 @@ declare function format($result as element(), $format as xs:string, $suite-name 
 	if ($format eq "junit") then
 		format-junit($result)
 	else
-		let $format-uris :=
-			if ($db-id = 0) then
-				xdmp:filesystem-directory(fn:concat($root, $FS-PATH, "test/formats"))/dir:entry[dir:type = "file"]/dir:filename[fn:matches(., $XSL-PATTERN)]
-			else
-				helper:list-from-database($db-id, $root, (), 'formats')
+		let $format-uris := helper:list-from-database($db-id, $root || "test/formats/")
 		let $xsl-match :=
 			for $uri in $format-uris
 			return

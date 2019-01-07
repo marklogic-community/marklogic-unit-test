@@ -25,7 +25,7 @@ declare variable $root as xs:string := xdmp:modules-root();
 declare function list()
 {
 	let $directories-to-ignore := map:new((
-    ".svn", "CVS", ".DS_Store", "Thumbs.db", "thumbs.db", "test-data", "test-lib"
+    ".svn", "CVS", ".DS_Store", "Thumbs.db", "thumbs.db", "test-data", "lib"
   ) ! map:entry(., .))
 
   let $files-to-ignore := map:new((

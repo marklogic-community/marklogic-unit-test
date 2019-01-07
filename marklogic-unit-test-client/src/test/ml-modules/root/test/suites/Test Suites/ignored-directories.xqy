@@ -7,5 +7,5 @@ let $list := test:list()
 
 return (
   test:assert-not-exists($list//element()[fn:contains(@path, "test-data")]),
-  test:assert-not-exists($list//element()[fn:contains(@path, "test-lib")])
+  test:assert-not-exists($list//element()[fn:contains(@path, "/lib")])
 )

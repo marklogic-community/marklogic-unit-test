@@ -214,18 +214,18 @@ function suiteSuccess(parent, xml) {
   'use strict';
 
   var i;
-  var suite = $('[nodeName="t:suite"]', xml);
+  var suite = $('[nodeName="test:suite"]', xml);
   var runCount = suite.attr('total');
   var passedCount = suite.attr('passed');
   var failedCount = suite.attr('failed');
 
   // var errors = [];
-  suite.find('[nodeName = "t:test"]').each(function() {
+  suite.find('[nodeName = "test:test"]').each(function() {
     var name = $(this).attr('name');
     var type = 'success';
     var errors = [];
 
-    var results = $(this).find('[nodeName = "t:result"]');
+    var results = $(this).find('[nodeName = "test:result"]');
     results.each(function() {
       if ($(this).attr('type') !== 'success') {
         type = $(this).attr('type');

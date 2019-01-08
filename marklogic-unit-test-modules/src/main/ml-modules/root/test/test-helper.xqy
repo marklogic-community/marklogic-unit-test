@@ -541,6 +541,85 @@ declare private function helper:assert-throws-error_($function as xdmp:function,
     }
 };
 
+declare function helper:assert-throws-message($function as xdmp:function)
+{
+  helper:assert-throws-message_($function, json:to-array(), ())
+};
+
+declare function helper:assert-throws-message($function as xdmp:function, $error-message as xs:string?)
+{
+  helper:assert-throws-message_($function, json:to-array(), $error-message)
+};
+
+declare function helper:assert-throws-message($function as xdmp:function, $param1 as item()*, $error-message as xs:string?)
+{
+  helper:assert-throws-message_($function, json:to-array( (json:to-array($param1), json:to-array('make me a sequence')), 1 ), $error-message)
+};
+
+declare function helper:assert-throws-message($function as xdmp:function, $param1 as item()*, $param2 as item()*, $error-message as xs:string?)
+{
+  helper:assert-throws-message_($function, json:to-array((json:to-array($param1), json:to-array($param2))), $error-message)
+};
+
+declare function helper:assert-throws-message($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $error-message as xs:string?)
+{
+  helper:assert-throws-message_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3))), $error-message)
+};
+
+declare function helper:assert-throws-message($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $error-message as xs:string?)
+{
+  helper:assert-throws-message_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4))), $error-message)
+};
+
+declare function helper:assert-throws-message($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $param5 as item()*, $error-message as xs:string?)
+{
+  helper:assert-throws-message_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4), json:to-array($param5))), $error-message)
+};
+
+declare function helper:assert-throws-message($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $param5 as item()*, $param6 as item()*, $error-message as xs:string?)
+{
+  helper:assert-throws-message_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4), json:to-array($param5), json:to-array($param6))), $error-message)
+};
+
+declare private function helper:assert-throws-message_($function as xdmp:function, $params as json:array, $error-message as xs:string?)
+{
+  let $size := json:array-size($params)
+  return
+    try {
+      if ($size eq 0) then
+        xdmp:apply($function)
+      else if ($size eq 1) then
+        xdmp:apply($function, json:array-values($params[1]))
+      else if ($size eq 2) then
+          xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]))
+        else if ($size eq 3) then
+            xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]))
+          else if ($size eq 4) then
+              xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]))
+            else if ($size eq 5) then
+                xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]), json:array-values($params[5]))
+              else if ($size eq 6) then
+                  xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]), json:array-values($params[5]), json:array-values($params[6]))
+                else (: arbitrary fall-back :)
+                  xdmp:apply($function, json:array-values($params))
+      ,
+      fn:error(xs:QName("ASSERT-THROWS-ERROR-FAILED"), "It did not throw an error")
+    }
+    catch($ex) {
+      if ($ex/error:name eq "ASSERT-THROWS-ERROR-FAILED") then
+        xdmp:rethrow()
+      else if ($error-message) then
+        if ($ex/error:message eq $error-message) then
+          helper:success()
+        else
+          (
+            fn:error(xs:QName("ASSERT-THROWS-ERROR-FAILED"), fn:concat("Error message was: ", $ex/error:message, " not: ", $error-message))
+          )
+      else
+        helper:success()
+    }
+};
+
 declare variable $local-url as xs:string := xdmp:get-request-protocol() || "://localhost:" || xdmp:get-request-port();
 declare variable $helper:DEFAULT_HTTP_OPTIONS := element xdmp-http:options {
   let $credential-id := xdmp:invoke-function(function() {

@@ -244,6 +244,24 @@ declare function helper:assert-same-values($expected as item()*, $actual as item
   return helper:assert-equal($expected-ordered, $actual-ordered)
 };
 
+(: Return true if and only if the two sequences have the same values, dependent
+ : of order. If the sequences differ then report where they differ. :)
+declare function helper:assert-equal-seq($expected as item()*, $actual as item()*) {
+  let $expected-size := fn:count($expected)
+  let $actual-size := fn:count($actual)
+  return (
+    for $i in 1 to fn:min(($expected-size, $actual-size))
+    let $expected-i := $expected[$i]
+    let $actual-i := $actual[$i]
+    return helper:assert-equal-message(
+      $expected-i, $actual-i,
+      "Item " || $i || " differs. expected: " || $expected-i || ", actual: " || $actual-i),
+    helper:assert-equal-message(
+      $expected-size, $actual-size,
+      "Item count differs. expected: " || $expected-size || ", actual: " || $actual-size)
+  )
+};
+
 declare function helper:assert-equal($expected as item()*, $actual as item()*) {
   if (helper:are-these-equal($expected, $actual)) then
     helper:success()

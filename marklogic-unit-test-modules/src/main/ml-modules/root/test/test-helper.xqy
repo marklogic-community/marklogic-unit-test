@@ -241,7 +241,7 @@ declare function helper:assert-same-values($expected as item()*, $actual as item
     for $a in $actual
     order by $a
     return $a
-  return helper:assert-equal($expected-ordered, $actual-ordered)
+  return helper:assert-equal-seq($expected-ordered, $actual-ordered)
 };
 
 (: Return true if and only if the two sequences have the same values, dependent

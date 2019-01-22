@@ -23,11 +23,11 @@ xquery version "1.0-ml";
  :
  : Modifications copyright (c) 2018 MarkLogic Corporation
  :)
-module namespace cover="http://marklogic.com/roxy/test-coverage";
+module namespace cover="http://marklogic.com/test/coverage";
 
-import module namespace helper = "http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
-declare namespace t = "http://marklogic.com/roxy/test";
-declare default element namespace "http://marklogic.com/roxy/test";
+import module namespace helper = "http://marklogic.com/test/unit" at "/test/test-helper.xqy";
+declare namespace test = "http://marklogic.com/test/unit";
+declare default element namespace "http://marklogic.com/test/unit";
 
 declare option xdmp:mapping "false";
 
@@ -243,7 +243,7 @@ declare function cover:results(
   )
   order by $uri
   return
-    element t:coverage {
+    element test:coverage {
       attribute uri { $uri },
       cover:_result('wanted', $wanted),
       cover:_result('covered', $covered),
@@ -281,8 +281,8 @@ declare function list-coverage-modules-from-database(
         if ($ex/error:code ne "XDMP-URILXCNNOTFOUND") then xdmp:rethrow()
         else
           for $uri in xdmp:directory($modules-root, "infinity")/xdmp:node-uri(.)
-          let $lower-case-uri := lower-case($uri)
-          where some $extension in $module-extensions satisfies ends-with($lower-case-uri, $extension)
+          let $lower-case-uri := fn:lower-case($uri)
+          where some $extension in $module-extensions satisfies fn:ends-with($lower-case-uri, $extension)
           return $uri
       }
     },
@@ -303,12 +303,12 @@ declare function list-coverage-modules-from-filesystem(
   where fn:not($entry/dir:filename = (".svn", "CVS", ".DS_Store"))
   return
     if ($entry[dir:type eq "file"]) then
-      for $path in $entry/dir:pathname/string()
-      let $lower-case-path := lower-case($path)
-      where some $extension in $module-extensions satisfies ends-with($lower-case-path, $extension)
+      for $path in $entry/dir:pathname/fn:string()
+      let $lower-case-path := fn:lower-case($path)
+      where some $extension in $module-extensions satisfies fn:ends-with($lower-case-path, $extension)
       return $path
     else
-      list-coverage-modules-from-filesystem($entry/dir:pathname/string(), $module-extensions)
+      list-coverage-modules-from-filesystem($entry/dir:pathname/fn:string(), $module-extensions)
 };
 
 (:~
@@ -324,7 +324,7 @@ declare function cover:summary(
 
     let $map := map:map()
     let $do :=
-      for $coverage in $tests/t:suite/t:test/t:coverage
+      for $coverage in $tests/test:suite/test:test/test:coverage
       let $uri := $coverage/@uri/fn:string()
       let $old := map:get($map, $uri)
       let $coverage-tuple := (
@@ -350,7 +350,7 @@ declare function cover:summary(
     let $covered-count := fn:sum( for $uri in $uris return map:count(map:get($map, $uri)[1]) )
     let $wanted-count := fn:sum( for $uri in $uris return map:count(map:get($map, $uri)[2]) )
     return
-      element t:coverage-summary {
+      element test:coverage-summary {
         attribute wanted-count { $wanted-count },
         attribute covered-count { $covered-count },
         attribute missing-count { $wanted-count - $covered-count },
@@ -361,7 +361,7 @@ declare function cover:summary(
         let $wanted := $coverage-tuple[2]
         order by $uri
         return
-          element t:module-coverage {
+          element test:module-coverage {
             attribute uri { $uri },
             cover:_result('wanted', $wanted),
             cover:_result('covered', $covered),
@@ -396,7 +396,7 @@ declare function cover:module-view-xml(
     $covered as map:map,
     $missing as map:map)
 {
-  element t:module {
+  element test:module {
     attribute uri { $module },
     attribute covered { map:count($covered) },
     attribute wanted { map:count($wanted) },
@@ -404,7 +404,7 @@ declare function cover:module-view-xml(
     for $i at $x in $lines
     let $key := fn:string($x)
     return
-      element t:line {
+      element test:line {
         attribute number { $x },
         attribute state {
           if (map:get($covered, $key)) then 'covered'

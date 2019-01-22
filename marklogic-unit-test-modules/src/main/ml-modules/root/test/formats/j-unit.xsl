@@ -3,7 +3,7 @@
 -->
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:t="http://marklogic.com/roxy/test"
+                xmlns:test="http://marklogic.com/test/unit"
                 xmlns:error="http://marklogic.com/xdmp/error"
                 exclude-result-prefixes="#all">
 	<xsl:output method="xml" encoding="utf-8" indent="yes"/>
@@ -20,28 +20,28 @@
 	</xsl:template>
 
 	<!-- Output test suites -->
-	<xsl:template match="t:suite">
+	<xsl:template match="test:suite">
 		<testsuite errors="0" failures="{@failed}" hostname="{$hostname}" name="{@name}" tests="{@total}" time="{@time}" timestamp="{$timestamp}">
 			<xsl:apply-templates/>
 		</testsuite>
 	</xsl:template>
 
 	<!-- Output test cases within test suites -->
-	<xsl:template match="t:test">
+	<xsl:template match="test:test">
 		<testcase classname="{@name}" name="{@name}" time="{@time}">
 			<xsl:apply-templates/>
 		</testcase>
 	</xsl:template>
 
 	<!-- Output test case failures -->
-	<xsl:template match="t:result[@type = 'fail']">
+	<xsl:template match="test:result[@type = 'fail']">
 		<failure type="{error:error/error:name/string()}" message="{error:error/error:message/string()}">
 			<xsl:apply-templates mode="serialize"/>
 		</failure>
 	</xsl:template>
 
 	<!-- Prevent output test case successes -->
-	<xsl:template match="t:result[@type = 'success']"/>
+	<xsl:template match="test:result[@type = 'success']"/>
 
 	<!-- Serialize error stack output so document is valid JUnit XML -->
 	<xsl:template match="*" mode="serialize">

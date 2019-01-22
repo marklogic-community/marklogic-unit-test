@@ -4,14 +4,12 @@ xquery version "1.0-ml";
 Defines functions that are used by the default.xqy test runner and by the REST endpoint.
 :)
 
-module namespace helper="http://marklogic.com/roxy/test-helper";
+module namespace test = "http://marklogic.com/test/unit";
 
-import module namespace cover = "http://marklogic.com/roxy/test-coverage" at "/test/test-coverage.xqy";
+import module namespace cover = "http://marklogic.com/test/coverage" at "/test/test-coverage.xqy";
 import module namespace cvt = "http://marklogic.com/cpf/convert" at "/MarkLogic/conversion/convert.xqy";
 import module namespace functx = "http://www.functx.com" at "/MarkLogic/functx/functx-1.0-nodoc-2007-01.xqy";
-import module namespace helper = "http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
-
-declare namespace t="http://marklogic.com/roxy/test";
+import module namespace test = "http://marklogic.com/test/unit" at "/test/test-helper.xqy";
 
 declare variable $XSL-PATTERN as xs:string := "\.xslt?$";
 declare variable $TEST-SUITES-ROOT := "/test/suites/";
@@ -36,7 +34,7 @@ declare function list()
   let $suites := map:map()
 
   let $_ :=
-    for $uri in helper:list-from-database($db-id, $root || "test/suites/")
+    for $uri in test:list-from-database($db-id, $root || "test/suites/")
       let $test-path := fn:replace($uri, fn:concat($root, "test/suites/?"), "")
       let $suite-path := cvt:basepath($test-path)
       let $test-name := fn:replace($test-path, $suite-path || "(\\|/)?", "")
@@ -56,13 +54,13 @@ declare function list()
       return map:put($suites, $suite-path, (map:get($suites, $suite-path), $test-name))
 
   let $main-formats as xs:string* := fn:distinct-values(
-    for $uri in helper:list-from-database($db-id, $root || "test/formats/")
+    for $uri in test:list-from-database($db-id, $root || "test/formats/")
       let $path := fn:replace($uri, fn:concat($root, "test/formats/"), "")
       where $path ne "" and fn:not(fn:contains($path, "/")) and fn:empty(map:get($files-to-ignore, $path)) and (fn:matches($path, $XSL-PATTERN))
       return $path
   )
 	return
-		element t:tests {
+		element test:tests {
 				for $suite as xs:string in map:keys($suites)
           let $tests as xs:string* :=
             for $test-name in map:get($suites, $suite)
@@ -71,21 +69,21 @@ declare function list()
           where $tests
           order by $suite
           return
-            element t:suite {
+            element test:suite {
               attribute path {$suite},
-              element t:tests {
+              element test:tests {
                 for $test in $tests
                 return
-                  element t:test {
+                  element test:test {
                     attribute path {$test}
                   }
               }
             },
 				if ($main-formats) then
-					element t:formats {
+					element test:formats {
 						for $main-format in $main-formats
 						return
-							element t:format {
+							element test:format {
 								attribute path {$main-format}
 							}
 					}
@@ -101,10 +99,10 @@ declare function run-tests() {
 	let $run-teardown := fn:true()
 	let $calculate-coverage := fn:true()
 	let $test-results :=
-		element t:tests {
-			for $suite in list()/t:suite
+		element test:tests {
+			for $suite in list()/test:suite
 			let $suite-name as xs:string := $suite/@path
-			let $test-modules as xs:string* := $suite/t:tests/t:test/@path
+			let $test-modules as xs:string* := $suite/test:tests/test:test/@path
 			return run-suite($suite-name, $test-modules, $run-suite-teardown, $run-teardown, $calculate-coverage)
 		}
 	return
@@ -136,7 +134,7 @@ declare function run-suite(
 	let $start-time := xdmp:elapsed-time()
 	let $tests as xs:string* :=
 		if ($tests) then $tests
-		else list()/t:suite[@path eq $suite]/t:tests/t:test/@path
+		else list()/test:suite[@path eq $suite]/test:tests/test:test/@path
 	let $coverage :=
 		if ($calculate-coverage) then
 			(
@@ -150,30 +148,30 @@ declare function run-suite(
 			)
 		else ()
 	let $results :=
-		element t:run {
-			helper:log(" "),
-			helper:log(text {"SUITE:", $suite}),
+		element test:run {
+			test:log(" "),
+			test:log(text {"SUITE:", $suite}),
 			run-setup-teardown(fn:true(), $suite),
 
-			helper:log(" - invoking tests"),
+			test:log(" - invoking tests"),
 			for $test in $tests
 			return
 				run($suite, $test, fn:concat($TEST-SUITES-ROOT, $suite, "/", $test), $run-teardown, $coverage),
 
 			if ($run-suite-teardown eq fn:true()) then
 				run-setup-teardown(fn:false(), $suite)
-			else helper:log(" - not running suite teardown"),
-			helper:log(" ")
+			else test:log(" - not running suite teardown"),
+			test:log(" ")
 		}
 	let $end-time := xdmp:elapsed-time()
 	return
-		element t:suite {
+		element test:suite {
 			attribute name { $suite },
-			attribute total { fn:count($results/t:test/t:result) },
-			attribute passed { fn:count($results/t:test/t:result[@type = 'success']) },
-			attribute failed { fn:count($results/t:test/t:result[@type = 'fail']) },
+			attribute total { fn:count($results/test:test/test:result) },
+			attribute passed { fn:count($results/test:test/test:result[@type = 'success']) },
+			attribute failed { fn:count($results/test:test/test:result[@type = 'fail']) },
 			attribute time { functx:total-seconds-from-duration($end-time - $start-time) },
-			$results/t:test
+			$results/test:test
 		}
 };
 
@@ -184,21 +182,21 @@ declare function run(
 	$run-teardown as xs:boolean,
 	$coverage as map:map?)
 {
-	helper:log(text { "    TEST:", $name }),
+	test:log(text { "    TEST:", $name }),
 	let $start-time := xdmp:elapsed-time()
 	let $setup := run-setup-or-teardown(fn:true(), $suite)
 	let $result :=
 		try {
 			if (fn:not($setup/@type = "fail")) then
-			(: Avoid returning result of helper:log :)
-				let $_ := helper:log("    ...running")
+			(: Avoid returning result of test:log :)
+				let $_ := test:log("    ...running")
 				return
 					if (fn:empty($coverage)) then xdmp:invoke($module)
 					else prof:invoke($module)
 			else ()
 		}
 		catch($ex) {
-			helper:fail($ex)
+			test:fail($ex)
 		}
 	(: If we had a .sjs test module, we may get arrays back. Convert the array
 	 : of results to a sequence of results.
@@ -217,10 +215,10 @@ declare function run(
 		if ($run-teardown eq fn:true() and fn:not($setup/@type = "fail")) then
 			run-setup-or-teardown(fn:false(), $suite)
 		else
-			helper:log("    ...not running teardown")
+			test:log("    ...not running teardown")
 	let $end-time := xdmp:elapsed-time()
 	return
-		element t:test {
+		element test:test {
 			attribute name { $name },
 			attribute path { $module },
 			attribute time { functx:total-seconds-from-duration($end-time - $start-time) },
@@ -237,7 +235,7 @@ declare function format($result as element(), $format as xs:string, $suite-name 
 	if ($format eq "junit") then
 		format-junit($result)
 	else
-		let $format-uris := helper:list-from-database($db-id, $root || "test/formats/")
+		let $format-uris := test:list-from-database($db-id, $root || "test/formats/")
 		let $xsl-match :=
 			for $uri in $format-uris
 			return
@@ -264,13 +262,13 @@ declare function format-junit($result as element())
 		attribute tests {fn:data($result/@total)},
 		attribute time {fn:data($result/@time)},
 		attribute timestamp {""},
-		for $test in $result/t:test
+		for $test in $result/test:test
 		return
 			element testcase {
 				attribute classname {fn:data($test/@name)},
 				attribute name {fn:data($test/@name)},
 				attribute time {fn:data($test/@time)},
-				for $result in ($test/t:result)[1]
+				for $result in ($test/test:result)[1]
 				where $result/@type = "fail"
 				return
 					element failure {
@@ -290,7 +288,7 @@ declare private function run-setup-or-teardown($setup as xs:boolean, $suite as x
 	return
 		try {
 		(: We don't want the return value, so return () :)
-			let $_ := helper:log("    ...invoking " || $stage)
+			let $_ := test:log("    ...invoking " || $stage)
 			let $_ := xdmp:invoke($TEST-SUITES-ROOT || $suite || "/" || $xquery-script)
 			return ()
 		}
@@ -309,13 +307,13 @@ declare private function run-setup-or-teardown($setup as xs:boolean, $suite as x
 							fn:matches($ex/error:expr, $sjs-script))) then
 						()
 					else
-						element t:result {
+						element test:result {
 							attribute type {"fail"},
 							$ex
 						}
 				}
 			else
-				element t:result {
+				element test:result {
 					attribute type {"fail"},
 					$ex
 				}
@@ -333,7 +331,7 @@ declare private function run-setup-teardown(
 	let $sjs-script := "suite" || xdmp:initcap($stage) || ".sjs"
 	return
 		try {
-			helper:log(" - invoking suite " || $stage),
+			test:log(" - invoking suite " || $stage),
 			xdmp:invoke($TEST-SUITES-ROOT || $suite || "/" || $xquery-script)
 		}
 		catch($ex) {
@@ -351,20 +349,20 @@ declare private function run-setup-teardown(
 							fn:matches($ex/error:expr, $sjs-script))) then
 						()
 					else
-						element t:test {
+						element test:test {
 							attribute name { $sjs-script },
 							attribute time { functx:total-seconds-from-duration(xdmp:elapsed-time() - $start-time) },
-							element t:result {
+							element test:result {
 								attribute type {"fail"},
 								$ex
 							}
 						}
 				}
 			else
-				element t:test {
+				element test:test {
 					attribute name { $xquery-script },
 					attribute time { functx:total-seconds-from-duration(xdmp:elapsed-time() - $start-time) },
-					element t:result {
+					element test:result {
 						attribute type {"fail"},
 						$ex
 					}

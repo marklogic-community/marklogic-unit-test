@@ -1,7 +1,7 @@
 
 // Given two JSON objects or arrays, determine whether they are the same.
 
-const test = require("/test/assert.xqy");
+const test = require("/test/test-helper.xqy");
 
 let j0 =
   {

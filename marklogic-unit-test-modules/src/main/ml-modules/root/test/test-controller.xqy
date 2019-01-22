@@ -9,8 +9,7 @@ module namespace test = "http://marklogic.com/test/unit";
 import module namespace cover = "http://marklogic.com/test/coverage" at "/test/test-coverage.xqy";
 import module namespace cvt = "http://marklogic.com/cpf/convert" at "/MarkLogic/conversion/convert.xqy";
 import module namespace functx = "http://www.functx.com" at "/MarkLogic/functx/functx-1.0-nodoc-2007-01.xqy";
-import module namespace test = "http://marklogic.com/test/unit" at "/test/test-helper.xqy",
-                                                                   "/test/assert.xqy";
+import module namespace test = "http://marklogic.com/test/unit" at "/test/test-helper.xqy";
 
 declare variable $XSL-PATTERN as xs:string := "\.xslt?$";
 declare variable $TEST-SUITES-ROOT := "/test/suites/";

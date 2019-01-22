@@ -1,4 +1,4 @@
-import module namespace test="http://marklogic.com/test/unit" at "/test/assert.xqy";
+import module namespace test="http://marklogic.com/test/unit" at "/test/test-helper.xqy";
 
 declare namespace t="http://marklogic.com/test/unit";
 

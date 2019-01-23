@@ -1,4 +1,4 @@
-import module namespace test="http://marklogic.com/test/unit" at "/test/test-helper.xqy";
+import module namespace test = "http://marklogic.com/test/unit" at "/test/test-helper.xqy";
 
 declare function local:case1()
 {
@@ -22,12 +22,12 @@ declare function local:case4()
 
 declare function local:case5()
 {
-  test:assert-equal((<a><aa/></a>, <b/>, <c/>), (element a { element aaa { } }, element b {}, element c {}))
+  test:assert-equal((<a><aa/></a>, <b/>, <c/>), (element a {element aaa {}}, element b {}, element c {}))
 };
 
 test:assert-throws-error(xdmp:function(xs:QName("local:case1")), "ASSERT-EQUAL-FAILED"),
 
-test:assert-equal(<a class="1"/>, element a { attribute class { "1" } }),
+test:assert-equal(<a class="1"/>, element a {attribute class {"1"}}),
 
 test:assert-throws-error(xdmp:function(xs:QName("local:case2")), "ASSERT-EQUAL-FAILED"),
 
@@ -39,7 +39,7 @@ test:assert-equal((<a/>, <b/>, <c/>), (<a/>, <b/>, <c/>)),
 
 test:assert-equal((<a/>, <b/>, <c/>), (element a {}, element b {}, element c {})),
 
-test:assert-equal((<a><aa/></a>, <b/>, <c/>), (element a { element aa { } }, element b {}, element c {})),
+test:assert-equal((<a><aa/></a>, <b/>, <c/>), (element a {element aa {}}, element b {}, element c {})),
 
 test:assert-equal(5, 5),
 
@@ -47,4 +47,29 @@ test:assert-equal("a", "a"),
 
 test:assert-equal((), ()),
 
-test:assert-throws-error(xdmp:function(xs:QName("local:case5")), "ASSERT-EQUAL-FAILED")
+test:assert-throws-error(xdmp:function(xs:QName("local:case5")), "ASSERT-EQUAL-FAILED"),
+
+test:assert-throws-error-with-message(
+  function() {
+    test:assert-equal("Custom failure message", "a", "b")
+  },
+  "ASSERT-EQUAL-FAILED",
+  "Assert Equal failed (ASSERT-EQUAL-FAILED): Custom failure message; expected: ""a"" actual: ""b"""
+),
+
+test:assert-throws-error-with-message(
+  function() {
+    test:assert-equal("a", "b")
+  },
+  "ASSERT-EQUAL-FAILED",
+  "Assert Equal failed (ASSERT-EQUAL-FAILED): expected: ""a"" actual: ""b"""
+),
+
+test:assert-throws-error-with-message(
+  function() {
+    test:assert-equal(("a", "b"), ("a", "c"))
+  },
+  "ASSERT-EQUAL-FAILED",
+  "Assert Equal failed (ASSERT-EQUAL-FAILED): expected: (""a"", ""b"") actual: (""a"", ""c"")"
+)
+

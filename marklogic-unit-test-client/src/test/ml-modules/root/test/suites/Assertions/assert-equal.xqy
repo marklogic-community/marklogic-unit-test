@@ -54,7 +54,7 @@ test:assert-throws-error-with-message(
     test:assert-equal("Custom failure message", "a", "b")
   },
   "ASSERT-EQUAL-FAILED",
-  "Assert Equal failed (ASSERT-EQUAL-FAILED): Custom failure message; expected: ""a"" actual: ""b"""
+  "Custom failure message; expected: ""a"" actual: ""b"""
 ),
 
 test:assert-throws-error-with-message(
@@ -62,7 +62,7 @@ test:assert-throws-error-with-message(
     test:assert-equal("a", "b")
   },
   "ASSERT-EQUAL-FAILED",
-  "Assert Equal failed (ASSERT-EQUAL-FAILED): expected: ""a"" actual: ""b"""
+  "expected: ""a"" actual: ""b"""
 ),
 
 test:assert-throws-error-with-message(
@@ -70,6 +70,6 @@ test:assert-throws-error-with-message(
     test:assert-equal(("a", "b"), ("a", "c"))
   },
   "ASSERT-EQUAL-FAILED",
-  "Assert Equal failed (ASSERT-EQUAL-FAILED): expected: (""a"", ""b"") actual: (""a"", ""c"")"
+  "expected: (""a"", ""b"") actual: (""a"", ""c"")"
 )
 

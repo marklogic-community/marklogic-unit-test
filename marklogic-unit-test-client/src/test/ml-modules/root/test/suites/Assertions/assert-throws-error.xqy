@@ -53,4 +53,13 @@ catch($ex) {
 
 test:assert-throws-error(xdmp:function(xs:QName("local:case5")), 5, ()),
 
-test:assert-throws-error(xdmp:function(xs:QName("local:case5")), 5, "XDMP-DIVBYZERO")
+test:assert-throws-error(xdmp:function(xs:QName("local:case5")), 5, "XDMP-DIVBYZERO"),
+
+try {
+  test:assert-throws-error-with-message("Custom failure message", function() {()}, "EXPECTED-CODE", "EXPECTED-MESSAGE")
+}
+catch($ex) {
+  test:assert-equal("Did not find the custom failure message in the failure",
+    "Custom failure message; Did not throw an error",
+    $ex//error:message/fn:string())
+}

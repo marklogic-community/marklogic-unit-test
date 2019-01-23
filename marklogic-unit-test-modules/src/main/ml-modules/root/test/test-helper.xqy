@@ -387,7 +387,7 @@ as document-node()
 declare function test:strip-blanks($n as node()) {
   typeswitch ($n)
     case document-node() return document {$n/node() ! test:strip-blanks(.)}
-    case element() return element {node-name($n)} {$n/@*, $n/node() ! test:strip-blanks(.)}
+    case element() return element {fn:node-name($n)} {$n/@*, $n/node() ! test:strip-blanks(.)}
     case text() return if (fn:normalize-space($n) eq '') then () else $n
     default return $n
 };
@@ -489,8 +489,8 @@ declare function test:assert-equal($message as xs:string?, $expected as item()*,
   else
     let $message := if ($message) then $message || "; " else ""
     return
-      fn:error(xs:QName("ASSERT-EQUAL-FAILED"), "Assert Equal failed", $message
-        || "expected: " || xdmp:describe($expected) || " actual: " || xdmp:describe($actual) )
+      fn:error(xs:QName("ASSERT-EQUAL-FAILED"), $message || "expected: " || xdmp:describe($expected) || " actual: "
+        || xdmp:describe($actual) )
 };
 
 declare function test:assert-not-equal($expected as item()*, $actual as item()*) {
@@ -696,8 +696,12 @@ declare function test:assert-meets-maximum-threshold($expected as xs:decimal, $a
       ($expected, $actual))
 };
 
-declare function test:assert-throws-error-with-message($function as xdmp:function, $error-code as xs:string, $message as xs:string) {
-  test:assert-throws-error_($function, json:to-array(), $error-code, $message)
+declare function test:assert-throws-error-with-message($function as xdmp:function, $expected-error-code as xs:string, $expected-message as xs:string) {
+  test:assert-throws-error-with-message((), $function, $expected-error-code, $expected-message)
+};
+
+declare function test:assert-throws-error-with-message($failure-message, $function as xdmp:function, $expected-error-code as xs:string, $expected-message as xs:string) {
+  test:assert-throws-error_($failure-message, $function, json:to-array(), $expected-error-code, $expected-message)
 };
 
 declare function test:assert-throws-error($function as xdmp:function)
@@ -740,8 +744,13 @@ declare function test:assert-throws-error($function as xdmp:function, $param1 as
   test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4), json:to-array($param5), json:to-array($param6))), $error-code, ())
 };
 
-declare private function test:assert-throws-error_($function as xdmp:function, $params as json:array, $error-code as xs:string?, $expected-error-message as xs:string?)
+declare private function test:assert-throws-error_($function as xdmp:function, $params as json:array, $error-code as xs:string?, $expected-error-message as xs:string?) {
+  test:assert-throws-error_((), $function, $params, $error-code, $expected-error-message)
+};
+
+declare private function test:assert-throws-error_($failure-message as xs:string?, $function as xdmp:function, $params as json:array, $error-code as xs:string?, $expected-error-message as xs:string?)
 {
+  let $message-prefix := if ($failure-message) then ($failure-message || "; ") else ()
   let $size := json:array-size($params)
   return
     try {
@@ -750,33 +759,36 @@ declare private function test:assert-throws-error_($function as xdmp:function, $
       else if ($size eq 1) then
         xdmp:apply($function, json:array-values($params[1]))
       else if ($size eq 2) then
-          xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]))
-        else if ($size eq 3) then
-            xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]))
-          else if ($size eq 4) then
-              xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]))
-            else if ($size eq 5) then
-                xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]), json:array-values($params[5]))
-              else if ($size eq 6) then
-                  xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]), json:array-values($params[5]), json:array-values($params[6]))
-                else (: arbitrary fall-back :)
-                  xdmp:apply($function, json:array-values($params))
+        xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]))
+      else if ($size eq 3) then
+        xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]))
+      else if ($size eq 4) then
+        xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]))
+      else if ($size eq 5) then
+        xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]), json:array-values($params[5]))
+      else if ($size eq 6) then
+        xdmp:apply($function, json:array-values($params[1]), json:array-values($params[2]), json:array-values($params[3]), json:array-values($params[4]), json:array-values($params[5]), json:array-values($params[6]))
+      else (: arbitrary fall-back :)
+        xdmp:apply($function, json:array-values($params))
       ,
-      fn:error(xs:QName("ASSERT-THROWS-ERROR-FAILED"), "It did not throw an error")
+      fn:error(xs:QName("ASSERT-THROWS-ERROR-FAILED"), $message-prefix || "Did not throw an error")
     }
     catch ($ex) {
       if ($ex/error:name eq "ASSERT-THROWS-ERROR-FAILED") then
         xdmp:rethrow()
       else if ($error-code) then
         if ($ex/error:code eq $error-code or $ex/error:name eq $error-code) then
-          if ($expected-error-message and fn:not($ex/error:format-string/text() eq $expected-error-message)) then
-            fn:error(xs:QName("ASSERT-THROWS-ERROR-FAILED"), "Found expected error code, but not expected message:" ||
-            " expected: [" || $expected-error-message || "] actual: [" || $ex/error:format-string || "]")
+          if ($expected-error-message and fn:not($ex/error:message/text() eq $expected-error-message)) then
+            (xdmp:log($ex, "info"),
+            fn:error(xs:QName("ASSERT-THROWS-ERROR-FAILED"), $message-prefix
+              || "Found expected error code, but not expected message:" || " expected: [" || $expected-error-message
+              || "] actual: [" || $ex/error:message/fn:string() || "]"))
           else
             test:success()
         else
           (
-            fn:error(xs:QName("ASSERT-THROWS-ERROR-FAILED"), fn:concat("Error code was: ", $ex/error:code, " not: ", $error-code))
+            fn:error(xs:QName("ASSERT-THROWS-ERROR-FAILED"), $message-prefix
+              || "Did not find expected error code: expected: " || $error-code || " actual: " || $ex/error:code/fn:string())
           )
       else
         test:success()

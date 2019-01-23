@@ -81,6 +81,16 @@ as document-node()
 
 declare function test:load-test-file($filename as xs:string, $database-id as xs:unsignedLong, $uri as xs:string)
 {
+  test:load-test-file($filename, $database-id, $uri, xdmp:default-permissions())
+};
+
+declare function test:load-test-file($filename as xs:string, $database-id as xs:unsignedLong, $uri as xs:string, $permissions as element(sec:permission)*)
+{
+  test:load-test-file($filename, $database-id, $uri, $permissions, xdmp:default-collections())
+};
+
+declare function test:load-test-file($filename as xs:string, $database-id as xs:unsignedLong, $uri as xs:string, $permissions as element(sec:permission)*, $collections as xs:string*)
+{
   if ($database-id eq 0) then
     let $uri := fn:replace($uri, "//", "/")
     let $_ :=
@@ -96,18 +106,17 @@ declare function test:load-test-file($filename as xs:string, $database-id as xs:
     return
       xdmp:save($uri, test:get-test-file($filename))
   else
-    xdmp:eval('
-      xquery version "1.0-ml";
-
-      declare variable $uri as xs:string external;
-      declare variable $file as node() external;
-      xdmp:document-insert($uri, $file)
-    ',
-      (xs:QName("uri"), $uri,
-      xs:QName("file"), test:get-test-file($filename)),
-      <options xmlns="xdmp:eval">
-        <database>{$database-id}</database>
-      </options>)
+    let $doc := test:get-test-file($filename)
+    return 
+      xdmp:invoke-function(
+        function() { 
+          xdmp:document-insert($uri, $doc, $permissions, $collections)
+        },
+        <options xmlns="xdmp:eval">
+          <transaction-mode>update-auto-commit</transaction-mode>
+          <database>{$database-id}</database>
+        </options>
+      )
 };
 
 declare function test:build-uri(

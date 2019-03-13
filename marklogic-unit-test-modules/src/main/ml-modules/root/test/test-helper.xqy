@@ -149,12 +149,15 @@ declare function test:get-modules-file($file as xs:string, $format as xs:string?
         else
           ())
     else
-      xdmp:eval(
-        'declare variable $file as xs:string external; fn:doc($file)',
-        (xs:QName('file'), $file),
+      xdmp:invoke-function(
+        function() { 
+          fn:doc($file)
+        },
         <options xmlns="xdmp:eval">
           <database>{xdmp:modules-database()}</database>
-        </options>)
+        </options>
+      )
+
   return
     if (fn:empty($unquote) or $doc/*) then
       $doc
@@ -246,20 +249,31 @@ declare function test:assert-http-put-status($message as xs:string?, $url as xs:
  : Convenience function to remove all xml docs from the data db
  :)
 declare function test:delete-all-xml() {
-  xdmp:eval('for $x in (cts:uri-match("*.xml"), cts:uri-match("*.xlsx"))
-             where fn:not(fn:contains($x, "config/config.xml"))
-             return
-              try {xdmp:document-delete($x)}
-              catch($ex) {()}')
+  xdmp:invoke-function(
+    function() { 
+      for $x in (cts:uri-match("*.xml"), cts:uri-match("*.xlsx"))
+      where fn:not(fn:contains($x, "config/config.xml"))
+      return
+        try {xdmp:document-delete($x)}
+        catch($ex) {()}    
+    }
+  )
 };
 
 declare function test:wait-for-doc($pattern, $sleep) {
-  if (xdmp:eval(fn:concat("cts:uri-match('", $pattern, "')"))) then ()
-  else
-    (
-      xdmp:sleep($sleep),
-      test:wait-for-doc($pattern, $sleep)
+  let $uris := 
+    xdmp:invoke-function(
+      function() { 
+        cts:uri-match($pattern)
+      }
     )
+  return 
+    if (fn:exists($uris)) then ()
+    else
+      (
+        xdmp:sleep($sleep),
+        test:wait-for-doc($pattern, $sleep)
+      )
 };
 
 declare function test:wait-for-truth($truth as xs:string, $sleep) {
@@ -293,9 +307,11 @@ declare function test:wait-for-taskserver($sleep) {
  : Convenience function to invoke a sleep
  :)
 declare function test:sleep($msec as xs:unsignedInt) as empty-sequence() {
-  xdmp:eval('declare variable $msec as xs:unsignedInt external;
-             xdmp:sleep($msec)',
-    (xs:QName("msec"), $msec))
+  xdmp:invoke-function(
+    function() { 
+      xdmp:sleep($msec)
+    }
+  )
 };
 
 declare function test:log($items as item()*)
@@ -316,15 +332,19 @@ as xs:string*
       let $directory-separator := if (xdmp:platform() eq "winnt") then "\\" else "/"
       return test:list-from-filesystem(fn:replace($path, "(/|\\)", $directory-separator))
     else
-      xdmp:eval(
-        'xquery version "1.0-ml";
-        declare variable $PATH as xs:string external;
-        try { cts:uris((), (), cts:directory-query($PATH, "infinity")) }
-        catch ($ex) {
-          if ($ex/error:code ne "XDMP-URILXCNNOTFOUND") then xdmp:rethrow()
-          else xdmp:directory($PATH, "infinity")/xdmp:node-uri(.) }',
-        (xs:QName('PATH'), $path),
-        <options xmlns="xdmp:eval"><database>{$database}</database></options>)
+      xdmp:invoke-function(
+        function() { 
+          try { 
+            cts:uris((), (), cts:directory-query($path, "infinity")) 
+          } catch ($ex) {
+            if ($ex/error:code ne "XDMP-URILXCNNOTFOUND") then xdmp:rethrow()
+            else xdmp:directory($path, "infinity")/xdmp:node-uri(.) 
+          }
+        },
+        <options xmlns="xdmp:eval">
+          <database>{$database}</database>
+        </options>
+      )
 };
 
 declare function test:list-from-filesystem($path as xs:string)
@@ -346,15 +366,14 @@ as xs:string*
 declare function test:remove-modules($uris as xs:string*)
 {
   if (xdmp:modules-database() ne 0) then
-    xdmp:eval('
-      xquery version "1.0-ml";
-      declare variable $uris external;
-
-      $uris ! xdmp:document-delete(.)',
-      map:new((map:entry("uris", $uris))),
+    xdmp:invoke-function(
+      function() { 
+        $uris ! xdmp:document-delete(.)
+      },
       <options xmlns="xdmp:eval">
         <database>{xdmp:modules-database()}</database>
-      </options>)
+      </options>
+    )  
   else ()
 };
 
@@ -364,15 +383,14 @@ declare function test:remove-modules($uris as xs:string*)
 declare function test:remove-modules-directories($dirs as xs:string*)
 {
   if (xdmp:modules-database() ne 0) then
-    xdmp:eval('
-      xquery version "1.0-ml";
-      declare variable $dirs external;
-
-      $dirs ! xdmp:directory-delete(.)',
-      map:new((map:entry("dirs", $dirs))),
+    xdmp:invoke-function(
+      function() { 
+        $dirs ! xdmp:directory-delete(.)
+      },
       <options xmlns="xdmp:eval">
         <database>{xdmp:modules-database()}</database>
-      </options>)
+      </options>
+    )  
   else ()
 };
 

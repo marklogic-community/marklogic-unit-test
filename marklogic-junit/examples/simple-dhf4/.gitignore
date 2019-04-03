@@ -1,0 +1,8 @@
+.gradle
+out
+build
+*.iml
+gradle-local.properties
+src/main
+gradle.properties
+.tmp

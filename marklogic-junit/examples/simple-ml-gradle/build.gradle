@@ -1,0 +1,31 @@
+plugins {
+	id "net.saliman.properties" version "1.4.6"
+	id "com.marklogic.ml-gradle" version "3.13.0"
+	id "java"
+}
+
+// Needed by Gradle 4.6+ - see https://www.petrikainulainen.net/programming/testing/junit-5-tutorial-running-unit-tests-with-gradle/
+test {
+	useJUnitPlatform()
+}
+
+repositories {
+	jcenter()
+	mavenLocal()
+}
+
+dependencies {
+  mlBundle "com.marklogic:marklogic-unit-test-modules:0.13.develop"
+
+	compile "com.marklogic:marklogic-client-api:4.2.0"
+
+	testCompile "com.marklogic:marklogic-junit:0.13.develop"
+
+	// Needed by Gradle 4.6+ - see https://www.petrikainulainen.net/programming/testing/junit-5-tutorial-running-unit-tests-with-gradle/
+	testRuntime "org.junit.jupiter:junit-jupiter-engine:5.4.1"
+
+	// Forcing Spring to use logback instead of commons-logging
+	testRuntime "ch.qos.logback:logback-classic:1.1.8"
+	testRuntime group: "org.slf4j", name: "jcl-over-slf4j", version: "1.7.22"
+	testRuntime group: "org.slf4j", name: "slf4j-api", version: "1.7.22"
+}

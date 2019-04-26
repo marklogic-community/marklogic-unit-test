@@ -1,4 +1,4 @@
-import module namespace test="http://marklogic.com/test/unit" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
 test:assert-meets-minimum-threshold(2, 2),
 test:assert-meets-minimum-threshold(2, (3, 4, 5, 6)),

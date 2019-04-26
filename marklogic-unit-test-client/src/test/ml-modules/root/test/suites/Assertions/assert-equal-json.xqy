@@ -1,4 +1,4 @@
-import module namespace test="http://marklogic.com/test/unit" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
 declare option xdmp:mapping "false";
 

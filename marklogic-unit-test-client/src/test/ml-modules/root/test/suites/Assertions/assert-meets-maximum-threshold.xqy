@@ -1,4 +1,4 @@
-import module namespace test="http://marklogic.com/test/unit" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
 test:assert-meets-maximum-threshold(6, 6),
 test:assert-meets-maximum-threshold(6, (3, 4, 5, 6)),

@@ -32,7 +32,7 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 		for (int i = 0; i < kids.getLength(); i++) {
 			Node suiteNode = kids.item(i);
 			if ("suite".equals(suiteNode.getLocalName())
-				&& "http://marklogic.com/test/unit".equals(suiteNode.getNamespaceURI())) {
+				&& "http://marklogic.com/test".equals(suiteNode.getNamespaceURI())) {
 				String suite = suiteNode.getAttributes().getNamedItem("path").getTextContent();
 				NodeList testsNodes = suiteNode.getChildNodes();
 				for (int j = 0; j < testsNodes.getLength(); j++) {

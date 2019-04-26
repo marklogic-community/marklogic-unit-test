@@ -3,7 +3,7 @@
 -->
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:test="http://marklogic.com/test/unit"
+                xmlns:test="http://marklogic.com/test"
                 xmlns:error="http://marklogic.com/xdmp/error"
                 exclude-result-prefixes="#all">
 	<xsl:output method="xml" encoding="utf-8" indent="yes"/>

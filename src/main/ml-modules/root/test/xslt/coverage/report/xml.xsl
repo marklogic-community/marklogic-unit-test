@@ -22,7 +22,7 @@
  Modifications copyright (c) 2018 MarkLogic Corporation
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:test="http://marklogic.com/test/unit"
+                xmlns:test="http://marklogic.com/test"
                 xmlns:error="http://marklogic.com/xdmp/error"
                 xmlns:prof="http://marklogic.com/xdmp/profile"
                 version="2.0">

@@ -2,7 +2,7 @@ xquery version "1.0-ml";
 
 module namespace resource = "http://marklogic.com/rest-api/resource/marklogic-unit-test";
 
-import module namespace test = "http://marklogic.com/test/unit" at "/test/test-controller.xqy";
+import module namespace test = "http://marklogic.com/test" at "/test/test-controller.xqy";
 
 declare function get(
 	$context as map:map,

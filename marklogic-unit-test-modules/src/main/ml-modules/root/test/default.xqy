@@ -15,7 +15,7 @@ limitations under the License.
 :)
 xquery version "1.0-ml";
 
-import module namespace test = "http://marklogic.com/test/unit" at "/test/test-helper.xqy",
+import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy",
                                                                    "/test/test-controller.xqy";
 import module namespace coverage = "http://marklogic.com/test/coverage" at "/test/test-coverage.xqy";
 

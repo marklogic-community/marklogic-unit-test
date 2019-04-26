@@ -2,10 +2,10 @@ xquery version "1.0-ml";
 
 (: add a module to the modules database :)
 xdmp:invoke-function(
-  function() { 
+  function() {
     let $mod := <foo><![CDATA[
       xquery version "1.0-ml";
-       
+
       "Hello World"
       ]]></foo>/text()
 
@@ -17,13 +17,13 @@ xdmp:invoke-function(
 );
 
 (: call the helper to remove the module :)
-import module namespace test="http://marklogic.com/test/unit" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 test:remove-modules("/remove-mods-test/mod1.xqy");
 
 (: confirm the module has been removed :)
-import module namespace test="http://marklogic.com/test/unit" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 xdmp:invoke-function(
-  function() { 
+  function() {
     test:assert-not-exists(fn:doc("/remove-mods-test/mod1.xqy"))
   },
   <options xmlns="xdmp:eval">

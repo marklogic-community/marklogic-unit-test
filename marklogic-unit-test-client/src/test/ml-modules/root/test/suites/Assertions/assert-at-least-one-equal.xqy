@@ -1,4 +1,4 @@
-import module namespace test="http://marklogic.com/test/unit" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
 test:assert-at-least-one-equal(0, 0),
 test:assert-at-least-one-equal(0, (0, 1, 2)),

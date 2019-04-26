@@ -15,7 +15,7 @@ limitations under the License.
 :)
 xquery version "1.0-ml";
 
-module namespace test = "http://marklogic.com/test/unit";
+module namespace test = "http://marklogic.com/test";
 
 import module namespace cvt = "http://marklogic.com/cpf/convert" at "/MarkLogic/conversion/convert.xqy";
 

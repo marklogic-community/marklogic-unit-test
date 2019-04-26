@@ -22,7 +22,7 @@
  * Modifications copyright (c) 2018 MarkLogic Corporation
  **/
 var queue = [];
-var coverage = $.parseXML("<test:tests xmlns:test='http://marklogic.com/test/unit'/>");
+var coverage = $.parseXML("<test:tests xmlns:test='http://marklogic.com/test'/>");
 
 function resetCoverage() {
   'use strict';

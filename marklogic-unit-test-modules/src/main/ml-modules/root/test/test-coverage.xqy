@@ -25,9 +25,9 @@ xquery version "1.0-ml";
  :)
 module namespace cover="http://marklogic.com/test/coverage";
 
-import module namespace helper = "http://marklogic.com/test/unit" at "/test/test-helper.xqy";
-declare namespace test = "http://marklogic.com/test/unit";
-declare default element namespace "http://marklogic.com/test/unit";
+import module namespace helper = "http://marklogic.com/test" at "/test/test-helper.xqy";
+declare namespace test = "http://marklogic.com/test";
+declare default element namespace "http://marklogic.com/test";
 
 declare option xdmp:mapping "false";
 

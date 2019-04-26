@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-	compile "com.marklogic:marklogic-client-api:4.0.3.1"
+	compile "com.marklogic:marklogic-client-api:4.2.0"
 
 	testCompile "junit:junit:4+"
 }
@@ -66,8 +66,9 @@ if (project.hasProperty("myBintrayUser")) {
 }
 
 task createHttpCredentials(type: com.marklogic.gradle.task.MarkLogicTask) {
-  def client = getAppConfig().newAppServicesDatabaseClient("Security")
-  String xquery = """
+  doLast {
+    def client = getAppConfig().newAppServicesDatabaseClient("Security")
+    String xquery = """
 xquery version "1.0-ml";
 
 import module namespace sec = "http://marklogic.com/xdmp/security"
@@ -98,14 +99,15 @@ sec:create-credential(
    xdmp:default-permissions()
 )
 """;
-  try {
-    String result
-    result = client.newServerEval().xquery(xquery).evalAs(String.class);
-    if (result != null) {
-      println result
+    try {
+      String result
+      result = client.newServerEval().xquery(xquery).evalAs(String.class);
+      if (result != null) {
+        println result
+      }
+    } finally {
+      client.release()
     }
-  } finally {
-    client.release()
   }
 }
 

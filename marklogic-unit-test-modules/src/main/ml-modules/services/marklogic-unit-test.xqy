@@ -2,7 +2,7 @@ xquery version "1.0-ml";
 
 module namespace resource = "http://marklogic.com/rest-api/resource/marklogic-unit-test";
 
-import module namespace helper = "http://marklogic.com/roxy/test-helper" at "/test/test-controller.xqy";
+import module namespace test = "http://marklogic.com/test" at "/test/test-controller.xqy";
 
 declare function get(
 	$context as map:map,
@@ -11,7 +11,8 @@ declare function get(
 {
 	document {
 		if (map:get($params, "func") = "run") then run($params)
-		else helper:list()
+		else
+      test:list()
 	}
 };
 
@@ -37,10 +38,10 @@ declare private function run($params as map:map)
 	let $calculate-coverage as xs:boolean := map:get($params, "calculatecoverage") eq "true"
 	return
 		if ($suite) then
-			let $result := helper:run-suite($suite, $tests, $run-suite-teardown, $run-teardown, $calculate-coverage)
+			let $result := test:run-suite($suite, $tests, $run-suite-teardown, $run-teardown, $calculate-coverage)
 			return
 				if ($format) then
-					helper:format($result, $format, $suite)
+					test:format($result, $format, $suite)
 				else
 					$result
 		else ()

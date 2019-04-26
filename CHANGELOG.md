@@ -1,19 +1,54 @@
 # Change Log
 
-## [v0.12.0](https://github.com/marklogic-community/marklogic-unit-test/tree/v0.12.0) (2018-09-20)
-[Full Changelog](https://github.com/marklogic-community/marklogic-unit-test/compare/0.11.2...v0.12.0)
+## [v1.0.0](https://github.com/marklogic-community/marklogic-unit-test/tree/v1.0.0) (2019-04-26)
+[Full Changelog](https://github.com/marklogic-community/marklogic-unit-test/compare/v0.12.0...v1.0.0)
+
+**Implemented enhancements:**
+
+- Support Nested Test Suites [\#45](https://github.com/marklogic-community/marklogic-unit-test/issues/45)
+- Add Failure Message to Assert Functions [\#51](https://github.com/marklogic-community/marklogic-unit-test/issues/51)
+- Remove Roxy from Namespaces [\#52](https://github.com/marklogic-community/marklogic-unit-test/issues/52)
+- Eliminate xdmp:eval\(\) [\#55](https://github.com/marklogic-community/marklogic-unit-test/issues/55)
+- Allow substitutions during deployment [\#32](https://github.com/marklogic-community/marklogic-unit-test/issues/32)
 
 **Merged pull requests:**
 
+- Merged marklogic-junit library into marklogic-unit-test [\#66](https://github.com/marklogic-community/marklogic-unit-test/pull/66) ([rjrudin](https://github.com/rjrudin))
+- Specify permissions and collections in test:load-test-file [\#59](https://github.com/marklogic-community/marklogic-unit-test/pull/59) ([cskeefer](https://github.com/cskeefer))
+- Adding contributor information [\#50](https://github.com/marklogic-community/marklogic-unit-test/pull/50) ([jamesagardner](https://github.com/jamesagardner))
+- Name change from ml-unit-test to marklogic-unit-test [\#43](https://github.com/marklogic-community/marklogic-unit-test/pull/43) ([dmcassel](https://github.com/dmcassel))
+
+**Breaking Changes:**
+- The namespaces were updated due to [\#52](https://github.com/marklogic-community/marklogic-unit-test/issues/52) follow these [instructions for upgrading](https://github.com/marklogic-community/marklogic-unit-test/issues/52#issuecomment-487184896).
+
+## [v0.12.0](https://github.com/marklogic-community/marklogic-unit-test/tree/v0.12.0) (2018-09-20)
+[Full Changelog](https://github.com/marklogic-community/marklogic-unit-test/compare/0.11.2...v0.12.0)
+
+
+**Merged pull requests:**
+
+- Release v0.12.0 [\#42](https://github.com/marklogic-community/marklogic-unit-test/pull/42) ([dmcassel](https://github.com/dmcassel))
+- Release [\#41](https://github.com/marklogic-community/marklogic-unit-test/pull/41) ([dmcassel](https://github.com/dmcassel))
 - Change to marklogic [\#40](https://github.com/marklogic-community/marklogic-unit-test/pull/40) ([dmcassel](https://github.com/dmcassel))
 
 ## [0.11.2](https://github.com/marklogic-community/marklogic-unit-test/tree/0.11.2) (2018-09-20)
 [Full Changelog](https://github.com/marklogic-community/marklogic-unit-test/compare/0.11.1...0.11.2)
 
+**Implemented enhancements:**
+
+- assert-equal-json doesn't accept arrays [\#28](https://github.com/marklogic-community/marklogic-unit-test/issues/28)
+
+**Fixed bugs:**
+
+- failures in suite-setup.xqy are not reported [\#13](https://github.com/marklogic-community/marklogic-unit-test/issues/13)
+
 **Closed issues:**
 
 - Unit testing with ml-data-hub:2.0.4 [\#34](https://github.com/marklogic-community/marklogic-unit-test/issues/34)
 - Set up github pages for docs [\#24](https://github.com/marklogic-community/marklogic-unit-test/issues/24)
+- assertEqual cannot compare JS/JSON arrays [\#23](https://github.com/marklogic-community/marklogic-unit-test/issues/23)
+- Add CONTRIBUTING.md [\#12](https://github.com/marklogic-community/marklogic-unit-test/issues/12)
+- Add .editorconfig to help with consistent formatting [\#5](https://github.com/marklogic-community/marklogic-unit-test/issues/5)
 
 **Merged pull requests:**
 

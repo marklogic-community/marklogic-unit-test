@@ -15,11 +15,9 @@ limitations under the License.
 :)
 xquery version "1.0-ml";
 
-import module namespace helper="http://marklogic.com/roxy/test-helper"
-at "/test/test-helper.xqy", "/test/test-controller.xqy";
-import module namespace coverage="http://marklogic.com/roxy/test-coverage" at "/test/test-coverage.xqy";
-
-declare namespace t="http://marklogic.com/roxy/test";
+import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy",
+                                                                   "/test/test-controller.xqy";
+import module namespace coverage = "http://marklogic.com/test/coverage" at "/test/test-coverage.xqy";
 
 declare option xdmp:mapping "false";
 
@@ -32,10 +30,10 @@ declare function local:run() {
 	let $calculate-coverage as xs:boolean := xdmp:get-request-field("calculatecoverage", "") eq "true"
 	return
 		if ($suite) then
-			let $result := helper:run-suite($suite, $tests, $run-suite-teardown, $run-teardown, $calculate-coverage)
+			let $result := test:run-suite($suite, $tests, $run-suite-teardown, $run-teardown, $calculate-coverage)
 			return
 				if ($format) then
-					helper:format($result, $format, $suite)
+					test:format($result, $format, $suite)
 				else
 					$result
 		else ()
@@ -43,7 +41,7 @@ declare function local:run() {
 
 declare function local:list()
 {
-	helper:list()
+	test:list()
 };
 
 (:~
@@ -117,7 +115,7 @@ declare function local:main() {
 					</thead>
 					<tbody>
 						{
-							for $suite at $index in helper:list()/t:suite
+							for $suite at $index in test:list()/test:suite
 							let $class := if ($index mod 2 = 1) then "odd" else "even"
 							return
 								(
@@ -130,7 +128,7 @@ declare function local:main() {
 												{fn:data($suite/@path)} <span class="spinner"><img src="img/spinner.gif"/><b>Running...</b></span>
 											</div>
 										</td>
-										<td>{fn:count($suite/t:tests/t:test)}</td>
+										<td>{fn:count($suite/test:tests/test:test)}</td>
 										<td class="tests-run">-</td>
 										<td class="passed">-</td>
 										<td class="right failed">-</td>
@@ -141,7 +139,7 @@ declare function local:main() {
 												<div class="wrapper"><input class="check-all-tests" type="checkbox" checked="checked"/>Run All Tests</div>
 												<ul class="tests">
 													{
-														for $test in (<t:test path="suite-setup.xqy"/>, $suite/t:tests/t:test, <t:test path="suite-teardown.xqy"/>)
+														for $test in (<test:test path="suite-setup.xqy"/>, $suite/test:tests/test:test, <test:test path="suite-teardown.xqy"/>)
 														return
 															<li class="tests {if (fn:ends-with($test/@path, 'setup.xqy')) then 'setup-module-hidden' else if (fn:ends-with($test/@path, 'teardown.xqy')) then 'teardown-module-hidden' else ()}">
 																{

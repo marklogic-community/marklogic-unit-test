@@ -1,11 +1,21 @@
 import module namespace test="http://marklogic.com/test/unit" at "/test/test-helper.xqy";
 
-declare function local:case1()
-{
-  test:assert-exists(())
-};
-
 test:assert-exists("1"),
 test:assert-exists(("1", "2")),
 test:assert-exists(<a/>),
-test:assert-throws-error(xdmp:function(xs:QName("local:case1")), "ASSERT-EXISTS-FAILED")
+
+test:assert-throws-error-with-message(
+  function() {
+    test:assert-exists(())
+  },
+  "ASSERT-EXISTS-FAILED",
+  "() does not exist"
+),
+
+test:assert-throws-error-with-message(
+  function() {
+    test:assert-exists((), "Failure message")
+  },
+  "ASSERT-EXISTS-FAILED",
+  "Failure message; () does not exist"
+)

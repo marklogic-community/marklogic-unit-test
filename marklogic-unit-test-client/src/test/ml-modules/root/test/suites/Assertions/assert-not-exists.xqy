@@ -1,9 +1,18 @@
 import module namespace test="http://marklogic.com/test/unit" at "/test/test-helper.xqy";
 
-declare function local:case1()
-{
-  test:assert-not-exists("a")
-};
-
 test:assert-not-exists(()),
-test:assert-throws-error(xdmp:function(xs:QName("local:case1")), "ASSERT-NOT-EXISTS-FAILED")
+test:assert-throws-error-with-message(
+  function() {
+    test:assert-not-exists("a")
+  },
+  "ASSERT-NOT-EXISTS-FAILED",
+  "Found unexpected items: ""a"""
+),
+
+test:assert-throws-error-with-message(
+  function() {
+    test:assert-not-exists("a", "Failure message")
+  },
+  "ASSERT-NOT-EXISTS-FAILED",
+  "Failure message; Found unexpected items: ""a"""
+)

@@ -1,36 +1,20 @@
 import module namespace test="http://marklogic.com/test/unit" at "/test/test-helper.xqy";
 
-declare function local:case1()
-{
+declare function local:div-by-zero() {
   5 div 0
 };
 
-declare function local:case2()
-{
-  5 div 0
-};
-
-declare function local:case3()
-{
-  5 div 0
-};
-
-declare function local:case4()
-{
-  5 div 5
-};
-
-declare function local:case5($num)
+declare function local:div-by-zero($num)
 {
   $num div 0
 };
 
-test:assert-throws-error(xdmp:function(xs:QName("local:case1"))),
+test:assert-throws-error( local:div-by-zero#0),
 
-test:assert-throws-error(xdmp:function(xs:QName("local:case2")), "XDMP-DIVBYZERO"),
+test:assert-throws-error(local:div-by-zero#0, "XDMP-DIVBYZERO"),
 
 try {
-  test:assert-throws-error(xdmp:function(xs:QName("local:case3")), "XDMP-DIVBYZERO2"),
+  test:assert-throws-error(local:div-by-zero#0, "XDMP-DIVBYZERO2"),
   test:fail("Did not Throw error and should have")
 }
 catch($ex) {
@@ -41,7 +25,11 @@ catch($ex) {
 },
 
 try {
-  test:assert-throws-error(xdmp:function(xs:QName("local:case4"))),
+  test:assert-throws-error(
+    function() {
+      5 div 5
+    }
+  ),
   test:fail("Did not Throw error and should have")
 }
 catch($ex) {
@@ -51,15 +39,16 @@ catch($ex) {
     test:fail($ex)
 },
 
-test:assert-throws-error(xdmp:function(xs:QName("local:case5")), 5, ()),
+test:assert-throws-error(local:div-by-zero#1, 5, ()),
 
-test:assert-throws-error(xdmp:function(xs:QName("local:case5")), 5, "XDMP-DIVBYZERO"),
+test:assert-throws-error(local:div-by-zero#1, 5, "XDMP-DIVBYZERO"),
 
 try {
-  test:assert-throws-error-with-message("Custom failure message", function() {()}, "EXPECTED-CODE", "EXPECTED-MESSAGE")
+  test:assert-throws-error-with-message(function() {()}, "EXPECTED-CODE", "EXPECTED-MESSAGE", "Custom failure message")
 }
 catch($ex) {
-  test:assert-equal("Did not find the custom failure message in the failure",
+  test:assert-equal(
     "Custom failure message; Did not throw an error",
-    $ex//error:message/fn:string())
+    $ex//error:message/fn:string(),
+    "Did not find the custom failure message in the failure")
 }

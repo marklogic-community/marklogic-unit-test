@@ -51,7 +51,7 @@ test:assert-throws-error(xdmp:function(xs:QName("local:case5")), "ASSERT-EQUAL-F
 
 test:assert-throws-error-with-message(
   function() {
-    test:assert-equal("Custom failure message", "a", "b")
+    test:assert-equal("a", "b", "Custom failure message")
   },
   "ASSERT-EQUAL-FAILED",
   "Custom failure message; expected: ""a"" actual: ""b"""

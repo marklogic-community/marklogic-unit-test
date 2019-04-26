@@ -56,19 +56,22 @@ let j5 =
     "charges": [1, true, "a", null]
   };
 
-/**
- * test.assertEqualJson expects an xdmp:function, but a JS function is not one of those.
- * @param f
- * @param msg
- */
-function assertThrowsError(f, msg)
+function assertThrowsErrorWithMessage(f, errorName, errorMessage)
 {
   try {
     f();
-    test.fail(msg);
+    test.fail('Function did not fail');
   }
   catch (e) {
     test.success();
+    xdmp.log(e, 'info');
+    let actual = e.stack.substr(0, e.stack.indexOf(" at "))
+    if (!e.stack.includes(errorName)) {
+      test.fail(`Function failed, but did not contain expected error [${errorName}] actual: [${actual}]`);
+    }
+    if (!e.stack.includes(errorMessage)) {
+      test.fail(`Function failed, but did not contain expected message [${errorMessage}] actual [${actual}]`);
+    }
   }
 }
 
@@ -83,10 +86,11 @@ function assertThrowsError(f, msg)
   test.assertEqualJson(1, 1),
   test.assertEqualJson('a', 'a'),
 
-  assertThrowsError(
+  assertThrowsErrorWithMessage(
     function() {
-      test.assertEqualJson(j0, j5)
+      test.assertEqualJson({}, {"key":"value"}, "Failure message");
     },
-    "ASSERT-EQUAL-JSON-FAILED"
+    "ASSERT-EQUAL-JSON-FAILED",
+    "Failure message; expected json:object() actual {\"key\":\"value\"}"
   )
 ]

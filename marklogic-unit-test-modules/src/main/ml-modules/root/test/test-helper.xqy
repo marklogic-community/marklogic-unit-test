@@ -150,7 +150,7 @@ declare function test:get-modules-file($file as xs:string, $format as xs:string?
           ())
     else
       xdmp:invoke-function(
-        function() { 
+        function() {
           fn:doc($file)
         },
         <options xmlns="xdmp:eval">
@@ -197,14 +197,14 @@ declare function test:http-get($url as xs:string, $options as item()?(:as (eleme
 };
 
 declare function test:assert-http-get-status($url as xs:string, $options as item()?, $status-code) {
-  test:assert-http-get-status((), $url, $options, $status-code)
+  test:assert-http-get-status( $url, $options, $status-code, ())
 };
 
-declare function test:assert-http-get-status($message as xs:string?, $url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $status-code)
+declare function test:assert-http-get-status($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $status-code, $message as xs:string*)
 {
   let $response := test:http-get($url, $options)
   return
-    test:assert-equal($message, $status-code, fn:data($response[1]/*:code))
+    test:assert-equal($status-code, fn:data($response[1]/*:code), $message)
 };
 
 declare function test:http-post($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?)
@@ -216,14 +216,14 @@ declare function test:http-post($url as xs:string, $options as item()?(:as (elem
 
 declare function test:assert-http-post-status($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?, $status-code)
 {
-  assert-http-post-status((), $url, $options, $data, $status-code)
+  assert-http-post-status($url, $options, $data, $status-code, ())
 };
 
-declare function test:assert-http-post-status($message as xs:string?, $url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?, $status-code)
+declare function test:assert-http-post-status($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?, $status-code, $message as xs:string*)
 {
   let $response := test:http-post($url, $options, $data)
   return
-    test:assert-equal($message, $status-code, fn:data($response[1]/*:code))
+    test:assert-equal($status-code, fn:data($response[1]/*:code), $message)
 };
 
 declare function test:http-put($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?)
@@ -235,14 +235,14 @@ declare function test:http-put($url as xs:string, $options as item()?(:as (eleme
 
 declare function test:assert-http-put-status($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?, $status-code)
 {
-  test:assert-http-put-status((), $url, $options, $data, $status-code)
+  test:assert-http-put-status($url, $options, $data, $status-code, ())
 };
 
-declare function test:assert-http-put-status($message as xs:string?, $url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?, $status-code)
+declare function test:assert-http-put-status($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?, $status-code, $message as xs:string*)
 {
   let $response := test:http-put($url, $options, $data)
   return
-    test:assert-equal($message, $status-code, fn:data($response[1]/*:code))
+    test:assert-equal($status-code, fn:data($response[1]/*:code), $message)
 };
 
 (:~
@@ -250,24 +250,24 @@ declare function test:assert-http-put-status($message as xs:string?, $url as xs:
  :)
 declare function test:delete-all-xml() {
   xdmp:invoke-function(
-    function() { 
+    function() {
       for $x in (cts:uri-match("*.xml"), cts:uri-match("*.xlsx"))
       where fn:not(fn:contains($x, "config/config.xml"))
       return
         try {xdmp:document-delete($x)}
-        catch($ex) {()}    
+        catch($ex) {()}
     }
   )
 };
 
 declare function test:wait-for-doc($pattern, $sleep) {
-  let $uris := 
+  let $uris :=
     xdmp:invoke-function(
-      function() { 
+      function() {
         cts:uri-match($pattern)
       }
     )
-  return 
+  return
     if (fn:exists($uris)) then ()
     else
       (
@@ -308,7 +308,7 @@ declare function test:wait-for-taskserver($sleep) {
  :)
 declare function test:sleep($msec as xs:unsignedInt) as empty-sequence() {
   xdmp:invoke-function(
-    function() { 
+    function() {
       xdmp:sleep($msec)
     }
   )
@@ -333,12 +333,12 @@ as xs:string*
       return test:list-from-filesystem(fn:replace($path, "(/|\\)", $directory-separator))
     else
       xdmp:invoke-function(
-        function() { 
-          try { 
-            cts:uris((), (), cts:directory-query($path, "infinity")) 
+        function() {
+          try {
+            cts:uris((), (), cts:directory-query($path, "infinity"))
           } catch ($ex) {
             if ($ex/error:code ne "XDMP-URILXCNNOTFOUND") then xdmp:rethrow()
-            else xdmp:directory($path, "infinity")/xdmp:node-uri(.) 
+            else xdmp:directory($path, "infinity")/xdmp:node-uri(.)
           }
         },
         <options xmlns="xdmp:eval">
@@ -367,13 +367,13 @@ declare function test:remove-modules($uris as xs:string*)
 {
   if (xdmp:modules-database() ne 0) then
     xdmp:invoke-function(
-      function() { 
+      function() {
         $uris ! xdmp:document-delete(.)
       },
       <options xmlns="xdmp:eval">
         <database>{xdmp:modules-database()}</database>
       </options>
-    )  
+    )
   else ()
 };
 
@@ -384,13 +384,13 @@ declare function test:remove-modules-directories($dirs as xs:string*)
 {
   if (xdmp:modules-database() ne 0) then
     xdmp:invoke-function(
-      function() { 
+      function() {
         $dirs ! xdmp:directory-delete(.)
       },
       <options xmlns="xdmp:eval">
         <database>{xdmp:modules-database()}</database>
       </options>
-    )  
+    )
   else ()
 };
 
@@ -437,36 +437,64 @@ declare function test:fail($message as item()*) {
   }
 };
 
-declare function test:assert-all-exist($count as xs:unsignedInt, $item as item()*) {
-  test:assert-all-exist((), $count, $item)
+declare function test:assert-all-exist($expected-count as xs:unsignedInt, $actuals as item()*) {
+  test:assert-all-exist($expected-count, $actuals, ())
 };
 
-declare function test:assert-all-exist($message as xs:string?, $count as xs:unsignedInt, $item as item()*) {
-  if ($count eq fn:count($item)) then
-    test:success()
-  else
-    fn:error(xs:QName("ASSERT-ALL-EXIST-FAILED"), ($message, "Assert All Exist failed")[1], $item)
+declare function test:assert-all-exist($expected-count as xs:unsignedInt, $actuals as item()*, $message as xs:string*) {
+  let $actual-count := fn:count($actuals)
+  return
+    if ($expected-count eq $actual-count) then
+      test:success()
+    else
+      let $message :=
+        fn:string-join((
+          $message,
+          "expected " || $expected-count || " items but found " || $actual-count || " items"
+        ), "; ")
+      return fn:error(xs:QName("ASSERT-ALL-EXIST-FAILED"), $message, $actuals)
 };
 
 declare function test:assert-exists($item as item()*) {
+  test:assert-exists($item, ())
+};
+
+declare function test:assert-exists($item as item()*, $message as xs:string*) {
   if (fn:exists($item)) then
     test:success()
   else
-    fn:error(xs:QName("ASSERT-EXISTS-FAILED"), "Assert Exists failed", $item)
+    let $message := fn:string-join(($message, xdmp:describe($item) || " does not exist"), "; ")
+    return fn:error(xs:QName("ASSERT-EXISTS-FAILED"), $message, $item)
 };
 
 declare function test:assert-not-exists($item as item()*) {
+  test:assert-not-exists($item, ())
+};
+
+declare function test:assert-not-exists($item as item()*, $message as xs:string*) {
   if (fn:not(fn:exists($item))) then
     test:success()
   else
-    fn:error(xs:QName("ASSERT-NOT-EXISTS-FAILED"), "Assert Not Exists failed", $item)
+    fn:error(
+      xs:QName("ASSERT-NOT-EXISTS-FAILED"),
+      fn:string-join(($message, "Found unexpected items: " || xdmp:describe($item)), "; "),
+      $item)
 };
 
 declare function test:assert-at-least-one-equal($expected as item()*, $actual as item()*) {
+  test:assert-at-least-one-equal($expected, $actual, ())
+};
+
+declare function test:assert-at-least-one-equal($expected as item()*, $actual as item()*, $message as xs:string*) {
   if ($expected = $actual) then
     test:success()
   else
-    fn:error(xs:QName("ASSERT-AT-LEAST-ONE-EQUAL-FAILED"), "Assert At Least one Equal failed", ())
+    let $message :=
+      fn:string-join((
+        $message,
+        "nothing was equal between " || xdmp:describe($expected) || " and " || xdmp:describe($actual)
+      ), "; ")
+    return fn:error(xs:QName("ASSERT-AT-LEAST-ONE-EQUAL-FAILED"), $message, ())
 };
 
 declare private function test:are-these-equal($expected as item()*, $actual as item()*) {
@@ -484,7 +512,13 @@ declare private function test:are-these-equal($expected as item()*, $actual as i
 
 (: Return true if and only if the two sequences have the same values, regardless
  : of order. fn:deep-equal() returns false if items are not in the same order. :)
+
 declare function test:assert-same-values($expected as item()*, $actual as item()*)
+{
+  test:assert-same-values($expected, $actual, ())
+};
+
+declare function test:assert-same-values($expected as item()*, $actual as item()*, $message as xs:string*)
 {
   let $expected-ordered :=
     for $e in $expected
@@ -494,34 +528,47 @@ declare function test:assert-same-values($expected as item()*, $actual as item()
     for $a in $actual
     order by $a
     return $a
-  return test:assert-equal($expected-ordered, $actual-ordered)
+  return test:assert-equal($expected-ordered, $actual-ordered, $message)
 };
 
 declare function test:assert-equal($expected as item()*, $actual as item()*) {
-  test:assert-equal((), $expected, $actual)
+  test:assert-equal($expected, $actual, ())
 };
 
-declare function test:assert-equal($message as xs:string?, $expected as item()*, $actual as item()*) {
+declare function test:assert-equal($expected as item()*, $actual as item()*, $message as xs:string*) {
   if (test:are-these-equal($expected, $actual)) then
     test:success()
   else
-    let $message := if ($message) then $message || "; " else ""
+    let $message :=
+      fn:string-join((
+        $message,
+        "expected: " || xdmp:describe($expected) || " actual: " || xdmp:describe($actual)
+      ), "; ")
     return
-      fn:error(xs:QName("ASSERT-EQUAL-FAILED"), $message || "expected: " || xdmp:describe($expected) || " actual: "
-        || xdmp:describe($actual) )
+      fn:error(xs:QName("ASSERT-EQUAL-FAILED"), $message)
 };
 
-declare function test:assert-not-equal($expected as item()*, $actual as item()*) {
-  if (fn:not(test:are-these-equal($expected, $actual))) then
+declare function test:assert-not-equal($not-expected as item()*, $actual as item()*) {
+  test:assert-not-equal($not-expected, $actual, ())
+};
+
+declare function test:assert-not-equal($not-expected as item()*, $actual as item()*, $message as xs:string*) {
+  if (fn:not(test:are-these-equal($not-expected, $actual))) then
     test:success()
   else
-    fn:error(
-      xs:QName("ASSERT-NOT-EQUAL-FAILED"),
-      fn:concat("test name", ": Assert Not Equal failed"),
-      ($expected, $actual))
+    let $message :=
+      fn:string-join((
+        $message,
+        "items were equal; not expected: " || xdmp:describe($not-expected) || " actual: " || xdmp:describe($actual)
+      ), "; ")
+    return fn:error(xs:QName("ASSERT-NOT-EQUAL-FAILED"), $message, ($not-expected, $actual))
 };
 
 declare function test:assert-equal-xml($expected, $actual) {
+  test:assert-equal-xml($expected, $actual, ())
+};
+
+declare function test:assert-equal-xml($expected, $actual, $message as xs:string*) {
   typeswitch ($actual)
     case document-node() return
       typeswitch ($expected)
@@ -561,54 +608,60 @@ declare function test:assert-equal-xml($expected, $actual) {
 };
 
 declare function test:assert-equal-json($expected, $actual) {
+  test:assert-equal-json($expected, $actual, ())
+};
+
+declare function test:assert-equal-json($expected, $actual, $message as xs:string*) {
+  let $message := fn:string-join(($message, "expected " || xdmp:describe($expected) || " actual " || $actual), "; ")
+  return
   if ($expected instance of object-node()*) then
     if ($actual instance of object-node()*) then
       if (fn:count($expected) = fn:count($actual)) then
         if (test:assert-equal-json-recursive($expected, $actual)) then
           test:success()
         else
-          fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed", ($expected, $actual))
+          fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), $message, ($expected, $actual))
       else
-        fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed (different counts of objects)", ($expected, $actual))
+        fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), $message || "; different counts of objects", ($expected, $actual))
     else
     (: $actual is not object-node()* :)
-      fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed ($actual does not consist of objects)", ($expected, $actual))
+      fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), $message || "; actual is not an object", ($expected, $actual))
   else if ($expected instance of map:map*) then
     if ($actual instance of map:map*) then
       if (fn:count($expected) = fn:count($actual)) then
         if (test:assert-equal-json-recursive($expected, $actual)) then
           test:success()
         else
-          fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed", ($expected, $actual))
+          fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), $message, ($expected, $actual))
       else
-        fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed (different counts of objects)", ($expected, $actual))
+        fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), $message || "; different counts of objects", ($expected, $actual))
     else
-      fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed ($actual does not consist of objects)", ($expected, $actual))
+      fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), $message || "; actual is not an object", ($expected, $actual))
   else if ($expected instance of array-node()*) then
       if ($actual instance of array-node()*) then
         if (fn:count($expected) = fn:count($actual)) then
           if (test:assert-equal-json-recursive($expected, $actual)) then
             test:success()
           else
-            fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed", ($expected, $actual))
+            fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), $message, ($expected, $actual))
         else
-          fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed (different counts of arrays)", ($expected, $actual))
+          fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), $message || "; different counts of arrays", ($expected, $actual))
       else
-        fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed ($actual does not consist of arrays)", ($expected, $actual))
+        fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), $message || "; actual is not an array", ($expected, $actual))
     else if ($expected instance of document-node()) then
         if ($actual instance of document-node()) then
           if (fn:count($expected) = fn:count($actual)) then
             if (test:assert-equal-json-recursive($expected/node(), $actual/node())) then
               test:success()
             else
-              fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed (documents not equal)", ($expected, $actual))
+              fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), $message || "; documents not equal", ($expected, $actual))
           else
-            fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed (different counts of documents)", ($expected, $actual))
+            fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), $message || "; different counts of documents", ($expected, $actual))
         else
-          fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed ($actual is not a document)", ($expected, $actual))
+          fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), $message || "; actual is not a document", ($expected, $actual))
       else
       (: scalar values :)
-        test:assert-equal($expected, $actual)
+        test:assert-equal($expected, $actual, $message)
 };
 
 declare function test:assert-equal-json-recursive($object1, $object2) as xs:boolean
@@ -676,50 +729,75 @@ declare function test:assert-equal-json-recursive($object1, $object2) as xs:bool
       $object1 = $object2
 };
 
-declare function test:assert-true($supposed-truths as xs:boolean*) {
-  test:assert-true($supposed-truths, $supposed-truths)
+declare function test:assert-true($conditions as xs:boolean*) {
+  test:assert-true($conditions, ())
 };
 
-declare function test:assert-true($supposed-truths as xs:boolean*, $msg as item()*) {
-  if (fn:false() = $supposed-truths) then
-    fn:error(xs:QName("ASSERT-TRUE-FAILED"), "Assert True failed", $msg)
+declare function test:assert-true($conditions as xs:boolean*, $message as xs:string?) {
+  if (fn:false() = $conditions) then
+    fn:error(xs:QName("ASSERT-TRUE-FAILED"), fn:string-join(($message, "Condition was not true."), "; ") , $conditions)
   else
     test:success()
 };
 
-declare function test:assert-false($supposed-falsehoods as xs:boolean*) {
-  if (fn:true() = $supposed-falsehoods) then
-    fn:error(xs:QName("ASSERT-FALSE-FAILED"), "Assert False failed", $supposed-falsehoods)
+declare function test:assert-false($conditions as xs:boolean*) {
+  test:assert-false($conditions, ())
+};
+
+declare function test:assert-false($conditions as xs:boolean*, $message as xs:string*) {
+  if (fn:true() = $conditions) then
+    fn:error(xs:QName("ASSERT-FALSE-FAILED"), fn:string-join(($message, "condition was not false."), "; "), $conditions)
   else
     test:success()
 };
 
-declare function test:assert-meets-minimum-threshold($expected as xs:decimal, $actual as xs:decimal+) {
-  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] ge $expected) then
-    test:success()
-  else
-    fn:error(
-      xs:QName("ASSERT-MEETS-MINIMUM-THRESHOLD-FAILED"),
-      fn:concat("test name", ": Assert Meets Minimum Threshold failed"),
-      ($expected, $actual))
+declare function test:assert-meets-minimum-threshold($minimum as xs:decimal, $actual as xs:decimal+) {
+  test:assert-meets-minimum-threshold($minimum, $actual, ())
 };
 
-declare function test:assert-meets-maximum-threshold($expected as xs:decimal, $actual as xs:decimal+) {
-  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] le $expected) then
+declare function test:assert-meets-minimum-threshold(
+  $minimum as xs:decimal,
+  $actual as xs:decimal+,
+  $message as xs:string*
+) {
+  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] ge $minimum) then
+    test:success()
+  else
+    let $message :=
+      fn:string-join((
+        $message,
+        "actual: " || xdmp:describe($actual) || " is less than minimum: " || xdmp:describe($minimum)
+      ), "; ")
+    return fn:error(xs:QName("ASSERT-MEETS-MINIMUM-THRESHOLD-FAILED"), $message, ($minimum, $actual))
+};
+
+declare function test:assert-meets-maximum-threshold($maximum as xs:decimal, $actual as xs:decimal+) {
+  test:assert-meets-maximum-threshold($maximum, $actual, ())
+};
+
+declare function test:assert-meets-maximum-threshold(
+  $maximum as xs:decimal,
+  $actual as xs:decimal+,
+  $message as xs:string?
+) {
+  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] le $maximum) then
     test:success()
   else
     fn:error(
       xs:QName("ASSERT-MEETS-MAXIMUM-THRESHOLD-FAILED"),
-      fn:concat("test name", ": Assert Meets Maximum Threshold failed"),
-      ($expected, $actual))
+      fn:string-join((
+        $message,
+        "actual: " || xdmp:describe($actual) || " is greater than maximum: " || xdmp:describe($maximum)
+      ), "; "),
+      ($maximum, $actual))
 };
 
 declare function test:assert-throws-error-with-message($function as xdmp:function, $expected-error-code as xs:string, $expected-message as xs:string) {
-  test:assert-throws-error-with-message((), $function, $expected-error-code, $expected-message)
+  test:assert-throws-error-with-message($function, $expected-error-code, $expected-message, ())
 };
 
-declare function test:assert-throws-error-with-message($failure-message, $function as xdmp:function, $expected-error-code as xs:string, $expected-message as xs:string) {
-  test:assert-throws-error_($failure-message, $function, json:to-array(), $expected-error-code, $expected-message)
+declare function test:assert-throws-error-with-message($function as xdmp:function, $expected-error-code as xs:string, $expected-message as xs:string, $message as xs:string*) {
+  test:assert-throws-error_($function, json:to-array(), $expected-error-code, $expected-message, $message)
 };
 
 declare function test:assert-throws-error($function as xdmp:function)
@@ -763,12 +841,12 @@ declare function test:assert-throws-error($function as xdmp:function, $param1 as
 };
 
 declare private function test:assert-throws-error_($function as xdmp:function, $params as json:array, $error-code as xs:string?, $expected-error-message as xs:string?) {
-  test:assert-throws-error_((), $function, $params, $error-code, $expected-error-message)
+  test:assert-throws-error_($function, $params, $error-code, $expected-error-message, ())
 };
 
-declare private function test:assert-throws-error_($failure-message as xs:string?, $function as xdmp:function, $params as json:array, $error-code as xs:string?, $expected-error-message as xs:string?)
+declare private function test:assert-throws-error_($function as xdmp:function, $params as json:array, $error-code as xs:string?, $expected-error-message as xs:string?, $message as xs:string*)
 {
-  let $message-prefix := if ($failure-message) then ($failure-message || "; ") else ()
+  let $message-prefix := fn:string-join($message, "; ") || "; "
   let $size := json:array-size($params)
   return
     try {
@@ -805,8 +883,10 @@ declare private function test:assert-throws-error_($failure-message as xs:string
             test:success()
         else
           (
+            xdmp:log($ex, "info"),
             fn:error(xs:QName("ASSERT-THROWS-ERROR-FAILED"), $message-prefix
-              || "Did not find expected error code: expected: " || $error-code || " actual: " || $ex/error:code/fn:string())
+              || "Did not find expected error code: expected: [" || $error-code || "] actual: ["
+              || $ex/error:name/fn:string() || "]")
           )
       else
         test:success()

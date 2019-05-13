@@ -1,7 +1,7 @@
 plugins {
 	id "java"
   id "maven-publish"
-	id "com.jfrog.bintray" version "1.8.0"
+	id "com.jfrog.bintray" version "1.8.4"
 }
 
 // Defines a configuration for the MarkLogic modules; used by the modulesZip task below

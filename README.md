@@ -10,10 +10,10 @@ immediately has access to:
 1. A UI for viewing and running unit tests entirely within MarkLogic
 1. A REST endpoint to run and report unit tests with other tools
 
-Testing MarkLogic from a Java JUnit 5 project is made easy with marklogic-junit5:
+Testing MarkLogic from a Java project is made easy with marklogic-junit5:
 
 1. Write MarkLogic tests entirely from Java
-1. Easily integrate MarkLogic unit tests into your JUnit 5 unit tests
+1. Easily integrate MarkLogic unit tests into your JUnit 5 project
 
 # Start using marklogic-unit-test
 
@@ -99,6 +99,6 @@ Now a new test suite has been generated in `src/test/ml-modules/root/test/suites
 If `mlWatch` is being used, refreshing the web browser at http://localhost:8004/test/ will now show the newly created
 `SampleTestSuite`.  The suite can be run using the Run Tests button at the top or bottom of the page.
 
-# Start using marklogic-junit5
+# Start using marklogic-junit
 Check out the [marklogic-junit5 sub-project](https://github.com/marklogic-community/marklogic-unit-test/tree/master/marklogic-junit5)
-to get started using marklogic-junit.
+to get started using marklogic-junit5.

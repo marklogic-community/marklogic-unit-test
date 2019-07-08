@@ -3,8 +3,8 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 # Testing MarkLogic
 
-marklogic-unit-test is an [ml-gradle bundle](https://github.com/marklogic-community/ml-gradle/wiki/Bundles) that allows
-a project to test MarkLogic code.  With one import a project immediately has access to:
+marklogic-unit-test is a testing framework that allows a project to test MarkLogic code.  With one import a project
+immediately has access to:
 
 1. A framework for writing and running MarkLogic unit tests, including several built in assertion functions
 1. A UI for viewing and running unit tests entirely within MarkLogic
@@ -17,13 +17,15 @@ Testing MarkLogic from a Java project is made easy with marklogic-junit:
 
 # Start using marklogic-unit-test
 
-If you'd like to use marklogic-unit-test check out this 
-[ml-gradle example project](https://github.com/marklogic-community/ml-gradle/tree/dev/examples/unit-test-project). 
-You can use that project's build.gradle file as an example of how to use marklogic-unit-test in your own project.
+MarkLogic unit test can easily be integrated into your project as an [ml-bundle](https://github.com/marklogic-community/ml-gradle/wiki/Bundles).
+  The following steps will configure a project to import and use marklogic-unit-tests.
+  
+If you'd like to skip straight to the end, you can check out a [working example project](https://github.com/marklogic-community/ml-gradle/tree/dev/examples/unit-test-project). 
+You can use that project's `build.gradle` file as an example of how to use marklogic-unit-test in your own project.
 
 ### Add marklogic-unit-test to `build.gradle`
 
-```aidl
+```groovy
 buildscript {
   repositories {
     jcenter()
@@ -48,7 +50,7 @@ dependencies {
 
 ### Add Test Properties to `gradle.properties`
 
-```aidl
+```properties
 // Settings for any ml-gradle project
 mlHost=localhost    // Assuming local development
 mlAppName=my-app    // Application name, defaults to my-app
@@ -60,43 +62,42 @@ mlPassword=         // Password used to manage MarkLogic
 // Settings specific to marklogic-unit-test
 mlTestRestPort=8004 // Testing port, view and run tests from this port
 
-mlModulePaths=src/main/ml-modules,src/test/ml-modules  // Add test directory to ml-gradle configuration so tests are
-                                                       // loaded.  Only necessary on automated testing environments.
-
+// ml-gradle supports deploying to multiple environments (https://github.com/marklogic-community/ml-gradle/wiki/Configuring-ml-gradle#environment-based-properties).\
+// Add the following line to gradle-{env}.properties files for which you would like to deploy the tests. Typically
+// tests are only deployed to environments that execute automated tests, like local development and CI environments. 
+mlModulePaths=src/main/ml-modules,src/test/ml-modules
 ```
 
 ### Deploy tests using ml-gradle
 
 Now that the environment is configured to load tests and setup a test application servier its time to deploy everything.
-```aidl
-> gradlew mlDeploy
+```sh
+./gradlew mlDeploy
 ```
 
 To enable quicker feedback between code updates and automated test runs, use the mlWatch task to automatically deploy
 changes to MarkLogic
-```aidl
-> gradlew mlWatch
+```sh
+./gradlew mlWatch
 ```
 
 ### Access marklogic-unit-test UI
 
-Open a web browser to http://localhost:8004/test/.  This is where tests are displayed, ran, and results are displayed.
+Open a web browser to http://localhost:8004/test/.  This is where tests are selected, run, and results are displayed.
 
 If this is a project that's new to marklogic-unit-tests no test suites are displayed because there are no tests.
 
 ### Creating a test suite
 
 Creating test suites is easy using the mlGenerateUnitTestSuite gradle task.  Run the following to setup a sample test suite:
-```aidl
-> gradlew mlGenerateUnitTestSuite
+```sh
+./gradlew mlGenerateUnitTestSuite
 ```
 
 Now a new test suite has been generated in `src/test/ml-modules/root/test/suites` called `SampleTestSuite`.
 
 If `mlWatch` is being used, refreshing the web browser at http://localhost:8004/test/ will now show the newly created
-`SampleTestSuite`.  The suite can be ran using the Run Tests button at the top or bottom of the page.
-
-
+`SampleTestSuite`.  The suite can be run using the Run Tests button at the top or bottom of the page.
 
 # Start using marklogic-junit
 Check out the [marklogic-junit sub-project](https://github.com/marklogic-community/marklogic-unit-test/tree/master/marklogic-junit)

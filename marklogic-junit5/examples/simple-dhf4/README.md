@@ -1,4 +1,4 @@
-This project shows an example of using both marklogic-junit and marklogic-unit-test within a 
+This project shows an example of using both marklogic-junit5 and marklogic-unit-test within a 
 Data Hub Framework version 4 project. 
 
 To try this out locally, first initialize the DHF project:

@@ -36,7 +36,7 @@ public class SearchTest extends AbstractSpringMarkLogicTest {
 
 ## Getting started on an ml-gradle project
 
-If you'd like to use marklogic-junit on a regular ml-gradle project (not a DHF project), then 
+If you'd like to use marklogic-junit5 on a regular ml-gradle project (not a DHF project), then 
 start with the ml-gradle example project to see a working example with instructions on how to get started. 
 
 ## Getting started on a Data Hub Framework project

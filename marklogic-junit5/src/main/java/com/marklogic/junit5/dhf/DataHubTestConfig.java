@@ -68,7 +68,7 @@ public class DataHubTestConfig {
   }
 
   /**
-   * marklogic-junit depends on one of these for obtaining a DatabaseClient.
+   * marklogic-junit5 depends on one of these for obtaining a DatabaseClient.
    *
    * @return
    */

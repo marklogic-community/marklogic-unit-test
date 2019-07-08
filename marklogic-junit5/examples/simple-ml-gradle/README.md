@@ -1,4 +1,4 @@
-This project shows a basic setup for writing JUnit tests with marklogic-junit against an application deployed 
+This project shows a basic setup for writing JUnit tests with marklogic-junit5 against an application deployed 
 with [ml-gradle](https://github.com/marklogic-community/ml-gradle). In addition, it includes an example of executing
 tests written using [marklogic-unit-test](https://github.com/marklogic-community/marklogic-unit-test) via JUnit.
 
@@ -21,9 +21,9 @@ This task should complete with an output of "BUILD SUCCESSFUL", with the JUnit t
 ./build/reports/tests/test/index.html . In this report, you'll also see how the 2 marklogic-unit-test modules - located under
 src/test/ml-modules - were both executed as separate tests. 
 
-## Using marklogic-junit in your own ml-gradle project
+## Using marklogic-junit5 in your own ml-gradle project
 
-Read through each of the following steps to use marklogic-junit in your own project.
+Read through each of the following steps to use marklogic-junit5 in your own project.
 
 ### Configure build.gradle
 
@@ -39,7 +39,7 @@ Next, add the following dependencies - this assumes you're using Gradle version 
     dependencies {
       // existing dependencies
       
-      testCompile "com.marklogic:marklogic-junit:0.10.0"
+      testCompile "com.marklogic:marklogic-junit5:1.0.beta"
             
       testRuntime "org.junit.jupiter:junit-jupiter-engine:5.3.0"
     
@@ -60,7 +60,7 @@ If you haven't already, set the value of mlTestRestPort in gradle.properties to 
     mlTestRestPort=8211
 
 If you haven't done this and run mlDeploy before, then run mlDeploy now to deploy a test app server and database that
-mirror your regular REST server and database (marklogic-junit depends on a REST server):
+mirror your regular REST server and database (marklogic-junit5 depends on a REST server):
 
     ./gradlew mlDeploy
 
@@ -72,14 +72,14 @@ log some information in certain tests.
 
 ### Create a test class and run it
 
-You're now ready to start writing JUnit 5 tests using marklogic-junit. See the src/test/java/org/example directory in 
+You're now ready to start writing JUnit 5 tests using marklogic-junit5. See the src/test/java/org/example directory in 
 this project for several examples of tests that write and read documents, search them, and make assertions (including 
 XPath expressions with custom namespace prefixes) on different aspects of documents.
 
 The key point here is that the tests in this project extend AbstractSpringMarkLogicTest. This class uses 
 [Spring's test support](https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html) to 
 execute JUnit 5 tests with all of Spring's support for dependency and configuration management. This class depends on 
-another class from marklogic-junit named SimpleTestConfig to create a DatabaseClient that connects to your test REST 
+another class from marklogic-junit5 named SimpleTestConfig to create a DatabaseClient that connects to your test REST 
 server. SimpleTestConfig assumes the following properties can be found in gradle.properties and gradle-local.properties:
 
 - mlUsername

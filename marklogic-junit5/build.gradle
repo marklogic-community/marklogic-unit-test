@@ -50,11 +50,11 @@ publishing {
 	publications {
 		mainJava(MavenPublication) {
 			from components.java
-      artifactId "marklogic-junit"
+      artifactId project.name
 		}
 		sourcesJava(MavenPublication) {
 			from components.java
-      artifactId "marklogic-junit"
+      artifactId project.name
 			artifact sourcesJar
 		}
 	}

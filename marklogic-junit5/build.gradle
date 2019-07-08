@@ -50,11 +50,11 @@ publishing {
 	publications {
 		mainJava(MavenPublication) {
 			from components.java
-      artifactId "marklogic-junit"
+      artifactId project.name
 		}
 		sourcesJava(MavenPublication) {
 			from components.java
-      artifactId "marklogic-junit"
+      artifactId project.name
 			artifact sourcesJar
 		}
 	}
@@ -70,7 +70,7 @@ if (project.hasProperty("myBintrayUser")) {
 			name = project.name
       userOrg = 'marklogic-community'
 			licenses = ["Apache-2.0"]
-			vcsUrl = "https://github.com/marklogic-community/" + project.name + ".git"
+			vcsUrl = "https://github.com/marklogic-community/marklogic-unit-test.git"
 			version {
 				name = project.version
 				released = new Date()

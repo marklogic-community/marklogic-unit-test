@@ -207,12 +207,12 @@ buildscript:</p>
     jcenter()
   }
   dependencies {
-    classpath "com.marklogic:marklogic-unit-test-client:0.12.0"
+    classpath "com.marklogic:marklogic-unit-test-client:1.0.beta"
   }
 }
 </code></pre></div></div>
 
-<p>Next, the marklogic-unit-test framework is depended on and installed as an “mlRestApi” dependency (the “mlRestApi” 
+<p>Next, the marklogic-unit-test framework is depended on and installed as an “mlBundle” dependency (the “mlBundle”
 configuration is a feature of ml-gradle for depending on packages of MarkLogic modules):</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>repositories {
@@ -220,7 +220,7 @@ configuration is a feature of ml-gradle for depending on packages of MarkLogic m
 }
   
 dependencies {
-  mlRestApi "com.marklogic:marklogic-unit-test-modules:0.12.0"
+  mlBundle "com.marklogic:marklogic-unit-test-modules:1.0.beta"
 }
 </code></pre></div></div>
 

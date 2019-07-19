@@ -37,7 +37,7 @@ declare function list()
     for $uri in test:list-from-database($db-id, $root || "test/suites/")
       let $test-path := fn:replace($uri, fn:concat($root, "test/suites/?"), "")
       let $suite-path := cvt:basepath($test-path)
-      let $test-name := fn:replace($test-path, $suite-path || "(\\|/)?", "")
+      let $test-name := fn:replace($test-path, $suite-path || "(\\|/)", "")
 
       let $suite-is-valid :=
         let $path-not-in-ignored-directory :=

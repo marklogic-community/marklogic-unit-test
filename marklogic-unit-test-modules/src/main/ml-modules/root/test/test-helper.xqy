@@ -107,9 +107,9 @@ declare function test:load-test-file($filename as xs:string, $database-id as xs:
       xdmp:save($uri, test:get-test-file($filename))
   else
     let $doc := test:get-test-file($filename)
-    return 
+    return
       xdmp:invoke-function(
-        function() { 
+        function() {
           xdmp:document-insert($uri, $doc, $permissions, $collections)
         },
         <options xmlns="xdmp:eval">
@@ -637,7 +637,10 @@ declare function test:assert-equal-json-recursive($object1, $object2) as xs:bool
           test:assert-equal-json-recursive($v1, $v2)
       return $counts-equal and fn:not($maps-equal = fn:false())
     default return
-      $object1 = $object2
+      if(fn:empty($object1) and fn:empty($object2)) then
+        fn:true()
+      else
+        $object1 = $object2
 };
 
 declare function test:assert-true($supposed-truths as xs:boolean*) {

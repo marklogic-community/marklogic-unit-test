@@ -18,6 +18,7 @@ let $j3 := xdmp:to-json(xdmp:from-json-string(
   '{"PersonNameType":{"PersonGivenName":"LINDSEY", "PersonSurName":"JONES"},"charges":[1,true,"a",null]}'
 ))/node()
 
+
 let $j4 :=
   let $o := json:object()
   let $pnt := json:object()
@@ -46,6 +47,8 @@ let $j5 :=
   let $_ := map:put($o, "charges", $a)
   return $o
 
+let $j6 := xdmp:to-json(xdmp:from-json-string('{ "objKeyWithNullValue": null}'))/node()
+
 return xdmp:eager((
   test:assert-equal-json($j1, $j2),
   test:assert-equal-json($j1, $j3),
@@ -59,6 +62,6 @@ return xdmp:eager((
   }, "ASSERT-EQUAL-JSON-FAILED"),
   test:assert-throws-error(function() {
     test:assert-equal-json($j0, $j5)
-  }, "ASSERT-EQUAL-JSON-FAILED")
-
+  }, "ASSERT-EQUAL-JSON-FAILED"),
+  test:assert-equal-json($j6, $j6)
 ))

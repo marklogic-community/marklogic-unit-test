@@ -726,7 +726,10 @@ declare function test:assert-equal-json-recursive($object1, $object2) as xs:bool
           test:assert-equal-json-recursive($v1, $v2)
       return $counts-equal and fn:not($maps-equal = fn:false())
     default return
-      $object1 = $object2
+      if(fn:empty($object1) and fn:empty($object2)) then
+        fn:true()
+      else
+        $object1 = $object2
 };
 
 declare function test:assert-true($conditions as xs:boolean*) {

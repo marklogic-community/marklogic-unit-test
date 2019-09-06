@@ -1,29 +1,69 @@
 # Change Log
 
-## [v1.0.0](https://github.com/marklogic-community/marklogic-unit-test/tree/v1.0.0) (2019-04-26)
-[Full Changelog](https://github.com/marklogic-community/marklogic-unit-test/compare/v0.12.0...v1.0.0)
+## [1.0.0](https://github.com/marklogic-community/marklogic-unit-test/tree/1.0.0) (2019-09-06)
+[Full Changelog](https://github.com/marklogic-community/marklogic-unit-test/compare/1.0.beta...1.0.0)
 
 **Implemented enhancements:**
 
-- Support Nested Test Suites [\#45](https://github.com/marklogic-community/marklogic-unit-test/issues/45)
-- Add Failure Message to Assert Functions [\#51](https://github.com/marklogic-community/marklogic-unit-test/issues/51)
-- Remove Roxy from Namespaces [\#52](https://github.com/marklogic-community/marklogic-unit-test/issues/52)
-- Eliminate xdmp:eval\(\) [\#55](https://github.com/marklogic-community/marklogic-unit-test/issues/55)
-- Allow substitutions during deployment [\#32](https://github.com/marklogic-community/marklogic-unit-test/issues/32)
+- Add documentation for developing and testing ml-unit-test locally [\#29](https://github.com/marklogic-community/marklogic-unit-test/issues/29)
+- Support Testing of the MarkLogic Data Hub Framework \(DHF\) [\#26](https://github.com/marklogic-community/marklogic-unit-test/issues/26)
+- Support testing of REST services [\#25](https://github.com/marklogic-community/marklogic-unit-test/issues/25)
+- Setup real JUnit tests for marklogic-unit-test-modules [\#11](https://github.com/marklogic-community/marklogic-unit-test/issues/11)
+
+**Fixed bugs:**
+
+- Unable to use suite name in test name [\#79](https://github.com/marklogic-community/marklogic-unit-test/issues/79)
+- JSON equals is inconsistent in comparisons [\#44](https://github.com/marklogic-community/marklogic-unit-test/issues/44)
+
+**Closed issues:**
+
+- ML10 gradle project has error with unit test [\#86](https://github.com/marklogic-community/marklogic-unit-test/issues/86)
+- Updating docs to reflect renamed dependency [\#80](https://github.com/marklogic-community/marklogic-unit-test/issues/80)
+- Document how to include marklogic-unit-test and set up for a Data Hub [\#36](https://github.com/marklogic-community/marklogic-unit-test/issues/36)
 
 **Merged pull requests:**
 
-- Merged marklogic-junit library into marklogic-unit-test [\#66](https://github.com/marklogic-community/marklogic-unit-test/pull/66) ([rjrudin](https://github.com/rjrudin))
-- Specify permissions and collections in test:load-test-file [\#59](https://github.com/marklogic-community/marklogic-unit-test/pull/59) ([cskeefer](https://github.com/cskeefer))
-- Adding contributor information [\#50](https://github.com/marklogic-community/marklogic-unit-test/pull/50) ([jamesagardner](https://github.com/jamesagardner))
-- Name change from ml-unit-test to marklogic-unit-test [\#43](https://github.com/marklogic-community/marklogic-unit-test/pull/43) ([dmcassel](https://github.com/dmcassel))
+- Fixing Issue \#44: assert-equal-json inconsistent in comparisons [\#85](https://github.com/marklogic-community/marklogic-unit-test/pull/85) ([cskeefer](https://github.com/cskeefer))
+- \#79 Updating assertion to be more specific [\#84](https://github.com/marklogic-community/marklogic-unit-test/pull/84) ([jamesagardner](https://github.com/jamesagardner))
+- \#79 Fixing module not found error when test module contains the test suite name [\#83](https://github.com/marklogic-community/marklogic-unit-test/pull/83) ([jamesagardner](https://github.com/jamesagardner))
+- Renaming marklogic-junit to marklogic-junit5 [\#78](https://github.com/marklogic-community/marklogic-unit-test/pull/78) ([rjrudin](https://github.com/rjrudin))
+- Improving the project landing page [\#73](https://github.com/marklogic-community/marklogic-unit-test/pull/73) ([jamesagardner](https://github.com/jamesagardner))
+- bintray config fixes [\#70](https://github.com/marklogic-community/marklogic-unit-test/pull/70) ([rjrudin](https://github.com/rjrudin))
 
-**Breaking Changes:**
-- The namespaces were updated due to [\#52](https://github.com/marklogic-community/marklogic-unit-test/issues/52) follow these [instructions for upgrading](https://github.com/marklogic-community/marklogic-unit-test/issues/52#issuecomment-487184896).
+## [1.0.beta](https://github.com/marklogic-community/marklogic-unit-test/tree/1.0.beta) (2019-04-26)
+[Full Changelog](https://github.com/marklogic-community/marklogic-unit-test/compare/v0.12.0...1.0.beta)
+
+**Implemented enhancements:**
+
+- Document Unit Testing Data Hub Framework \(DHF\) Flow [\#65](https://github.com/marklogic-community/marklogic-unit-test/issues/65)
+- Eliminate xdmp:eval\(\) [\#55](https://github.com/marklogic-community/marklogic-unit-test/issues/55)
+- Remove Roxy from Namespaces [\#52](https://github.com/marklogic-community/marklogic-unit-test/issues/52)
+- Add Failure Message to Assert Functions [\#51](https://github.com/marklogic-community/marklogic-unit-test/issues/51)
+- Support Nested Test Suites [\#45](https://github.com/marklogic-community/marklogic-unit-test/issues/45)
+- Allow substitutions during deployment [\#32](https://github.com/marklogic-community/marklogic-unit-test/issues/32)
+- Was not able to use the ml-unit-test framework [\#21](https://github.com/marklogic-community/marklogic-unit-test/issues/21)
+- \#45 Nested test suite support [\#54](https://github.com/marklogic-community/marklogic-unit-test/pull/54) ([jamesagardner](https://github.com/jamesagardner))
+
+**Closed issues:**
+
+- Difficult to run a unit test in qconsole [\#62](https://github.com/marklogic-community/marklogic-unit-test/issues/62)
+- Create Node client for REST endpoint [\#17](https://github.com/marklogic-community/marklogic-unit-test/issues/17)
+- Rename ml-unit-test-client? [\#16](https://github.com/marklogic-community/marklogic-unit-test/issues/16)
+
+**Merged pull requests:**
+
+- 1.0.0 Release [\#69](https://github.com/marklogic-community/marklogic-unit-test/pull/69) ([jamesagardner](https://github.com/jamesagardner))
+- Updating Namespace \#52 [\#68](https://github.com/marklogic-community/marklogic-unit-test/pull/68) ([jamesagardner](https://github.com/jamesagardner))
+- Merged marklogic-junit library into marklogic-unit-test [\#66](https://github.com/marklogic-community/marklogic-unit-test/pull/66) ([rjrudin](https://github.com/rjrudin))
+- Issue \#55: Converted xdmp:eval to xdmp:invoke-function [\#60](https://github.com/marklogic-community/marklogic-unit-test/pull/60) ([cskeefer](https://github.com/cskeefer))
+- Specify permissions and collections in test:load-test-file [\#59](https://github.com/marklogic-community/marklogic-unit-test/pull/59) ([cskeefer](https://github.com/cskeefer))
+- \#52 Removing Roxy from Namespaces [\#56](https://github.com/marklogic-community/marklogic-unit-test/pull/56) ([jamesagardner](https://github.com/jamesagardner))
+- Adding contributor information [\#50](https://github.com/marklogic-community/marklogic-unit-test/pull/50) ([jamesagardner](https://github.com/jamesagardner))
+- Updating formatting [\#49](https://github.com/marklogic-community/marklogic-unit-test/pull/49) ([jamesagardner](https://github.com/jamesagardner))
+- Docs name change [\#43](https://github.com/marklogic-community/marklogic-unit-test/pull/43) ([dmcassel](https://github.com/dmcassel))
 
 ## [v0.12.0](https://github.com/marklogic-community/marklogic-unit-test/tree/v0.12.0) (2018-09-20)
 [Full Changelog](https://github.com/marklogic-community/marklogic-unit-test/compare/0.11.2...v0.12.0)
-
 
 **Merged pull requests:**
 
@@ -72,6 +112,7 @@
 
 **Merged pull requests:**
 
+- run teardown by default [\#3](https://github.com/marklogic-community/marklogic-unit-test/pull/3) ([dmcassel](https://github.com/dmcassel))
 - fixing \#19 [\#22](https://github.com/marklogic-community/marklogic-unit-test/pull/22) ([paxtonhare](https://github.com/paxtonhare))
 - adding param to enable codeCoverage via ml-unit-test.xqy endpoint and… [\#20](https://github.com/marklogic-community/marklogic-unit-test/pull/20) ([hansenmc](https://github.com/hansenmc))
 - run setup/teardown with coverage and ensure all executed lines included in wanted lines [\#18](https://github.com/marklogic-community/marklogic-unit-test/pull/18) ([hansenmc](https://github.com/hansenmc))
@@ -98,7 +139,6 @@
 
 **Merged pull requests:**
 
-- run teardown by default [\#3](https://github.com/marklogic-community/marklogic-unit-test/pull/3) ([dmcassel](https://github.com/dmcassel))
 - Teardown scripts are now invoked by default as part of a single test [\#7](https://github.com/marklogic-community/marklogic-unit-test/pull/7) ([rjrudin](https://github.com/rjrudin))
 - Develop [\#6](https://github.com/marklogic-community/marklogic-unit-test/pull/6) ([dmcassel](https://github.com/dmcassel))
 

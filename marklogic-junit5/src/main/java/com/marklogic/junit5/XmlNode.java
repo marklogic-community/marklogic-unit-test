@@ -76,7 +76,7 @@ public class XmlNode {
 
 	public List<XmlNode> getXmlNodes(String xpath) {
 		List<Element> elements = evaluateForElements(xpath);
-		List<XmlNode> fragments = new ArrayList<XmlNode>();
+		List<XmlNode> fragments = new ArrayList<>();
 		for (Element el : elements) {
 			fragments.add(new XmlNode(el, this.namespaces));
 		}

@@ -54,7 +54,7 @@ declare function local:coverage-report()
 	let $params := map:new(( map:entry("test-dir", xdmp:get-request-field("/test/suites/")) ))
 	let $coverage-summary := coverage:summary($test-results/*)
 	return
-		xdmp:xslt-invoke("/test/xslt/coverage/report/" || $format || ".xsl", $coverage-summary)
+		xdmp:xslt-invoke("/test/xslt/coverage/report/" || $format || ".xsl", $coverage-summary, $params)
 };
 
 (:~

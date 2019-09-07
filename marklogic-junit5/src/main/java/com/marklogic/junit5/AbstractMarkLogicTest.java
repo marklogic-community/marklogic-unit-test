@@ -127,7 +127,6 @@ public abstract class AbstractMarkLogicTest extends LoggingObject {
 	/**
 	 * Verify that the document at the given URI is not in any of the given collections.
 	 *
-	 * @param message
 	 * @param uri
 	 * @param collections
 	 */
@@ -171,7 +170,6 @@ public abstract class AbstractMarkLogicTest extends LoggingObject {
 	 * convenience methods for asserting on the permissions on a document.
 	 *
 	 * @param uri
-	 * @param t
 	 * @return
 	 */
 	protected PermissionsTester readDocumentPermissions(String uri) {
@@ -184,7 +182,6 @@ public abstract class AbstractMarkLogicTest extends LoggingObject {
 	 * Convenience method for getting the properties for a document as a fragment.
 	 *
 	 * @param uri
-	 * @param client
 	 * @return
 	 */
 	protected XmlNode readDocumentProperties(String uri) {

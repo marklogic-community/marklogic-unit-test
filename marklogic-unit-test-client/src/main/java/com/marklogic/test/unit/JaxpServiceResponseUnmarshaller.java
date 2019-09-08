@@ -12,10 +12,11 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import org.xml.sax.InputSource;
 
 /**
  * JAXP-based implementation. Not the prettiest code, but doesn't have any 3rd-party dependencies,
@@ -139,7 +140,7 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 	protected Document parse(String xml) {
 		initializeDocumentBuilder();
 		try {
-			return documentBuilder.parse(new ByteArrayInputStream(xml.getBytes()));
+			return documentBuilder.parse(new InputSource(new StringReader(xml)));
 		} catch (Exception ex) {
 			throw new RuntimeException("Unable to parse test list XML, cause: " + ex.getMessage(), ex);
 		}

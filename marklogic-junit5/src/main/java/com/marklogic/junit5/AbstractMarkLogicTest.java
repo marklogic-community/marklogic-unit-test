@@ -34,11 +34,6 @@ import java.util.List;
 public abstract class AbstractMarkLogicTest extends LoggingObject {
 
 	/**
-	 * A Logger is declared, as the SLF4J Logger API is brought in via the ml-javaclient-util dependency.
-	 */
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-	/**
 	 * Subclass must define how a connection is made to (presumably) the test database.
 	 *
 	 * @return

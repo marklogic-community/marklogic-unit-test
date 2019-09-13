@@ -1,10 +1,11 @@
 # Change Log
 
-## [1.0.0](https://github.com/marklogic-community/marklogic-unit-test/tree/1.0.0) (2019-09-06)
+## [1.0.0](https://github.com/marklogic-community/marklogic-unit-test/tree/1.0.0) (2019-09-13)
 [Full Changelog](https://github.com/marklogic-community/marklogic-unit-test/compare/1.0.beta...1.0.0)
 
 **Implemented enhancements:**
 
+- assert-equal-json no longer reports the location of comparison differences [\#37](https://github.com/marklogic-community/marklogic-unit-test/issues/37)
 - Add documentation for developing and testing ml-unit-test locally [\#29](https://github.com/marklogic-community/marklogic-unit-test/issues/29)
 - Support Testing of the MarkLogic Data Hub Framework \(DHF\) [\#26](https://github.com/marklogic-community/marklogic-unit-test/issues/26)
 - Support testing of REST services [\#25](https://github.com/marklogic-community/marklogic-unit-test/issues/25)
@@ -19,16 +20,29 @@
 
 - ML10 gradle project has error with unit test [\#86](https://github.com/marklogic-community/marklogic-unit-test/issues/86)
 - Updating docs to reflect renamed dependency [\#80](https://github.com/marklogic-community/marklogic-unit-test/issues/80)
+- How to test DHF project that uses multiple databases [\#74](https://github.com/marklogic-community/marklogic-unit-test/issues/74)
 - Document how to include marklogic-unit-test and set up for a Data Hub [\#36](https://github.com/marklogic-community/marklogic-unit-test/issues/36)
 
 **Merged pull requests:**
 
+- Removing Roxy reference [\#103](https://github.com/marklogic-community/marklogic-unit-test/pull/103) ([jamesagardner](https://github.com/jamesagardner))
+- Updating MarkLogic Copyrights to 2019 [\#102](https://github.com/marklogic-community/marklogic-unit-test/pull/102) ([jamesagardner](https://github.com/jamesagardner))
+- Updating 1.0.beta references to 1.0.0 [\#101](https://github.com/marklogic-community/marklogic-unit-test/pull/101) ([jamesagardner](https://github.com/jamesagardner))
+- Abstract mark logic test logger [\#99](https://github.com/marklogic-community/marklogic-unit-test/pull/99) ([hansenmc](https://github.com/hansenmc))
+- JaxpServiceResponseUnmarshaller.parse\(\) relies upon default character encoding [\#98](https://github.com/marklogic-community/marklogic-unit-test/pull/98) ([hansenmc](https://github.com/hansenmc))
+- Update XmlNode.java to use the diamond operator \<\> [\#97](https://github.com/marklogic-community/marklogic-unit-test/pull/97) ([hansenmc](https://github.com/hansenmc))
+- change hard-coded namespace-prefix test from name\(\) to use self axis [\#96](https://github.com/marklogic-community/marklogic-unit-test/pull/96) ([hansenmc](https://github.com/hansenmc))
+- apply $params in xdmp:xslt-invoke\(\) for coverage report format transform [\#95](https://github.com/marklogic-community/marklogic-unit-test/pull/95) ([hansenmc](https://github.com/hansenmc))
+- Update CONTRIBUTING.md [\#94](https://github.com/marklogic-community/marklogic-unit-test/pull/94) ([hansenmc](https://github.com/hansenmc))
+- fix AbstractMarkLogicTest.java javadocs [\#93](https://github.com/marklogic-community/marklogic-unit-test/pull/93) ([hansenmc](https://github.com/hansenmc))
+- Fixing Travis CI error [\#90](https://github.com/marklogic-community/marklogic-unit-test/pull/90) ([jamesagardner](https://github.com/jamesagardner))
 - Fixing Issue \#44: assert-equal-json inconsistent in comparisons [\#85](https://github.com/marklogic-community/marklogic-unit-test/pull/85) ([cskeefer](https://github.com/cskeefer))
 - \#79 Updating assertion to be more specific [\#84](https://github.com/marklogic-community/marklogic-unit-test/pull/84) ([jamesagardner](https://github.com/jamesagardner))
 - \#79 Fixing module not found error when test module contains the test suite name [\#83](https://github.com/marklogic-community/marklogic-unit-test/pull/83) ([jamesagardner](https://github.com/jamesagardner))
 - Renaming marklogic-junit to marklogic-junit5 [\#78](https://github.com/marklogic-community/marklogic-unit-test/pull/78) ([rjrudin](https://github.com/rjrudin))
 - Improving the project landing page [\#73](https://github.com/marklogic-community/marklogic-unit-test/pull/73) ([jamesagardner](https://github.com/jamesagardner))
 - bintray config fixes [\#70](https://github.com/marklogic-community/marklogic-unit-test/pull/70) ([rjrudin](https://github.com/rjrudin))
+- \#46 Change test failure stack output from encoded XML to a nested text format [\#61](https://github.com/marklogic-community/marklogic-unit-test/pull/61) ([jonesyface](https://github.com/jonesyface))
 
 ## [1.0.beta](https://github.com/marklogic-community/marklogic-unit-test/tree/1.0.beta) (2019-04-26)
 [Full Changelog](https://github.com/marklogic-community/marklogic-unit-test/compare/v0.12.0...1.0.beta)
@@ -112,7 +126,6 @@
 
 **Merged pull requests:**
 
-- run teardown by default [\#3](https://github.com/marklogic-community/marklogic-unit-test/pull/3) ([dmcassel](https://github.com/dmcassel))
 - fixing \#19 [\#22](https://github.com/marklogic-community/marklogic-unit-test/pull/22) ([paxtonhare](https://github.com/paxtonhare))
 - adding param to enable codeCoverage via ml-unit-test.xqy endpoint and… [\#20](https://github.com/marklogic-community/marklogic-unit-test/pull/20) ([hansenmc](https://github.com/hansenmc))
 - run setup/teardown with coverage and ensure all executed lines included in wanted lines [\#18](https://github.com/marklogic-community/marklogic-unit-test/pull/18) ([hansenmc](https://github.com/hansenmc))
@@ -139,6 +152,7 @@
 
 **Merged pull requests:**
 
+- run teardown by default [\#3](https://github.com/marklogic-community/marklogic-unit-test/pull/3) ([dmcassel](https://github.com/dmcassel))
 - Teardown scripts are now invoked by default as part of a single test [\#7](https://github.com/marklogic-community/marklogic-unit-test/pull/7) ([rjrudin](https://github.com/rjrudin))
 - Develop [\#6](https://github.com/marklogic-community/marklogic-unit-test/pull/6) ([dmcassel](https://github.com/dmcassel))
 

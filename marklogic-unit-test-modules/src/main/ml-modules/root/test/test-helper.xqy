@@ -47,9 +47,9 @@ declare variable $test:__CALLER_FILE__ := test:get-caller();
 declare function test:get-caller()
 as xs:string
 {
-  try {fn:error((), "ROXY-BOOM")}
+  try {fn:error((), "GETTING-CALL-STACK-FROM-ERROR")}
   catch ($ex) {
-    if ($ex/error:code ne 'ROXY-BOOM') then xdmp:rethrow()
+    if ($ex/error:code ne "GETTING-CALL-STACK-FROM-ERROR") then xdmp:rethrow()
     else (
       let $uri-list := $ex/error:stack/error:frame/error:uri/fn:string()
       let $this := $uri-list[1]

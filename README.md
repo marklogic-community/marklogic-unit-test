@@ -32,7 +32,7 @@ buildscript {
     mavenLocal()
   }
   dependencies {
-    classpath "com.marklogic:marklogic-unit-test-client:1.0.beta"
+    classpath "com.marklogic:marklogic-unit-test-client:1.0.0"
     classpath "com.marklogic:ml-gradle:3.14.0"
   }
 }
@@ -44,7 +44,7 @@ repositories {
 }
 
 dependencies {
-  mlBundle "com.marklogic:marklogic-unit-test-modules:1.0.beta"
+  mlBundle "com.marklogic:marklogic-unit-test-modules:1.0.0"
 }
 ```
 

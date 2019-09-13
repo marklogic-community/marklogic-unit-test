@@ -1,5 +1,5 @@
 (:
-Copyright 2012-2015 MarkLogic Corporation
+Copyright 2012-2019 MarkLogic Corporation
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -47,9 +47,9 @@ declare variable $test:__CALLER_FILE__ := test:get-caller();
 declare function test:get-caller()
 as xs:string
 {
-  try {fn:error((), "ROXY-BOOM")}
+  try {fn:error((), "GETTING-CALL-STACK-FROM-ERROR")}
   catch ($ex) {
-    if ($ex/error:code ne 'ROXY-BOOM') then xdmp:rethrow()
+    if ($ex/error:code ne "GETTING-CALL-STACK-FROM-ERROR") then xdmp:rethrow()
     else (
       let $uri-list := $ex/error:stack/error:frame/error:uri/fn:string()
       let $this := $uri-list[1]
@@ -726,7 +726,10 @@ declare function test:assert-equal-json-recursive($object1, $object2) as xs:bool
           test:assert-equal-json-recursive($v1, $v2)
       return $counts-equal and fn:not($maps-equal = fn:false())
     default return
-      $object1 = $object2
+      if(fn:empty($object1) and fn:empty($object2)) then
+        fn:true()
+      else
+        $object1 = $object2
 };
 
 declare function test:assert-true($conditions as xs:boolean*) {

@@ -1,5 +1,5 @@
 (:
-Copyright 2012-2015 MarkLogic Corporation
+Copyright 2012-2019 MarkLogic Corporation
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ declare function local:coverage-report()
 	let $params := map:new(( map:entry("test-dir", xdmp:get-request-field("/test/suites/")) ))
 	let $coverage-summary := coverage:summary($test-results/*)
 	return
-		xdmp:xslt-invoke("/test/xslt/coverage/report/" || $format || ".xsl", $coverage-summary)
+		xdmp:xslt-invoke("/test/xslt/coverage/report/" || $format || ".xsl", $coverage-summary, $params)
 };
 
 (:~

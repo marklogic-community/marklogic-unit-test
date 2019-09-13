@@ -48,7 +48,7 @@
         <xsl:text>&lt;</xsl:text>
         <xsl:value-of select="name()"/>
         <xsl:apply-templates select="@*" mode="serialize" />
-        <xsl:if test="name() = 'error:error'">
+        <xsl:if test="self::error:error">
             <xsl:for-each select="namespace::*">
                 <xsl:text> </xsl:text>
                 <xsl:value-of select="name()"/>

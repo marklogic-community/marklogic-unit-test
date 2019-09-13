@@ -39,7 +39,7 @@ Next, add the following dependencies - this assumes you're using Gradle version 
     dependencies {
       // existing dependencies
       
-      testCompile "com.marklogic:marklogic-junit5:1.0.beta"
+      testCompile "com.marklogic:marklogic-junit5:1.0.0"
             
       testRuntime "org.junit.jupiter:junit-jupiter-engine:5.3.0"
     

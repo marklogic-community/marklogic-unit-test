@@ -274,10 +274,19 @@ declare function format-junit($result as element())
 					element failure {
 						attribute type {fn:data($result/error:error/error:name)},
 						attribute message {fn:data($result/error:error/error:message)},
-						xdmp:quote($result/error:error)
+						format-result($result/error:error, ())
 					}
 			}
 	}
+};
+
+declare private function format-result($result as element(), $tab as xs:string?) {
+  for $node in $result/*
+  let $tab := '&#9;' || $tab
+  return (
+    $tab || $node/fn:local-name() || ': ' || fn:normalize-space($node/text()) || '&#10;',
+    if ($node/*) then format-result($node, $tab) else ()
+  )
 };
 
 declare private function run-setup-or-teardown($setup as xs:boolean, $suite as xs:string)

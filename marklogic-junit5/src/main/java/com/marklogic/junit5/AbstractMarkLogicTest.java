@@ -14,7 +14,6 @@ import com.marklogic.test.unit.TestResult;
 import com.marklogic.test.unit.TestSuiteResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-
 import java.util.List;
 
 /**

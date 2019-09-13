@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 (:
- : Copyright 2012-2018 MarkLogic Corporation
+ : Copyright 2012-2019 MarkLogic Corporation
  :
  : Licensed under the Apache License, Version 2.0 (the "License");
  : you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ xquery version "1.0-ml";
  : Code adapted from xray
  : https://github.com/robwhitby/xray/tree/v2.1
  :
- : Modifications copyright (c) 2018 MarkLogic Corporation
+ : Modifications copyright (c) 2018-2019 MarkLogic Corporation
  :)
 module namespace cover="http://marklogic.com/test/coverage";
 

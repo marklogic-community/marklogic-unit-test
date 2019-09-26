@@ -11,7 +11,35 @@ permalink: /docs/testing-with-xquery/
 
 ## Testing XQuery With XQuery
 
-*TODO*
+```
+(: Scenario 1 - Test assert all exist with assert-equal for success :)
+xquery version "1.0-ml";
+
+import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
+
+let $count := 2
+let $testSequence := (1,2)
+let $result := test:assert-all-exist($count, $testSequence)
+return test:assert-equal($result/@type/string(), "success")
+
+(: Scenario 2 - Test assert all exist with assert-equal for exception error :)
+xquery version "1.0-ml";
+
+import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
+declare namespace error = "http://marklogic.com/xdmp/error";
+
+let $count := 3
+let $testSequence := (1,2)
+let $errorMessage := "Assert All Exist failed"
+let $result := 
+try{
+  test:assert-all-exist($count, $testSequence)
+} catch($err) {
+  $err
+}
+return test:assert-equal($result//error:code/string(), $errorMessage)
+
+```
 
 ## Test Server-side JavaScript with XQuery
 

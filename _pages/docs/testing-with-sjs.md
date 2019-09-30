@@ -61,29 +61,13 @@ Note that the last line returns the `assertions` array.
 ### Testing For Expected Errors
 
 ```javascript
-let leftArray = [1,2,3]
-let rightArray = [1,2,3,4]
+const test = require('/test/test-helper.xqy');
 
-// Scenario 1: Expected message hard coded
-
-try{
-  test.assertEqual(leftArray, rightArray)
-} catch(err) {
-  test.assertEqual(err.message, "Assert Equal failed:")
+try {
+    throw "wrong error message";
+} catch (error) {
+    test.assertEqual("expected error message", error, "Did not find expected error message");
 }
-// Scenario 2: Expected message passed in
-let leftArray = [1,2,3]
-let rightArray = [1,2,3,4]
-let message = "Assert Equal failed:"
-
-// Scenario 1: Expected message hard coded
-
-try{
-  test.assertEqual(leftArray, rightArray, message)
-} catch(err) {
-  test.assertEqual(err.message, message)
-}
-Both the scenarios checks left and right arrays and since they are not equal throws an exception. The exception message is validated with assertEqual as part of the test case
 ```
 
 ## Testing XQuery using SJS
@@ -124,19 +108,4 @@ assertions.push(
 );
 
 assertions
-```
-
-### Testing For Expected Errors
-
-```javascript
-let leftSequence= (1,2,3)
-let rightSequence = (1,2,3,4)
-let message = "Assert Equal failed:"
-
-try{
-  test.assertEqual(leftSequence, rightSequence, message)
-} catch(err) {
-  test.assertEqual(err.message, message)
-}
-Checks left and right arrays and since they are not equal throws an exception. The exception message is validated with assertEqual as part of the test case
 ```

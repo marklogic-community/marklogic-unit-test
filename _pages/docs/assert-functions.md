@@ -8,6 +8,7 @@ permalink: /docs/assertions/
 ## Assert Functions
 
 The testing component has a [helper library](https://github.com/marklogic-community/marklogic-unit-test/blob/master/marklogic-unit-test-modules/src/main/ml-modules/root/test/test-helper.xqy) that provides several assert functions:
+
 * assert-http-get-status($url as xs:string, $options as item()?, $status-code)
 * assert-http-get-status($url as xs:string, $options as item()?, $status-code, $message as xs:string\*)
 * assert-http-post-status($url as xs:string, $options as item()?, $data as node()?, $status-code)
@@ -45,14 +46,7 @@ The testing component has a [helper library](https://github.com/marklogic-commun
 * assert-throws-error-with-message($function as xdmp:function, $expected-error-code as xs:string, $expected-message as xs:string, $message as xs:string\*)
 * assert-throws-error($function as xdmp:function)
 * assert-throws-error($function as xdmp:function, $error-code as xs:string?)
-* assert-throws-error($function as xdmp:function, $param1 as item()\*, $error-code as xs:string?)
-* assert-throws-error($function as xdmp:function, $param1 as item()\*, $param2 as item()\*, $error-code as xs:string?)
-* assert-throws-error($function as xdmp:function, $param1 as item()\*, $param2 as item()\*, $param3 as item()\*, $error-code as xs:string?)
-* assert-throws-error($function as xdmp:function, $param1 as item()\*, $param2 as item()\*, $param3 as item()\*, $param4 as item()\*, $error-code as xs:string?)
-* assert-throws-error($function as xdmp:function, $param1 as item()\*, $param2 as item()\*, $param3 as item()\*, $param4 as item()\*, $param5 as item()\*, $error-code as xs:string?)
-* assert-throws-error($function as xdmp:function, $param1 as item()\*, $param2 as item()\*, $param3 as item()\*, $param4 as item()\*, $param5 as item()\*, $param6 as item()\*, $error-code as xs:string?)
-* assert-throws-error_($function as xdmp:function, $params as json:array, $error-code as xs:string?, $expected-error-message as xs:string?)
-* assert-throws-error_($function as xdmp:function, $params as json:array, $error-code as xs:string?, $expected-error-message as xs:string?, $message as xs:string\*)
+* assert-throws-error($function as xdmp:function, $param as item()\*, $error-code as xs:string?)
 
 It is good practice to use a specific assert function. So rather than:
 

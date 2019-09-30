@@ -7,228 +7,139 @@ permalink: /docs/testing-with-xquery/
 
 ## Testing XQuery With XQuery
 
-### Scenario 1 - Test assert all exist with assert-equal for success
+### Scenario 1 - Test assert all exist and this is a failing test case
 ```
 xquery version "1.0-ml";
 
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
 let $count := 2
 let $testSequence := (1,2)
-let $result := test:assert-all-exist($count, $testSequence)
-return test:assert-equal($result/@type/string(), "success")
+return test:assert-all-exist($count, $testSequence, "Did not find expected number of items in the sequence")
 ```
-### Scenario 2 - Test assert all exist with assert-equal for exception error
-```
-xquery version "1.0-ml";
-
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
-declare namespace error = "http://marklogic.com/xdmp/error";
-
-let $count := 3
-let $testSequence := (1,2)
-let $errorMessage := "Assert All Exist failed"
-let $result := 
-try{
-  test:assert-all-exist($count, $testSequence)
-} catch($err) {
-  $err
-}
-return test:assert-equal($result//error:code/string(), $errorMessage)
-```
-### Scenario 3 - Test assert same values with same sequences for left and right
+### Scenario 2 - Test assert same values with same sequences for expected and actual. This is a success test case
 ```
 xquery version "1.0-ml";
 
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
-let $leftSequence := ("a","b","c")
-let $rightSequence := ("a","b","c")
-return test:assert-same-values($leftSequence, $rightSequence)
+let $expected := ("a","b","c")
+let $actual := ("a","b","c")
+return test:assert-same-values($expected, $actual)
 ```
-### Scenario 4 - Test assert same values with different sequences for left and right. This generates an exception that is validated with the actual value to get success status
+### Scenario 3 - Test assert same values with different sequences for expected and actual. This is a failing test case
 ```
  xquery version "1.0-ml";
 
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
-declare namespace error = "http://marklogic.com/xdmp/error";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
-let $leftSequence := ("a","d","c")
-let $rightSequence := ("a","b","c")
-let $formattedErrorMessage := "Assert Equal failed (ASSERT-EQUAL-FAILED): a c d a b c"
-return 
-try{
-  test:assert-same-values($leftSequence, $rightSequence)
-} catch($err) {
-  test:assert-equal($err//error:format-string/string(), $formattedErrorMessage)
-}
+let $expected := ("a","d","c")
+let $actual := ("a","b","c")
+return test:assert-same-values($expected, $actual, "Expected values did not match with actual values")
 ```
-### Scenario 5 - Test assert equal xml - all attributes and elements matched
+### Scenario 4 - Test assert equal xml - all attributes and elements matched. This is a success test case
 ```
 xquery version "1.0-ml";
 
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
-declare namespace t = "http://marklogic.com/roxy/test";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
-let $actual := <t:test type="actual" xmlns:t="http://marklogic.com/roxy/test"><code>abc</code></t:test>
-let $expected := <t:test  type="actual" xmlns:t="http://marklogic.com/roxy/test"><code>abc</code></t:test>
-return
-try{
-	test:assert-equal-xml($actual, $expected)
-} catch($err) {
- $err
-}
+let $actual := <element attribute="attribute-value">element value</element>
+let $expected := <element attribute="attribute-value">element value</element>
+
+return test:assert-equal-xml($expected, $actual)
 ```
-### Scenario 6 - Test assert equal xml - attributes mis-match and test expected error
+### Scenario 5 - Test assert equal xml - attributes mis-match. This is a failing test case
 ```
 xquery version "1.0-ml";
 
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
-declare namespace t = "http://marklogic.com/roxy/test";
-declare namespace error = "http://marklogic.com/xdmp/error";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
-let $actual := <t:test type="actual" xmlns:t="http://marklogic.com/roxy/test"><code>abc</code></t:test>
-let $expected := <t:test  type="expected" xmlns:t="http://marklogic.com/roxy/test"><code>abc</code></t:test>
-let $errorMessageExpected := "Assert Equal failed (ASSERT-EQUAL-FAILED): actual expected  :  mismatched attribute text ($expected= /t:test/@type , $actual= /t:test/@type )"
-return
-try{
-	test:assert-equal-xml($actual, $expected)
-} catch($err) {
- test:assert-equal($err/error:format-string/string(), $errorMessageExpected)
-}
+let $expected := <xml attribute="attribute-value-expected">expected value</xml>
+let $actual := <xml attribute="attribute-value-unexpected">expected value</xml>
+return test:assert-equal-xml($expected, $actual)
 ```
-#### Scenario 7 - Test assert equal xml - element value mis-match and test expected error
+#### Scenario 6 - Test assert equal xml - element value mis-match. This is a failing test case
 ```
 xquery version "1.0-ml";
 
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
-declare namespace t = "http://marklogic.com/roxy/test";
-declare namespace error = "http://marklogic.com/xdmp/error";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
-let $actual := <t:test type="actual" xmlns:t="http://marklogic.com/roxy/test"><code>abc</code></t:test>
-let $expected := <t:test  type="actual" xmlns:t="http://marklogic.com/roxy/test"><code>abcd</code></t:test>
-let $errorMessageExpected := "Assert Equal failed (ASSERT-EQUAL-FAILED): abc abcd  :  mismatched element text ($expected= /t:test/code , $actual= /t:test/code )"
-return
-try{
-	test:assert-equal-xml($actual, $expected)
-} catch($err) {
- test:assert-equal($err/error:format-string/string(), $errorMessageExpected)
-}
+let $expected := <xml>expected value</xml>
+let $actual := <xml>unexpected value</xml>
+return test:assert-equal-xml($expected, $actual)
 ```
-### Scenario 8 - Test assert equal JSON - same json node and values as json object
+### Scenario 7 - Test assert equal JSON - Object node properties match. This is a success test case
 ```
 xquery version "1.0-ml";
 
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
-let $actual := json:object()
-let $_ := map:put($actual,"a",111)
-let $_ := map:put($actual,"b",222)
-
-let $expected := json:object()
-let $_ := map:put($expected,"a",111)
-let $_ := map:put($expected,"b",222)
-
-return
-try{
-	test:assert-equal-json($actual, $expected)
-} catch($err) {
- $err
+let $expected := object-node {
+  "firstProperty": "first value",
+  "secondProperty": "second value"
 }
+
+let $actual := object-node {
+  "firstProperty": "first value",
+  "secondProperty": "second value"
+}
+return test:assert-equal-json($expected, $actual)
 ```
-### Scenario 9 - Test assert equal JSON - same json node and values as json document
+### Scenario 8 - Test assert equal JSON - Node property missing. This is a failing test case
 ```
 xquery version "1.0-ml";
 
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
-let $actual := json:object()
-let $_ := map:put($actual,"a",111)
-let $_ := map:put($actual,"b",222)
-
-let $actualJson := xdmp:to-json($actual)
-let $expected := json:object()
-let $_ := map:put($expected,"a",111)
-let $_ := map:put($expected,"b",222)
-let $expectedJson := xdmp:to-json($expected)
-
-return
-try{
-	test:assert-equal-json($actualJson, $expectedJson)
-} catch($err) {
- $err
+let $expected := object-node {
+  "firstProperty": "first value",
+  "secondProperty": "second value",
+  "thirdProperty": "third value"
 }
+
+let $actual := object-node {
+  "firstProperty": "first value",
+  "secondProperty": "second value"
+}
+return test:assert-equal-json($expected, $actual, "missing object node property thirdproperty in actual")
 ```
-### Scenario 10 - Test assert equal JSON - Node mismatch as json document and validate expected error message
+### Scenario 9 - Test assert equal JSON - Node value mismatch for one of the property. This is a failing test case
+```
+xquery version "1.0-ml";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
+
+let $expected := object-node {
+  "firstProperty": "first value",
+  "secondProperty": "second value",
+  "thirdProperty": "third value"
+}
+
+let $actual := object-node {
+  "firstProperty": "first value",
+  "secondProperty": "second value",
+  "thirdProperty": "unexpected value"
+}
+
+return test:assert-equal-json($expected, $actual)
+This test fails because the actual JSON property 'thirdProperty' had a value of unexpected value, when the expected JSON property 'thirdProperty' had a value of third value.
+```
+### Scenario 10 - Test assert-http-get-status - Look for a document that doesn't exist after a valid authentication
 ```
 xquery version "1.0-ml";
 
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
-
-let $actual := json:object()
-let $_ := map:put($actual,"a",111)
-let $_ := map:put($actual,"b",222)
-let $_ := map:put($actual,"c",333)
-
-let $actualJson := xdmp:to-json($actual)
-let $expected := json:object()
-let $_ := map:put($expected,"a",111)
-let $_ := map:put($expected,"b",222)
-let $expectedJson := xdmp:to-json($expected)
-let $errorMessageExpected := "Assert Equal Json failed (ASSERT-EQUAL-JSON-FAILED): " || $actualJson || " " || $expectedJson
-return
-try{
-	test:assert-equal-json($actualJson, $expectedJson)
-} catch($err) {
- test:assert-equal($err/error:format-string/string(), $errorMessageExpected)
-}
-```
-### Scenario 11 - Test assert equal JSON - Node value mismatch as json document and validate expected error message
-```
-xquery version "1.0-ml";
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
-
-let $actual := json:object()
-let $_ := map:put($actual,"a",111)
-let $_ := map:put($actual,"b",222)
-let $_ := map:put($actual,"c",333)
-
-let $actualJson := xdmp:to-json($actual)
-let $expected := json:object()
-let $_ := map:put($expected,"a",111)
-let $_ := map:put($expected,"b",222)
-let $_ := map:put($expected,"c",444)
-let $expectedJson := xdmp:to-json($expected)
-let $errorMessageExpected := "Assert Equal Json failed (ASSERT-EQUAL-JSON-FAILED): " || $actualJson || " " || $expectedJson
-return
-try{
-test:assert-equal-json($actualJson, $expectedJson)
-} catch($err) {
- test:assert-equal($err/error:format-string/string(), $errorMessageExpected)
-}
-```
-### Scenario 12 - Test assert http get status - Look for a document that does n't exist after a valid authentication with correct user name and passwd
-```
-xquery version "1.0-ml";
-
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
 let $url := "http://localhost:8000/v1/documents?uri=document_does_not_exist.xml"
 let $options :=      
 <options xmlns="xdmp:http">
    <authentication method="digest">
-     <username>admin</username>
-     <password>admin</password>
+     <username>%%mlUsername%%</username>
+     <password>%%mlPassword%%</password>
    </authentication>
 </options>
 let $status-code := 404
-
-return
-try {
-  test:assert-http-get-status( $url, $options, $status-code)
-} catch ($err) {
-  $err
-}
+return test:assert-http-get-status( $url, $options, $status-code)
+Note that the username and password are substituted from gradle.properties for authentication
 ```
 
 ## Test Server-side JavaScript with XQuery
@@ -238,7 +149,7 @@ You can write unit tests in XQuery to test code written in JavaScript. The one t
 ```
 xquery version "1.0-ml";
 
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
 let $actual := xdmp:javascript-eval(
   "var simple = require ('/lib/simple.sjs');

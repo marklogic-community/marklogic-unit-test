@@ -14,7 +14,7 @@ xquery version "1.0-ml";
 import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
 let $count := 2
-let $testSequence := (1,2)
+let $testSequence := (1,2,3)
 return test:assert-all-exist($count, $testSequence, "Did not find expected number of items in the sequence")
 ```
 ### Scenario 2 - Test assert same values with same sequences for expected and actual. This is a success test case

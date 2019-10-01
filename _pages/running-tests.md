@@ -46,7 +46,7 @@ You can also access the marklogic-unit-test REST endpoints directly: http://loca
 The response will look like this:
 
 ```xml
-<t:tests xmlns:t="http://marklogic.com/roxy/test">
+<t:tests xmlns:t="http://marklogic.com/test">
   <t:suite path="auditing">
     <t:tests>
       <t:test path="document-history.sjs"/>
@@ -56,7 +56,7 @@ The response will look like this:
       <t:test path="remerge.sjs"/>
     </t:tests>
   </t:suite>
-</t:tests:>
+</t:tests>
 ```
 
 In most cases, you'll have more than one suite defined. 

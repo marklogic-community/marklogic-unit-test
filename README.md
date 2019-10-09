@@ -19,8 +19,8 @@ Testing MarkLogic from a Java project is made easy with marklogic-junit5:
 
 MarkLogic unit test can easily be integrated into your project as an [ml-bundle](https://github.com/marklogic-community/ml-gradle/wiki/Bundles).
   The following steps will configure a project to import and use marklogic-unit-tests.
-  
-If you'd like to skip straight to the end, you can check out a [working example project](https://github.com/marklogic-community/ml-gradle/tree/dev/examples/unit-test-project). 
+
+If you'd like to skip straight to the end, you can check out a [working example project](https://github.com/marklogic-community/ml-gradle/tree/dev/examples/unit-test-project).
 You can use that project's `build.gradle` file as an example of how to use marklogic-unit-test in your own project.
 
 ### Add marklogic-unit-test to `build.gradle`
@@ -33,7 +33,7 @@ buildscript {
   }
   dependencies {
     classpath "com.marklogic:marklogic-unit-test-client:1.0.0"
-    classpath "com.marklogic:ml-gradle:3.14.0"
+    classpath "com.marklogic:ml-gradle:3.16.1"
   }
 }
 
@@ -51,20 +51,20 @@ dependencies {
 ### Add Test Properties to `gradle.properties`
 
 ```properties
-// Settings for any ml-gradle project
-mlHost=localhost    // Assuming local development
-mlAppName=my-app    // Application name, defaults to my-app
-mlRestPort=8003     // Application Port, defaults to 8003
-mlUsername=         // Username used to manage MarkLogic
-mlPassword=         // Password used to manage MarkLogic
+# Settings for any ml-gradle project
+mlHost=localhost    # Assuming local development
+mlAppName=my-app    # Application name, defaults to my-app
+mlRestPort=8003     # Application Port, defaults to 8003
+mlUsername=         # Username used to manage MarkLogic
+mlPassword=         # Password used to manage MarkLogic
 
 
-// Settings specific to marklogic-unit-test
-mlTestRestPort=8004 // Testing port, view and run tests from this port
+# Settings specific to marklogic-unit-test
+mlTestRestPort=8004 # Testing port, view and run tests from this port
 
-// ml-gradle supports deploying to multiple environments (https://github.com/marklogic-community/ml-gradle/wiki/Configuring-ml-gradle#environment-based-properties).\
-// Add the following line to gradle-{env}.properties files for which you would like to deploy the tests. Typically
-// tests are only deployed to environments that execute automated tests, like local development and CI environments. 
+# ml-gradle supports deploying to multiple environments (https://github.com/marklogic-community/ml-gradle/wiki/Configuring-ml-gradle#environment-based-properties).\
+# Add the following line to gradle-{env}.properties files for which you would like to deploy the tests. Typically
+# tests are only deployed to environments that execute automated tests, like local development and CI environments.
 mlModulePaths=src/main/ml-modules,src/test/ml-modules
 ```
 
@@ -92,6 +92,11 @@ If this is a project that's new to marklogic-unit-tests no test suites are displ
 Creating test suites is easy using the mlGenerateUnitTestSuite gradle task.  Run the following to setup a sample test suite:
 ```sh
 ./gradlew mlGenerateUnitTestSuite
+```
+
+More options exist for mlGenerateUnitTestSuite, consult the gradle help
+```sh
+./gradlew help --task mlGenerateUnitTestSuite
 ```
 
 Now a new test suite has been generated in `src/test/ml-modules/root/test/suites` called `SampleTestSuite`.

@@ -173,7 +173,7 @@ declare function test:get-modules-file($file as xs:string, $format as xs:string?
         xdmp:unquote($doc)
 };
 
-declare variable $local-url as xs:string := xdmp:get-request-protocol() || "://localhost:" || xdmp:get-request-port();
+declare variable $local-url as xs:string := xdmp:get-request-protocol() || "://%%mlHost%%:" || xdmp:get-request-port();
 declare variable $test:DEFAULT_HTTP_OPTIONS := element xdmp-http:options {
   let $credential-id := xdmp:invoke-function(function() {
     xdmp:apply(xdmp:function(xs:QName('sec:credential-get-id'), "/MarkLogic/security.xqy"), "marklogic-unit-test-credentials")

@@ -7,12 +7,12 @@ test:assert-throws-error-with-message(
     test:assert-less-than-or-equal(6, 7)
   },
   "ASSERT-LESS-THAN-OR-EQUAL-FAILED",
-  "actual: 7 is greater than maximum: 6"
+  "actual: 7 is not less than or equal to value: 6"
 ),
 test:assert-throws-error-with-message(
   function() {
     test:assert-less-than-or-equal(6, (5, 6, 7), "Failure message")
   },
   "ASSERT-LESS-THAN-OR-EQUAL-FAILED",
-  "Failure message; actual: (5, 6, 7) is greater than maximum: 6"
+  "Failure message; actual: (5, 6, 7) is not less than or equal to value: 6"
 )

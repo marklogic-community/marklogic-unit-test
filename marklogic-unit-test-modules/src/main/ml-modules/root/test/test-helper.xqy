@@ -818,19 +818,19 @@ declare function test:assert-greater-than-or-equal($minimum as xs:decimal, $actu
 };
 
 declare function test:assert-greater-than-or-equal(
-  $minimum as xs:decimal,
+  $value as xs:decimal,
   $actual as xs:decimal+,
   $message as xs:string*
 ) {
-  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] ge $minimum) then
+  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] ge $value) then
     test:success()
   else
     let $message :=
       fn:string-join((
         $message,
-        "actual: " || xdmp:describe($actual) || " is less than minimum: " || xdmp:describe($minimum)
+        "actual: " || xdmp:describe($actual) || " is not greater than or equal to value: " || xdmp:describe($value)
       ), "; ")
-    return fn:error(xs:QName("ASSERT-GREATER-THAN-OR-EQUAL-FAILED"), $message, ($minimum, $actual))
+    return fn:error(xs:QName("ASSERT-GREATER-THAN-OR-EQUAL-FAILED"), $message, ($value, $actual))
 };
 
 declare function test:assert-less-than-or-equal($maximum as xs:decimal, $actual as xs:decimal+) {
@@ -838,20 +838,20 @@ declare function test:assert-less-than-or-equal($maximum as xs:decimal, $actual 
 };
 
 declare function test:assert-less-than-or-equal(
-  $maximum as xs:decimal,
+  $value as xs:decimal,
   $actual as xs:decimal+,
   $message as xs:string?
 ) {
-  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] le $maximum) then
+  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] le $value) then
     test:success()
   else
     fn:error(
       xs:QName("ASSERT-LESS-THAN-OR-EQUAL-FAILED"),
       fn:string-join((
         $message,
-        "actual: " || xdmp:describe($actual) || " is greater than maximum: " || xdmp:describe($maximum)
+        "actual: " || xdmp:describe($actual) || " is not less than or equal to value: " || xdmp:describe($value)
       ), "; "),
-      ($maximum, $actual))
+      ($value, $actual))
 };
 
 declare function test:assert-throws-error-with-message($function as xdmp:function, $expected-error-code as xs:string, $expected-message as xs:string) {

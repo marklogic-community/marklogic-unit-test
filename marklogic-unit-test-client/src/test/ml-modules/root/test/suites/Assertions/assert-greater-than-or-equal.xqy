@@ -7,7 +7,7 @@ test:assert-throws-error-with-message(
     test:assert-greater-than-or-equal(2, 1)
   },
   "ASSERT-GREATER-THAN-OR-EQUAL-FAILED",
-  "actual: 1 is less than minimum: 2"
+  "actual: 1 is not greater than or equal to value: 2"
 ),
 
 test:assert-throws-error-with-message(
@@ -15,5 +15,5 @@ test:assert-throws-error-with-message(
     test:assert-greater-than-or-equal(2, (1, 2, 3), "Failure message")
   },
   "ASSERT-GREATER-THAN-OR-EQUAL-FAILED",
-  "Failure message; actual: (1, 2, 3) is less than minimum: 2"
+  "Failure message; actual: (1, 2, 3) is not greater than or equal to value: 2"
 )

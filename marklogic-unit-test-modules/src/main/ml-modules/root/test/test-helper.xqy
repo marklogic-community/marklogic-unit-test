@@ -754,45 +754,104 @@ declare function test:assert-false($conditions as xs:boolean*, $message as xs:st
     test:success()
 };
 
+(: Deprecated.  Replaced by test:assert-greater-than-or-equal(). :)
 declare function test:assert-meets-minimum-threshold($minimum as xs:decimal, $actual as xs:decimal+) {
-  test:assert-meets-minimum-threshold($minimum, $actual, ())
+  (
+    test:assert-meets-minimum-threshold($minimum, $actual, ()),
+    xdmp:log("Assertion 'assert-meets-minimum-threshold()' has been deprecated.   Use 'assert-greater-than-or-equal()' instead.", "info")
+  )
 };
 
+(: Deprecated.  Replaced by test:assert-greater-than-or-equal(). :)
 declare function test:assert-meets-minimum-threshold(
   $minimum as xs:decimal,
   $actual as xs:decimal+,
   $message as xs:string*
 ) {
-  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] ge $minimum) then
-    test:success()
-  else
-    let $message :=
-      fn:string-join((
-        $message,
-        "actual: " || xdmp:describe($actual) || " is less than minimum: " || xdmp:describe($minimum)
-      ), "; ")
-    return fn:error(xs:QName("ASSERT-MEETS-MINIMUM-THRESHOLD-FAILED"), $message, ($minimum, $actual))
+  (
+    if (every $i in 1 to fn:count($actual) satisfies $actual[$i] ge $minimum) then
+      test:success()
+    else
+      let $message :=
+        fn:string-join((
+          $message,
+          "actual: " || xdmp:describe($actual) || " is less than minimum: " || xdmp:describe($minimum)
+        ), "; ")
+      return fn:error(xs:QName("ASSERT-MEETS-MINIMUM-THRESHOLD-FAILED"), $message, ($minimum, $actual))
+    ,
+    xdmp:log("Assertion 'assert-meets-minimum-threshold()' has been deprecated.   Use 'assert-greater-than-or-equal()' instead.", "info")
+  )
 };
 
+(: Deprecated.  Replaced by test:assert-less-than-or-equal(). :)
 declare function test:assert-meets-maximum-threshold($maximum as xs:decimal, $actual as xs:decimal+) {
-  test:assert-meets-maximum-threshold($maximum, $actual, ())
+  (
+    test:assert-meets-maximum-threshold($maximum, $actual, ()),
+    xdmp:log("Assertion 'assert-meets-maximum-threshold()' has been deprecated.   Use 'assert-less-than-or-equal()' instead.", "info")
+  )
 };
 
+(: Deprecated.  Replaced by test:assert-less-than-or-equal(). :)
 declare function test:assert-meets-maximum-threshold(
   $maximum as xs:decimal,
   $actual as xs:decimal+,
   $message as xs:string?
 ) {
-  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] le $maximum) then
+  (
+    if (every $i in 1 to fn:count($actual) satisfies $actual[$i] le $maximum) then
+      test:success()
+    else
+      fn:error(
+        xs:QName("ASSERT-MEETS-MAXIMUM-THRESHOLD-FAILED"),
+        fn:string-join((
+          $message,
+          "actual: " || xdmp:describe($actual) || " is greater than maximum: " || xdmp:describe($maximum)
+        ), "; "),
+        ($maximum, $actual))
+    ,
+    xdmp:log("Assertion 'assert-meets-maximum-threshold()' has been deprecated.   Use 'assert-less-than-or-equal()' instead.", "info")
+  )
+};
+
+declare function test:assert-greater-than-or-equal($minimum as xs:decimal, $actual as xs:decimal+) {
+  test:assert-greater-than-or-equal($minimum, $actual, ())
+};
+
+declare function test:assert-greater-than-or-equal(
+  $value as xs:decimal,
+  $actual as xs:decimal+,
+  $message as xs:string*
+) {
+  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] ge $value) then
+    test:success()
+  else
+    let $message :=
+      fn:string-join((
+        $message,
+        "actual: " || xdmp:describe($actual) || " is not greater than or equal to value: " || xdmp:describe($value)
+      ), "; ")
+    return fn:error(xs:QName("ASSERT-GREATER-THAN-OR-EQUAL-FAILED"), $message, ($value, $actual))
+};
+
+declare function test:assert-less-than-or-equal($maximum as xs:decimal, $actual as xs:decimal+) {
+  test:assert-less-than-or-equal($maximum, $actual, ())
+};
+
+declare function test:assert-less-than-or-equal(
+  $value as xs:decimal,
+  $actual as xs:decimal+,
+  $message as xs:string?
+) {
+  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] le $value) then
     test:success()
   else
     fn:error(
-      xs:QName("ASSERT-MEETS-MAXIMUM-THRESHOLD-FAILED"),
+      xs:QName("ASSERT-LESS-THAN-OR-EQUAL-FAILED"),
       fn:string-join((
         $message,
-        "actual: " || xdmp:describe($actual) || " is greater than maximum: " || xdmp:describe($maximum)
+        "actual: " || xdmp:describe($actual) || " is not less than or equal to value: " || xdmp:describe($value)
       ), "; "),
-      ($maximum, $actual))
+      ($value, $actual))
 };
 
 declare function test:assert-throws-error-with-message($function as xdmp:function, $expected-error-code as xs:string, $expected-message as xs:string) {

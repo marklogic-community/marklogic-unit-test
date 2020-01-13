@@ -813,6 +813,26 @@ declare function test:assert-meets-maximum-threshold(
   )
 };
 
+declare function test:assert-greater-than($value as xs:decimal, $actual as xs:decimal+) {
+  test:assert-greater-than($value, $actual, ())
+};
+
+declare function test:assert-greater-than(
+  $value as xs:decimal,
+  $actual as xs:decimal+,
+  $message as xs:string*
+) {
+  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] gt $value) then
+    test:success()
+  else
+    let $message :=
+      fn:string-join((
+        $message,
+        "actual: " || xdmp:describe($actual) || " is not greater than value: " || xdmp:describe($value)
+      ), "; ")
+    return fn:error(xs:QName("ASSERT-GREATER-THAN-FAILED"), $message, ($value, $actual))
+};
+
 declare function test:assert-greater-than-or-equal($minimum as xs:decimal, $actual as xs:decimal+) {
   test:assert-greater-than-or-equal($minimum, $actual, ())
 };
@@ -831,6 +851,27 @@ declare function test:assert-greater-than-or-equal(
         "actual: " || xdmp:describe($actual) || " is not greater than or equal to value: " || xdmp:describe($value)
       ), "; ")
     return fn:error(xs:QName("ASSERT-GREATER-THAN-OR-EQUAL-FAILED"), $message, ($value, $actual))
+};
+
+declare function test:assert-less-than($value as xs:decimal, $actual as xs:decimal+) {
+  test:assert-less-than($value, $actual, ())
+};
+
+declare function test:assert-less-than(
+  $value as xs:decimal,
+  $actual as xs:decimal+,
+  $message as xs:string?
+) {
+  if (every $i in 1 to fn:count($actual) satisfies $actual[$i] lt $value) then
+    test:success()
+  else
+    fn:error(
+      xs:QName("ASSERT-LESS-THAN-FAILED"),
+      fn:string-join((
+        $message,
+        "actual: " || xdmp:describe($actual) || " is not less than value: " || xdmp:describe($value)
+      ), "; "),
+      ($value, $actual))
 };
 
 declare function test:assert-less-than-or-equal($maximum as xs:decimal, $actual as xs:decimal+) {

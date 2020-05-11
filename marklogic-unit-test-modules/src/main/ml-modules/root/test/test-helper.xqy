@@ -581,13 +581,13 @@ declare function test:assert-equal-xml($expected, $actual, $message as xs:string
         test:assert-true(fn:false(), ("element not found in $expected : ", xdmp:path($actual)))
       else typeswitch ($expected)
         case element() return (
-          test:assert-equal(fn:concat(("mismatched node name ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")), fn:name($expected), fn:name($actual)),
-          test:assert-equal(fn:concat(("mismatched attribute count ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")), fn:count($expected/@*), fn:count($actual/@*)),
+          test:assert-equal(fn:name($expected), fn:name($actual), fn:concat("mismatched node name ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")),
+          test:assert-equal(fn:count($expected/@*), fn:count($actual/@*), fn:concat("mismatched attribute count ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")),
           for $attribute in $actual/@* return
             test:assert-equal-xml($expected/@*[fn:name(.) = fn:name($attribute)], $attribute),
           for $text at $i in $actual/text() return
-            test:assert-equal(fn:concat(("mismatched element text ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")), fn:normalize-space($expected/text()[$i]), fn:normalize-space($text)),
-          test:assert-equal(fn:concat(("mismatched element count ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")), fn:count($expected/*), fn:count($actual/*)),
+            test:assert-equal(fn:normalize-space($expected/text()[$i]), fn:normalize-space($text), fn:concat("mismatched element text ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")),
+          test:assert-equal(fn:count($expected/*), fn:count($actual/*), fn:concat("mismatched element count ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")),
           for $element at $i in $actual/* return
             test:assert-equal-xml($expected/*[$i], $element)
         )
@@ -598,8 +598,8 @@ declare function test:assert-equal-xml($expected, $actual, $message as xs:string
         test:assert-true(fn:false(), ("attribute not found in $expected : ", xdmp:path($actual)))
       else typeswitch ($expected)
         case attribute() return (
-          test:assert-equal(fn:concat(("mismatched attribute name ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")), fn:name($expected), fn:name($actual)),
-          test:assert-equal(fn:concat(("mismatched attribute text ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")), $expected/fn:data(), $actual/fn:data())
+          test:assert-equal(fn:name($expected), fn:name($actual), fn:concat("mismatched attribute name ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")),
+          test:assert-equal($expected/fn:data(), $actual/fn:data(), fn:concat("mismatched attribute text ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
         )
         default return
           test:assert-true(fn:false(), ("type mismatch : $expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual)))

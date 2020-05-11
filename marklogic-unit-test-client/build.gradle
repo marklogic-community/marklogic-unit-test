@@ -4,7 +4,7 @@ plugins {
 	id "com.jfrog.bintray" version "1.8.4"
 
 	// ml-gradle is used for deploying a test application so that this project itself can be tested
-	id "com.marklogic.ml-gradle" version "3.7.1"
+	id "com.marklogic.ml-gradle" version "3.12.0"
 
 	// Used to generate a license report
 	id "com.github.jk1.dependency-license-report" version "1.3"

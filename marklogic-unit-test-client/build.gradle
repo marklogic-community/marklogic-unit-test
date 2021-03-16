@@ -1,5 +1,5 @@
 plugins {
-	id "java"
+	id "java-library"
 	id "maven-publish"
 	id "com.jfrog.bintray" version "1.8.4"
 
@@ -19,9 +19,9 @@ repositories {
 }
 
 dependencies {
-	compile "com.marklogic:marklogic-client-api:4.2.0"
+	api "com.marklogic:marklogic-client-api:4.1.1"
 
-	testCompile "junit:junit:4+"
+	testImplementation "junit:junit:4+"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

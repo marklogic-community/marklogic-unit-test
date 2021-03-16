@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-  implementation project(":marklogic-unit-test-client")
+  api project(":marklogic-unit-test-client")
 	api "com.marklogic:ml-javaclient-util:4.1.1"
 	api "jaxen:jaxen:1.1.6"
 	api "org.junit.jupiter:junit-jupiter-api:5.4.1"

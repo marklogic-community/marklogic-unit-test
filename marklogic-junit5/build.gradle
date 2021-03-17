@@ -17,15 +17,15 @@ dependencies {
   api project(":marklogic-unit-test-client")
 	api "com.marklogic:ml-javaclient-util:4.1.1"
 	api "jaxen:jaxen:1.1.6"
-	api "org.junit.jupiter:junit-jupiter-api:5.4.1"
-	api "org.junit.jupiter:junit-jupiter-params:5.4.1"
+	api "org.junit.jupiter:junit-jupiter-api:5.7.1"
+	api "org.junit.jupiter:junit-jupiter-params:5.7.1"
 	api "org.springframework:spring-context:5.2.9.RELEASE"
 	api "org.springframework:spring-test:5.2.9.RELEASE"
 	api "com.fasterxml.jackson.core:jackson-databind:2.11.1"
 	api "org.slf4j:slf4j-api:1.7.30"
 
 	// Needed by Gradle 4.6+ - see https://www.petrikainulainen.net/programming/testing/junit-5-tutorial-running-unit-tests-with-gradle/
-	testRuntime "org.junit.jupiter:junit-jupiter-engine:5.4.1"
+	testRuntime "org.junit.jupiter:junit-jupiter-engine:5.7.1"
 
 	// Forcing Spring to use logback instead of commons-logging
 	testRuntime "ch.qos.logback:logback-classic:1.2.3"

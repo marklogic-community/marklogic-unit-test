@@ -30,7 +30,7 @@ Read through each of the following steps to use marklogic-junit5 in your own pro
 First, make sure you're applied the Gradle "java" plugin:
 
     plugins {
-        id "java"
+        id "java-library"
         // other plugins, such as ml-gradle
     } 
 
@@ -39,7 +39,7 @@ Next, add the following dependencies - this assumes you're using Gradle version 
     dependencies {
       // existing dependencies
       
-      testCompile "com.marklogic:marklogic-junit5:1.0.0"
+      testImplementation "com.marklogic:marklogic-junit5:1.0.0"
             
       testRuntime "org.junit.jupiter:junit-jupiter-engine:5.3.0"
     

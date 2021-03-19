@@ -25,6 +25,7 @@ import org.xml.sax.InputSource;
 public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshaller {
 
 	private DocumentBuilder documentBuilder;
+	private static int ELEMENT_NODE = 1;	
 
 	@Override
 	public List<TestModule> parseTestList(String xml) {
@@ -67,10 +68,14 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 			NodeList resultNodes = testNode.getChildNodes();
 			String failureXml = null;
 			for (int j = 0; j < resultNodes.getLength(); j++) {
-				Element resultNode = (Element) resultNodes.item(j);
-				if ("fail".equals(resultNode.getAttribute("type"))) {
-					failureXml = toXml(resultNode);
-					break;
+				if (resultNodes.item(j).getNodeType() == ELEMENT_NODE) { // process only element node, ignore the rest
+					Element resultNode = (Element) resultNodes.item(j);
+					if ("fail".equals(resultNode.getAttribute("type"))) {
+						failureXml = toXml(resultNode);
+						break;						
+					}
+				} else {
+					System.out.println("Ignoring Node Type [" + resultNodes.item(j).getNodeType() + "]");
 				}
 			}
 			testSuiteResult.addTestResult(new TestResult(testName, testTime, failureXml));

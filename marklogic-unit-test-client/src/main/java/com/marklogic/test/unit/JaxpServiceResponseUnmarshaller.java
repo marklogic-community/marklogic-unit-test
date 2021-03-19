@@ -17,6 +17,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import org.xml.sax.InputSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JAXP-based implementation. Not the prettiest code, but doesn't have any 3rd-party dependencies,
@@ -24,6 +26,7 @@ import org.xml.sax.InputSource;
  */
 public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshaller {
 
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	private DocumentBuilder documentBuilder;
 	private static int ELEMENT_NODE = 1;	
 
@@ -75,7 +78,7 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 						break;						
 					}
 				} else {
-					System.out.println("Ignoring Node Type [" + resultNodes.item(j).getNodeType() + "]");
+					logger.debug("Ignoring Node Type [" + resultNodes.item(j).getNodeType() + "]");
 				}
 			}
 			testSuiteResult.addTestResult(new TestResult(testName, testTime, failureXml));

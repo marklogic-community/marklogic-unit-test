@@ -1,3 +1,7 @@
+(: 
+This module returns two assertions and then a text node; the intent is to verify that the text node
+is ignored by the Java code that parses the response into JUnit assertion results.
+:)
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
 let $doc1 := 

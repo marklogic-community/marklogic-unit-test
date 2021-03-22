@@ -28,7 +28,7 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	private DocumentBuilder documentBuilder;
-	private static int ELEMENT_NODE = 1;	
+	private static int ELEMENT_TYPE = 1;	
 
 	@Override
 	public List<TestModule> parseTestList(String xml) {
@@ -71,7 +71,9 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 			NodeList resultNodes = testNode.getChildNodes();
 			String failureXml = null;
 			for (int j = 0; j < resultNodes.getLength(); j++) {
-				if (resultNodes.item(j).getNodeType() == ELEMENT_NODE) { // process only element node, ignore the rest
+				// An XQuery test module may return additional nodes, such as text nodes, which should be
+				// ignored unless they are element nodes. 				
+				if (resultNodes.item(j).getNodeType() == ELEMENT_TYPE) {
 					Element resultNode = (Element) resultNodes.item(j);
 					if ("fail".equals(resultNode.getAttribute("type"))) {
 						failureXml = toXml(resultNode);

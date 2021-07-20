@@ -1,10 +1,4 @@
-plugins {
-	id "java"
-  id "maven-publish"
-	id "com.jfrog.bintray" version "1.8.4"
-}
-
-// Defines a configuration for the MarkLogic modules; used by the modulesZip task below
+// Defines a configuration for the MarkLogic modules; used by the modulesJar task below
 configurations {
 	modules
 }
@@ -13,7 +7,12 @@ task sourcesJar(type: Jar) {
 	description = "Create a jar of the modules to meet jcenter's requirements for publishing"
 	classifier "sources"
 	from "src/main/ml-modules"
-	destinationDir file("build/libs")
+  destinationDir file("build/libs")
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier "javadoc"
+  from javadoc
 }
 
 task modulesJar(type: Jar) {
@@ -21,47 +20,59 @@ task modulesJar(type: Jar) {
 	from("src/main/ml-modules") {
 		into("marklogic-unit-test-modules/ml-modules")
 	}
-	destinationDir file("build/libs")
+  destinationDir file("build/libs")
 	baseName "marklogic-unit-test-modules"
 }
 
-// Define the artifacts, in addition to the jar registered by the "java" plugin
 artifacts {
-	modules modulesJar
+	archives sourcesJar, javadocJar, modulesJar
+}
+signing {
+  sign configurations.archives
 }
 
-// Setup publishing of both a jar (containing the src/main/java code) and the modules zip
-// Can eventually include a test jar (containing some src/test/java code) if desired
-// Run "gradle publishtomavenlocal" to publish these locally
 publishing {
-	publications {
-		sourcesJava(MavenPublication) {
-			artifactId "marklogic-unit-test-modules"
-			artifact sourcesJar
-		}
-		mainModules(MavenPublication) {
-			artifactId "marklogic-unit-test-modules"
-			artifact modulesJar
-		}
-	}
+  publications {
+    mainJava(MavenPublication) {
+      pom {
+        name = "${group}:${project.name}"
+        description = "Supports testing MarkLogic applications"
+        packaging = "jar"
+        url = "https://github.com/marklogic-community/${project.name}"
+        licenses {
+          license {
+            name = "The Apache License, Version 2.0"
+            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+        developers {
+          developer {
+            id = "marklogic"
+            name = "MarkLogic Github Contributors"
+            email = "general@developer.marklogic.com"
+            organization = "MarkLogic"
+            organizationUrl = "https://www.marklogic.com"
+          }
+        }
+        scm {
+          url = "git@github.com:marklogic-community/${project.name}.git"
+          connection = "scm:git@github.com:marklogic-community/${project.name}.git"
+          developerConnection = "scm:git@github.com:marklogic-community/${project.name}.git"
+        }
+      }
+      artifact sourcesJar
+      artifact javadocJar
+      artifact modulesJar
+    }
+  }
+  repositories {
+    maven {
+      name = "central"
+      url = mavenCentralUrl
+      credentials {
+        username mavenCentralUsername
+        password mavenCentralPassword
+      }
+    }
+  }
 }
-
-if (project.hasProperty("myBintrayUser")) {
-	bintray {
-		user = myBintrayUser
-		key = myBintrayKey
-		publications = ["sourcesJava", "mainModules"]
-		pkg {
-			repo = "Maven"
-			name = project.name
-			userOrg = 'marklogic-community'
-			licenses = ["Apache-2.0"]
-			vcsUrl = "https://github.com/marklogic-community/marklogic-unit-test.git"
-			version {
-				name = project.version
-				released = new Date()
-			}
-		}
-	}
-}
-

@@ -124,15 +124,15 @@ When finished, verify that the self-test works.
 To deploy the marklogic-unit-test project by itself, run the following commands:
 
 - cd marklogic-unit-test-client
-- gradle mlDeploy
+- ../gradlew -i mlDeploy
 
-That process will create an application server on port 8090 (create a file
+That process will create an application server on port 8008 (create a file
 marklogic-unit-test-client/gradle-local.properties and copy the `mlRestPort` property 
 to change the port.)
 
 ##### Running Tests in the GUI
 
-Point a browser to http://localhost:8090/test/. 
+Point a browser to http://localhost:8008/test/. 
 
 ##### Running Tests with Gradle
 

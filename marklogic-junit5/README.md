@@ -39,8 +39,25 @@ public class SearchTest extends AbstractSpringMarkLogicTest {
 If you'd like to use marklogic-junit5 on a regular ml-gradle project (not a DHF project), then 
 start with the ml-gradle example project to see a working example with instructions on how to get started. 
 
-## Getting started on a Data Hub Framework project
+## Getting started on a Data Hub Framework project 
 
-If you're working on a Data Hub Framework (DHF) project and you're like to start writing JUnit tests to verify your application 
-features, then check out the DHF example project to see a working example with instructions on how to get started.
+As of DHF 5.5, support exists within DHF 5 for writing tests and should be used instead of this project. 
+See [this example project](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/reference-entity-model#testing-support) 
+for more information.
 
+If you're using DHF 4, see [the DHF 4 example project](https://github.com/marklogic-community/marklogic-unit-test/tree/1.0.0/marklogic-junit5/examples/simple-dhf4)
+from the 1.0.0 tag of this repository. 
+
+## Running the tests within this project
+
+If you'd like to run the tests within this project, you'll first need to create a gradle-local.properties file in this 
+project that defines your admin user's password - e.g. 
+
+    mlPassword=admin
+
+The tests will make use of MarkLogic's out-of-the-box Documents database. Be sure you do not have anything of importance 
+in this database, as it will be cleared before each test is run.
+
+You can then run the tests via Gradle:
+
+    ../gradlew clean test

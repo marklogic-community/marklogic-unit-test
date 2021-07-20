@@ -1,17 +1,18 @@
 package com.marklogic.test.unit;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This is included as a demonstration of MarkLogic unit tests being included with non-MarkLogic unit tests in the
  * same suite.
  */
-public class NonMarkLogicUnitTest extends Assert {
+public class NonMarkLogicUnitTest {
 
-	@Test
-	public void thisShouldSucceed() {
-		assertEquals("1", "1");
-	}
+  @Test
+  public void thisShouldSucceed() {
+    assertEquals("1", "1");
+  }
 
 }

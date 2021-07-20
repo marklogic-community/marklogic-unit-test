@@ -4,14 +4,13 @@ plugins {
 
 dependencies {
   api project(":marklogic-unit-test-client")
-	api "com.marklogic:ml-javaclient-util:4.3.0"
+  api "com.marklogic:ml-javaclient-util:4.3.0"
   api "org.jdom:jdom2:2.0.6"
-  api "org.junit.jupiter:junit-jupiter-api:5.7.2"
-  api "org.junit.jupiter:junit-jupiter-params:5.7.2"
-	api "org.springframework:spring-context:5.3.9"
-	api "org.springframework:spring-test:5.3.9"
-	api "com.fasterxml.jackson.core:jackson-databind:2.11.1"
-	api "org.slf4j:slf4j-api:1.7.31"
+  api "org.junit.jupiter:junit-jupiter:5.7.2"
+  api "org.springframework:spring-context:5.3.9"
+  api "org.springframework:spring-test:5.3.9"
+  api "com.fasterxml.jackson.core:jackson-databind:2.11.1"
+  api "org.slf4j:slf4j-api:1.7.31"
 
   implementation "jaxen:jaxen:1.2.0"
 

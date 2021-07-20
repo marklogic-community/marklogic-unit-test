@@ -6,10 +6,7 @@ tests written using [marklogic-unit-test](https://github.com/marklogic-community
 
 To try this project out locally, assuming you've cloned this repository, just run the following steps:
 
-First, deploy the application - this uses the Gradle test wrapper version 4.6. The version of Gradle matters as 
-[discussed here](https://www.petrikainulainen.net/programming/testing/junit-5-tutorial-running-unit-tests-with-gradle/) 
-in terms of how JUnit 5 tests can be executed using Gradle's "test" task. So you can use your own version of Gradle, 
-just be sure it's 4.6 or higher.
+First, deploy the application:
 
     ./gradlew mlDeploy
 
@@ -30,34 +27,30 @@ Read through each of the following steps to use marklogic-junit5 in your own pro
 First, make sure you're applied the Gradle "java" plugin:
 
     plugins {
-        id "java-library"
+        id "java"
         // other plugins, such as ml-gradle
     } 
 
-Next, add the following dependencies - this assumes you're using Gradle version 4.6 or higher - see below if you're not:
+Next, add the following dependencies:
 
     dependencies {
       // existing dependencies
       
-      testImplementation "com.marklogic:marklogic-junit5:1.0.0"
+      testImplementation "com.marklogic:marklogic-junit5:1.1.0"
             
-      testRuntime "org.junit.jupiter:junit-jupiter-engine:5.3.0"
+      testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
     
       // Forcing Spring to use logback instead of commons-logging
-      testRuntime "ch.qos.logback:logback-classic:1.1.8"
-      testRuntime group: "org.slf4j", name: "jcl-over-slf4j", version: "1.7.22"
-      testRuntime group: "org.slf4j", name: "slf4j-api", version: "1.7.22"	
+      testImplementation "ch.qos.logback:logback-classic:1.2.4"
+      testImplementation "org.slf4j:jcl-over-slf4j:1.7.31"
+      testImplementation "org.slf4j:slf4j-api:1.7.31"
     }
     
-The "junit-jupiter-engine" library is needed so that Gradle's "test" task will find and execute JUnit 5 tests, 
-as [discussed here](https://www.petrikainulainen.net/programming/testing/junit-5-tutorial-running-unit-tests-with-gradle/). 
-If you're using Gradle 4.5 or earlier, you'll need to add some additional configuration that is discussed in that article.
-
 ### Configure gradle.properties
 
 If you haven't already, set the value of mlTestRestPort in gradle.properties to an available port:
 
-    mlTestRestPort=8211
+    mlTestRestPort=8019
 
 If you haven't done this and run mlDeploy before, then run mlDeploy now to deploy a test app server and database that
 mirror your regular REST server and database (marklogic-junit5 depends on a REST server):
@@ -117,8 +110,8 @@ You'll still be able to leverage all of the testing support in AbstractMarkLogic
 If you'd like to write and execute marklogic-unit-test test modules, add the following to your build.gradle file as well (grab
 the latest version for both dependencies):
 
-    mlRestApi "com.marklogic:marklogic-unit-test-modules:0.12.0"
-    testCompile "com.marklogic:marklogic-unit-test-client:0.12.0"
+    mlBundle "com.marklogic:marklogic-unit-test-modules:1.1.0"
+    testImplementation "com.marklogic:marklogic-unit-test-client:1.1.0"
 
 In addition, add the following to gradle.properties so that you can store test modules in a directory separate from 
 your application modules:

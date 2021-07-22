@@ -130,6 +130,8 @@ That process will create an application server on port 8008 (create a file
 marklogic-unit-test-client/gradle-local.properties and copy the `mlRestPort` property 
 to change the port.)
 
+For modifications to code in the ./marklogic-junit 5 project, please see the README file in that project. 
+
 ##### Running Tests in the GUI
 
 Point a browser to http://localhost:8008/test/. 

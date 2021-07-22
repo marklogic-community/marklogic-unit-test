@@ -4,7 +4,7 @@ configurations {
 }
 
 task sourcesJar(type: Jar) {
-	description = "Create a jar of the modules to meet jcenter's requirements for publishing"
+	description = "Create a jar of the modules to meet Maven Central's requirements for publishing"
 	classifier "sources"
 	from "src/main/ml-modules"
   destinationDir file("build/libs")

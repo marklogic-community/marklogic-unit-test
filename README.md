@@ -28,23 +28,22 @@ You can use that project's `build.gradle` file as an example of how to use markl
 ```groovy
 buildscript {
   repositories {
-    jcenter()
-    mavenLocal()
+    mavenCentral()
   }
   dependencies {
-    classpath "com.marklogic:marklogic-unit-test-client:1.0.0"
-    classpath "com.marklogic:ml-gradle:3.16.1"
+    classpath "com.marklogic:marklogic-unit-test-client:1.1.0"
+    classpath "com.marklogic:ml-gradle:4.2.1"
   }
 }
 
 apply plugin: "com.marklogic.ml-gradle"
 
 repositories {
-  jcenter()
+  mavenCentral()
 }
 
 dependencies {
-  mlBundle "com.marklogic:marklogic-unit-test-modules:1.0.0"
+  mlBundle "com.marklogic:marklogic-unit-test-modules:1.1.0"
 }
 ```
 

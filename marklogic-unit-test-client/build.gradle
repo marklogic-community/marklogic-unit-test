@@ -1,68 +1,83 @@
 plugins {
-	id "java"
-	id "maven-publish"
-	id "com.jfrog.bintray" version "1.8.4"
-
 	// ml-gradle is used for deploying a test application so that this project itself can be tested
-	id "com.marklogic.ml-gradle" version "3.7.1"
+	id "com.marklogic.ml-gradle" version "4.2.1"
 
 	// Used to generate a license report
-	id "com.github.jk1.dependency-license-report" version "1.3"
-}
-
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"
-
-repositories {
-	jcenter()
-	mavenCentral()
+	id "com.github.jk1.dependency-license-report" version "1.17"
 }
 
 dependencies {
-	compile "com.marklogic:marklogic-client-api:4.2.0"
+	api "com.marklogic:marklogic-client-api:5.5.0"
+  implementation "org.slf4j:slf4j-api:1.7.31"
 
-	testCompile "junit:junit:4+"
+  testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
+}
+
+test {
+  useJUnitPlatform()
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier "sources"
-	from sourceSets.main.allJava
+  classifier 'sources'
+  from sourceSets.main.allSource
 }
 
-// Setup publishing of both a jar (containing the src/main/java code) and the modules zip
-// Can eventually include a test jar (containing some src/test/java code) if desired
-// Run "gradle publishtomavenlocal" to publish these locally
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier "javadoc"
+  from javadoc
+}
+
+artifacts {
+  archives javadocJar, sourcesJar
+}
+signing {
+  sign configurations.archives
+}
+
 publishing {
-	publications {
-		mainJava(MavenPublication) {
-			from components.java
-			artifactId "marklogic-unit-test-client"
-		}
-		sourcesJava(MavenPublication) {
-			from components.java
-			artifactId "marklogic-unit-test-client"
-			artifact sourcesJar
-		}
-	}
-}
-
-if (project.hasProperty("myBintrayUser")) {
-	bintray {
-		user = myBintrayUser
-		key = myBintrayKey
-		publications = ["mainJava", "sourcesJava"]
-		pkg {
-			repo = "Maven"
-			name = project.name
-			userOrg = 'marklogic-community'
-			licenses = ["Apache-2.0"]
-			vcsUrl = "https://github.com/marklogic-community/marklogic-unit-test.git"
-			version {
-				name = project.version
-				released = new Date()
-			}
-		}
-	}
+  publications {
+    mainJava(MavenPublication) {
+      pom {
+        name = "${group}:${project.name}"
+        description = "Supports testing MarkLogic applications"
+        packaging = "jar"
+        url = "https://github.com/marklogic-community/${project.name}"
+        licenses {
+          license {
+            name = "The Apache License, Version 2.0"
+            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+        developers {
+          developer {
+            id = "marklogic"
+            name = "MarkLogic Github Contributors"
+            email = "general@developer.marklogic.com"
+            organization = "MarkLogic"
+            organizationUrl = "https://www.marklogic.com"
+          }
+        }
+        scm {
+          url = "git@github.com:marklogic-community/${project.name}.git"
+          connection = "scm:git@github.com:marklogic-community/${project.name}.git"
+          developerConnection = "scm:git@github.com:marklogic-community/${project.name}.git"
+        }
+      }
+      from components.java
+      artifact sourcesJar
+      artifact javadocJar
+    }
+  }
+  repositories {
+    maven {
+      name = "central"
+      url = mavenCentralUrl
+      credentials {
+        username mavenCentralUsername
+        password mavenCentralPassword
+      }
+    }
+  }
 }
 
 task createHttpCredentials(type: com.marklogic.gradle.task.MarkLogicTask) {

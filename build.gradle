@@ -1,0 +1,22 @@
+subprojects {
+  apply plugin: "java-library"
+  apply plugin: "maven-publish"
+  apply plugin: "signing"
+
+  group = "com.marklogic"
+  version = "1.1.0"
+
+  sourceCompatibility = "8"
+  targetCompatibility = "8"
+
+  repositories {
+    mavenCentral()
+
+    // For local development
+    mavenLocal()
+  }
+
+  javadoc.failOnError = false
+  // Ignores warnings on params that don't have descriptions, which is a little too noisy
+  javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+}

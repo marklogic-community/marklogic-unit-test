@@ -17,6 +17,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import org.xml.sax.InputSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JAXP-based implementation. Not the prettiest code, but doesn't have any 3rd-party dependencies,
@@ -24,7 +26,9 @@ import org.xml.sax.InputSource;
  */
 public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshaller {
 
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	private DocumentBuilder documentBuilder;
+	private static int ELEMENT_TYPE = 1;	
 
 	@Override
 	public List<TestModule> parseTestList(String xml) {
@@ -67,10 +71,16 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 			NodeList resultNodes = testNode.getChildNodes();
 			String failureXml = null;
 			for (int j = 0; j < resultNodes.getLength(); j++) {
-				Element resultNode = (Element) resultNodes.item(j);
-				if ("fail".equals(resultNode.getAttribute("type"))) {
-					failureXml = toXml(resultNode);
-					break;
+				// An XQuery test module may return additional nodes, such as text nodes, which should be
+				// ignored unless they are element nodes. 				
+				if (resultNodes.item(j).getNodeType() == ELEMENT_TYPE) {
+					Element resultNode = (Element) resultNodes.item(j);
+					if ("fail".equals(resultNode.getAttribute("type"))) {
+						failureXml = toXml(resultNode);
+						break;						
+					}
+				} else {
+					logger.debug("Ignoring Node Type [" + resultNodes.item(j).getNodeType() + "]");
 				}
 			}
 			testSuiteResult.addTestResult(new TestResult(testName, testTime, failureXml));

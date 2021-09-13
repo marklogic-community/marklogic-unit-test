@@ -57,6 +57,29 @@ as xs:string
   }
 };
 
+(: Helper functions to derive suite and test ids from caller, useful for boiler-plate code to insert/delete test data :)
+
+declare function test:suite-id()
+as xs:string
+{
+  replace($test:__CALLER_FILE__, "^/test/suites/(.*)/([^\-/]+)(-[^/]*)?$", "$1")
+};
+
+declare function test:test-id()
+as xs:string
+{
+  replace($test:__CALLER_FILE__, "^/test/suites/(.*)/([^\-/]+)(-[^/]*)?$", "$2")
+};
+
+declare function test:get-test-data-path()
+as xs:string
+{
+  test:build-uri(
+    cvt:basepath($test:__CALLER_FILE__),
+    "test-data/"
+  )
+};
+
 declare function test:get-test-file($filename as xs:string)
 as document-node()
 {
@@ -73,10 +96,35 @@ declare function test:get-test-file($filename as xs:string, $format as xs:string
 as document-node()
 {
   test:get-modules-file(
-    fn:replace(
-      fn:concat(
-        cvt:basepath($test:__CALLER_FILE__), "/test-data/", $filename),
-      "//", "/"), $format, $unquote)
+    test:build-uri(
+      test:get-test-data-path(),
+      $filename
+    ),
+    $format,
+    $unquote
+  )
+};
+
+declare function test:get-test-file-permissions($filename as xs:string)
+as document-node()
+{
+  test:get-modules-permissions(
+    test:build-uri(
+      test:get-test-data-path(),
+      $filename
+    )
+  )
+};
+
+declare function test:get-test-file-collections($filename as xs:string)
+as document-node()
+{
+  test:get-modules-collections(
+    test:build-uri(
+      test:get-test-data-path(),
+      $filename
+    )
+  )
 };
 
 declare function test:load-test-file($filename as xs:string, $database-id as xs:unsignedLong, $uri as xs:string)
@@ -123,25 +171,24 @@ declare function test:build-uri(
   $base as xs:string,
   $suffix as xs:string) as xs:string
 {
-  fn:string-join(
-    (fn:replace($base, "(.*)/$", "$1"),
-    fn:replace($suffix, "^/(.*)", "$1")),
-    "/")
+  let $base := fn:replace($base, "(.*)/$", "$1")
+  let $suffix := fn:replace($suffix, "^/(.*)", "$1")
+  return fn:concat($base, "/", $suffix)
 };
 
-declare function test:get-modules-file($file as xs:string) {
-  test:get-modules-file($file, "text", "force-unquote")
+declare function test:get-modules-file($uri as xs:string) {
+  test:get-modules-file($uri, "text", "force-unquote")
 };
 
-declare function test:get-modules-file($file as xs:string, $format as xs:string?) {
-  test:get-modules-file($file, $format, ())
+declare function test:get-modules-file($uri as xs:string, $format as xs:string?) {
+  test:get-modules-file($uri, $format, ())
 };
 
-declare function test:get-modules-file($file as xs:string, $format as xs:string?, $unquote as xs:string?) {
+declare function test:get-modules-file($uri as xs:string, $format as xs:string?, $unquote as xs:string?) {
   let $doc :=
     if (xdmp:modules-database() eq 0) then
       xdmp:document-get(
-        test:build-uri(xdmp:modules-root(), $file),
+        test:build-uri(xdmp:modules-root(), $uri),
         if (fn:exists($format)) then
           <options xmlns="xdmp:document-get">
             <format>{$format}</format>
@@ -151,7 +198,7 @@ declare function test:get-modules-file($file as xs:string, $format as xs:string?
     else
       xdmp:invoke-function(
         function() {
-          fn:doc($file)
+          fn:doc($uri)
         },
         <options xmlns="xdmp:eval">
           <database>{xdmp:modules-database()}</database>
@@ -171,6 +218,28 @@ declare function test:get-modules-file($file as xs:string, $format as xs:string?
         }
       else
         xdmp:unquote($doc)
+};
+
+declare function test:get-modules-permissions($uri as xs:string) {
+  xdmp:invoke-function(
+    function() {
+      xdmp:document-get-permissions($uri)
+    },
+    <options xmlns="xdmp:eval">
+      <database>{xdmp:modules-database()}</database>
+    </options>
+  )
+};
+
+declare function test:get-modules-collections($uri as xs:string) {
+  xdmp:invoke-function(
+    function() {
+      xdmp:document-get-collections($uri)
+    },
+    <options xmlns="xdmp:eval">
+      <database>{xdmp:modules-database()}</database>
+    </options>
+  )
 };
 
 declare variable $local-url as xs:string := xdmp:get-request-protocol() || "://localhost:" || xdmp:get-request-port();
@@ -392,6 +461,40 @@ declare function test:remove-modules-directories($dirs as xs:string*)
       </options>
     )
   else ()
+};
+
+(: Use this to copy a complete dir of test-data from modules to content, and remove it again :)
+
+declare function test:load-suite-test-dir($suite-id, $subdir) {
+  let $test-data-path := test:get-test-data-path()
+  for $modules-uri in
+    test:list-from-database(
+      xdmp:modules-database(),
+      test:build-uri(
+        $test-data-path,
+        $subdir
+      )
+    )[not(ends-with(., '/'))]
+  let $test-file :=
+    if ($test-data-path ne '') then
+      replace($modules-uri, $test-data-path, '')
+    else
+      $modules-uri
+  let $target-uri := replace($test-file, $subdir, '')
+  let $permissions := test:get-test-file-permissions($test-file)
+  let $collections := test:get-test-file-collections($test-file)
+  return
+    test:load-test-file(
+      $test-file,
+      xdmp:database(),
+      $target-uri,
+      $permissions,
+      ($collections, $suite-id || "/" || $subdir)
+    )
+};
+
+declare function test:remove-suite-test-dir($suite-id, $subdir) {
+  xdmp:collection-delete($suite-id || "/" || $subdir)
 };
 
 (: unquote text and get the actual doc content, but without tabs and newlines. convenience function. :)

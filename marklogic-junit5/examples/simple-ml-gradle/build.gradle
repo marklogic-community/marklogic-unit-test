@@ -14,11 +14,11 @@ repositories {
 }
 
 dependencies {
-  mlBundle "com.marklogic:marklogic-unit-test-modules:1.1.0"
+  mlBundle "com.marklogic:marklogic-unit-test-modules:1.2.0"
 
 	api "com.marklogic:marklogic-client-api:5.5.3"
 
-	testImplementation "com.marklogic:marklogic-junit5:1.1.0"
+	testImplementation "com.marklogic:marklogic-junit5:1.2.0"
 
   testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
 

@@ -12,7 +12,7 @@ It is not intended to be used to build this project.
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.marklogic</groupId>
   <artifactId>marklogic-junit5</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
   <name>com.marklogic:marklogic-junit5</name>
   <description>Supports testing MarkLogic applications</description>
   <url>https://github.com/marklogic-community/marklogic-junit5</url>
@@ -40,7 +40,7 @@ It is not intended to be used to build this project.
     <dependency>
       <groupId>com.marklogic</groupId>
       <artifactId>marklogic-unit-test-client</artifactId>
-      <version>1.1.0</version>
+      <version>1.2.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

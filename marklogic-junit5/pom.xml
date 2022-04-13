@@ -46,7 +46,7 @@ It is not intended to be used to build this project.
     <dependency>
       <groupId>com.marklogic</groupId>
       <artifactId>ml-javaclient-util</artifactId>
-      <version>4.3.0</version>
+      <version>4.3.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -64,13 +64,13 @@ It is not intended to be used to build this project.
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>5.3.9</version>
+      <version>5.3.18</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>5.3.9</version>
+      <version>5.3.18</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

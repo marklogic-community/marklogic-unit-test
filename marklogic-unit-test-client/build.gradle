@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-	api "com.marklogic:marklogic-client-api:5.5.0"
+	api "com.marklogic:marklogic-client-api:5.5.3"
   implementation "org.slf4j:slf4j-api:1.7.31"
 
   testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"

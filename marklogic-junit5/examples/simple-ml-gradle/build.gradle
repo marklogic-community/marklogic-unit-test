@@ -14,16 +14,13 @@ repositories {
 }
 
 dependencies {
-  mlBundle "com.marklogic:marklogic-unit-test-modules:1.2.0"
+  mlBundle "com.marklogic:marklogic-unit-test-modules:1.2.1"
 
 	api "com.marklogic:marklogic-client-api:5.5.3"
 
-	testImplementation "com.marklogic:marklogic-junit5:1.2.0"
-
-  testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
+	testImplementation "com.marklogic:marklogic-junit5:1.2.1"
 
 	// Forcing Spring to use logback instead of commons-logging
-  testImplementation "ch.qos.logback:logback-classic:1.2.4"
-  testImplementation "org.slf4j:jcl-over-slf4j:1.7.31"
-  testImplementation "org.slf4j:slf4j-api:1.7.31"
+  testImplementation "ch.qos.logback:logback-classic:1.2.12"
+  testImplementation "org.slf4j:jcl-over-slf4j:1.7.36"
 }

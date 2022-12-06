@@ -115,7 +115,7 @@ declare function local:main() {
 					</thead>
 					<tbody>
 						{
-							for $suite at $index in test:list()/test:suite
+							for $suite at $index in test:list(fn:true())/test:suite
 							let $class := if ($index mod 2 = 1) then "odd" else "even"
 							return
 								(
@@ -139,11 +139,11 @@ declare function local:main() {
 												<div class="wrapper"><input class="check-all-tests" type="checkbox" checked="checked"/>Run All Tests</div>
 												<ul class="tests">
 													{
-														for $test in (<test:test path="suite-setup.xqy"/>, $suite/test:tests/test:test, <test:test path="suite-teardown.xqy"/>)
+														for $test in ($suite/test:tests/test:test)
 														return
-															<li class="tests {if (fn:ends-with($test/@path, 'setup.xqy')) then 'setup-module-hidden' else if (fn:ends-with($test/@path, 'teardown.xqy')) then 'teardown-module-hidden' else ()}">
+															<li class="tests {if (fn:matches($test/@path, '(S|s)etup\.')) then 'setup-module-hidden' else if (fn:matches($test/@path, '(T|t)eardown\.')) then 'teardown-module-hidden' else ()}">
 																{
-																	if ($test/@path = "suite-setup.xqy" or $test/@path = "suite-teardown.xqy" or $test/@path = "suiteSetup.sjs" or $test/@path = "suiteTeardown.sjs") then
+																	if (fn:matches($test/@path, "^suite((-s|S)etup|(-t|T)eardown\.)")) then
 																		<input type="hidden" value="{fn:data($test/@path)}"/>
 																	else
 																		<input class="test-cb" type="checkbox" checked="checked" value="{fn:data($test/@path)}"/>,

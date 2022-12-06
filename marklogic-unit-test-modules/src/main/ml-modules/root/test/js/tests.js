@@ -235,12 +235,12 @@ function suiteSuccess(parent, xml) {
         }
         errors.push(error);
 
-        if ($(this).parent().attr('name') == 'suite-setup.xqy') {
+        if (/suite(-s|S)etup\./.test($(this).parent().attr('name'))) {
           var setupModule = parent.next().find('li.tests.setup-module-hidden');
           setupModule.removeClass('setup-module-hidden');
           setupModule.addClass('setup-module-visible');
         }
-        if ($(this).parent().attr('name') == 'suite-teardown.xqy') {
+        if (/suite(-t|T)eardown\./.test($(this).parent().attr('name'))) {
           var teardownModule = parent.next().find('li.tests.teardown-module-hidden');
           teardownModule.removeClass('teardown-module-hidden');
           teardownModule.addClass('teardown-module-visible');

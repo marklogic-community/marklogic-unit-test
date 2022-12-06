@@ -22,15 +22,28 @@ declare variable $root as xs:string := xdmp:modules-root();
  :)
 declare function list()
 {
+  list(fn:false())
+};
+(:
+ : Returns a list of the available tests. This list is magically computed based on the modules
+ :)
+declare function list($include-suite-setup-teardown as xs:boolean)
+{
 	let $directories-to-ignore := map:new((
     ".svn", "CVS", ".DS_Store", "Thumbs.db", "thumbs.db", "test-data", "lib"
   ) ! map:entry(., .))
 
-  let $files-to-ignore := map:new((
-		"setup.xqy", "teardown.xqy", "setup.sjs", "teardown.sjs",
-		"suite-setup.xqy", "suite-teardown.xqy", "suiteSetup.sjs", "suiteTeardown.sjs"
-	) ! map:entry(., .))
-
+  let $files-to-ignore-check := function ($file-name) {
+    is-setup-module($file-name)
+      or
+    is-teardown-module($file-name)
+      or
+    (
+      fn:not($include-suite-setup-teardown)
+        and
+      (is-suite-setup-module($file-name) or is-suite-teardown-module($file-name))
+    )
+  }
   let $suites := map:map()
 
   let $_ :=
@@ -47,8 +60,8 @@ declare function list()
       let $test-is-valid :=
         $test-name
           and fn:not(fn:contains($test-name, "(\\|/)"))
-          and fn:empty(map:get($files-to-ignore, $test-name))
-          and fn:matches($test-name, "(\.sjs|\.xqy)$")
+          and fn:not($files-to-ignore-check($test-name))
+          and xdmp:uri-content-type($test-name) = ("application/xquery","application/vnd.marklogic-xdmp","application/javascript","application/vnd.marklogic-javascript", "application/vnd.marklogic-js-module")
 
       where $suite-is-valid and $test-is-valid
       return map:put($suites, $suite-path, (map:get($suites, $suite-path), $test-name))
@@ -56,7 +69,7 @@ declare function list()
   let $main-formats as xs:string* := fn:distinct-values(
     for $uri in test:list-from-database($db-id, $root || "test/formats/")
       let $path := fn:replace($uri, fn:concat($root, "test/formats/"), "")
-      where $path ne "" and fn:not(fn:contains($path, "/")) and fn:empty(map:get($files-to-ignore, $path)) and (fn:matches($path, $XSL-PATTERN))
+      where $path ne "" and fn:not(fn:contains($path, "/")) and fn:not($files-to-ignore-check($path)) and (fn:matches($path, $XSL-PATTERN))
       return $path
   )
 	return
@@ -138,12 +151,12 @@ declare function run-suite(
 	let $coverage :=
 		if ($calculate-coverage) then
 			(
-				run-setup-teardown(fn:true(), $suite),
+				run-suite-setup-or-teardown(fn:true(), $suite),
 				let $coverage-modules := cover:list-coverage-modules()[fn:not(fn:starts-with(., $TEST-SUITES-ROOT))]
 				let $test-modules :=	$tests ! fn:concat($TEST-SUITES-ROOT, $suite, "/", .)
 			  return cover:prepare($coverage-modules, $test-modules),
 				if ($run-suite-teardown eq fn:true()) then
-					run-setup-teardown(fn:false(), $suite)
+					run-suite-setup-or-teardown(fn:false(), $suite)
 				else ()
 			)
 		else ()
@@ -151,7 +164,7 @@ declare function run-suite(
 		element test:run {
 			test:log(" "),
 			test:log(text {"SUITE:", $suite}),
-			run-setup-teardown(fn:true(), $suite),
+			run-suite-setup-or-teardown(fn:true(), $suite),
 
 			test:log(" - invoking tests"),
 			for $test in $tests
@@ -159,7 +172,7 @@ declare function run-suite(
 				run($suite, $test, fn:concat($TEST-SUITES-ROOT, $suite, "/", $test), $run-teardown, $coverage),
 
 			if ($run-suite-teardown eq fn:true()) then
-				run-setup-teardown(fn:false(), $suite)
+				run-suite-setup-or-teardown(fn:false(), $suite)
 			else test:log(" - not running suite teardown"),
 			test:log(" ")
 		}
@@ -289,92 +302,70 @@ declare private function format-result($result as element(), $tab as xs:string?)
   )
 };
 
-declare private function run-setup-or-teardown($setup as xs:boolean, $suite as xs:string)
+declare private function run-setup-or-teardown($is-setup as xs:boolean, $suite as xs:string)
 {
-	let $stage := if ($setup) then "setup" else "teardown"
-	let $xquery-script := $stage || ".xqy"
-	let $sjs-script := $stage || ".sjs"
+	let $start-time := xdmp:elapsed-time()
+	let $suite-modules := test:list-from-database($db-id, $TEST-SUITES-ROOT || $suite || "/")
+	let $stage := if ($is-setup) then "setup" else "teardown"
+	let $module := fn:head(if ($is-setup) then $suite-modules[is-setup-module(.)] else $suite-modules[is-teardown-module(.)])
+	where fn:exists($module)
 	return
-		try {
-		(: We don't want the return value, so return () :)
-			let $_ := test:log("    ...invoking " || $stage)
-			let $_ := xdmp:invoke($TEST-SUITES-ROOT || $suite || "/" || $xquery-script)
-			return ()
-		}
-		catch($ex) {
-			if (($ex/error:code = "XDMP-MODNOTFOUND" and
-				fn:matches($ex/error:stack/error:frame[1]/error:uri/fn:string(), "/" || $xquery-script || "$")) or
-				($ex/error:code = "SVC-FILOPN" and
-					fn:matches($ex/error:expr, $xquery-script))) then
-				try {
-					xdmp:invoke($TEST-SUITES-ROOT || $suite || "/" || $sjs-script)
-				}
-				catch($ex) {
-					if (($ex/error:code = "XDMP-MODNOTFOUND" and
-						fn:matches($ex/error:stack/error:frame[1]/error:uri/fn:string(), "/" || $sjs-script || "$")) or
-						($ex/error:code = "SVC-FILOPN" and
-							fn:matches($ex/error:expr, $sjs-script))) then
-						()
-					else
-						element test:result {
-							attribute type {"fail"},
-							$ex
-						}
-				}
-			else
-				element test:result {
-					attribute type {"fail"},
-					$ex
-				}
-		}
+		(: We don't want the return value, so only return if element(test:test) for failures :)
+		let $result := invoke-setup-teardown-module($start-time, $stage, $module)
+    where $result instance of element(test:test)
+		return $result
 };
 
-declare private function run-setup-teardown(
+declare private function run-suite-setup-or-teardown(
 	$is-setup as xs:boolean,
 	$suite as xs:string
 )
 {
 	let $start-time := xdmp:elapsed-time()
-	let $stage := if ($is-setup) then "setup" else "teardown"
-	let $xquery-script := "suite-" || $stage || ".xqy"
-	let $sjs-script := "suite" || xdmp:initcap($stage) || ".sjs"
+	let $suite-modules := test:list-from-database($db-id, $TEST-SUITES-ROOT || $suite || "/")
+	let $stage := "suite " || (if ($is-setup) then "setup" else "teardown")
+	let $module := fn:head(if ($is-setup) then $suite-modules[is-suite-setup-module(.)] else $suite-modules[is-suite-teardown-module(.)])
+	where fn:exists($module)
 	return
-		try {
-			test:log(" - invoking suite " || $stage),
-			xdmp:invoke($TEST-SUITES-ROOT || $suite || "/" || $xquery-script)
-		}
-		catch($ex) {
-			if (($ex/error:code = "XDMP-MODNOTFOUND" and
-				fn:matches($ex/error:stack/error:frame[1]/error:uri/fn:string(), "/" || $xquery-script || "$")) or
-				($ex/error:code = "SVC-FILOPN" and
-					fn:matches($ex/error:expr, $xquery-script))) then
-				try {
-					xdmp:invoke($TEST-SUITES-ROOT || $suite || "/" || $sjs-script)
-				}
-				catch ($ex) {
-					if (($ex/error:code = "XDMP-MODNOTFOUND" and
-						fn:matches($ex/error:stack/error:frame[1]/error:uri/fn:string(), "/" || $sjs-script || "$")) or
-						($ex/error:code = "SVC-FILOPN" and
-							fn:matches($ex/error:expr, $sjs-script))) then
-						()
-					else
-						element test:test {
-							attribute name { $sjs-script },
-							attribute time { functx:total-seconds-from-duration(xdmp:elapsed-time() - $start-time) },
-							element test:result {
-								attribute type {"fail"},
-								$ex
-							}
-						}
-				}
-			else
-				element test:test {
-					attribute name { $xquery-script },
-					attribute time { functx:total-seconds-from-duration(xdmp:elapsed-time() - $start-time) },
-					element test:result {
-						attribute type {"fail"},
-						$ex
-					}
-				}
-		}
+		invoke-setup-teardown-module($start-time, $stage, $module)
+};
+
+declare function invoke-setup-teardown-module($start-time as xs:dayTimeDuration, $stage as xs:string, $module as xs:string) {
+  try {
+    test:log(" - invoking " || $stage),
+    xdmp:invoke($module)
+  }
+  catch($ex) {
+    if (($ex/error:code = "XDMP-MODNOTFOUND" and
+      $ex/error:stack/error:frame[1]/error:uri/fn:string() = $module) or
+      ($ex/error:code = "SVC-FILOPN" and
+        fn:contains($ex/error:expr, $module))) then
+      ()
+    else
+      element test:test {
+        attribute name { $module },
+        attribute time { functx:total-seconds-from-duration(xdmp:elapsed-time() - $start-time) },
+        element test:result {
+          attribute type {"fail"},
+          $ex
+        }
+      }
+  }
+};
+
+(: setup/teardown checks :)
+declare function is-setup-module($file-name as xs:string) {
+  fn:matches($file-name, "(^|/)setup\.")
+};
+
+declare function is-teardown-module($file-name as xs:string) {
+  fn:matches($file-name, "(^|/)teardown\.")
+};
+
+declare function is-suite-setup-module($file-name as xs:string) {
+  fn:matches($file-name, "(^|/)suite(-s|S)etup\.")
+};
+
+declare function is-suite-teardown-module($file-name as xs:string) {
+  fn:matches($file-name, "(^|/)suite(-t|T)eardown\.")
 };

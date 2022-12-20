@@ -4,22 +4,15 @@ plugins {
 
 dependencies {
   api project(":marklogic-unit-test-client")
-  api "com.marklogic:ml-javaclient-util:4.3.3"
+  api "com.marklogic:ml-javaclient-util:4.3.7"   // TODO Upgrade this to 4.4.0 once it's available
   api "org.jdom:jdom2:2.0.6.1"
-  api "org.junit.jupiter:junit-jupiter:5.9.0"
-  api "org.springframework:spring-context:5.3.22"
-  api "org.springframework:spring-test:5.3.22"
-  api "com.fasterxml.jackson.core:jackson-databind:2.12.6.1"
+  api "org.junit.jupiter:junit-jupiter:5.9.1"
+  api "org.springframework:spring-context:5.3.24"
+  api "org.springframework:spring-test:5.3.24"
+  api "com.fasterxml.jackson.core:jackson-databind:2.13.4.2"
   api 'org.slf4j:slf4j-api:1.7.36'
 
-  implementation "jaxen:jaxen:1.2.0"
-
-  testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
-
-	// Forcing Spring to use logback instead of commons-logging
-  testImplementation 'ch.qos.logback:logback-classic:1.2.11'
-  testImplementation 'org.slf4j:jcl-over-slf4j:1.7.36'
-  testImplementation 'org.slf4j:slf4j-api:1.7.36'
+  implementation "jaxen:jaxen:2.0.0"
 }
 
 test {

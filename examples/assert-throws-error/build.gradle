@@ -1,0 +1,19 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "com.marklogic:marklogic-unit-test-client:1.2.1"
+    classpath "com.marklogic:ml-gradle:4.4.0"
+  }
+}
+
+apply plugin: "com.marklogic.ml-gradle"
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  mlBundle "com.marklogic:marklogic-unit-test-modules:1.2.1"
+}

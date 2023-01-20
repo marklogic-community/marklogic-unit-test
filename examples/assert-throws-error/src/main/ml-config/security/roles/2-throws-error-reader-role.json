@@ -1,0 +1,5 @@
+{
+  "role-name" : "throws-error-reader",
+  "description" : "Can view documents, but not edit",
+  "role" : [ "rest-reader", "throws-error-nobody" ]
+}

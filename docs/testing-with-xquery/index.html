@@ -205,7 +205,7 @@
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xquery version "1.0-ml";
 
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
 let $actual := xdmp:javascript-eval(
   "var simple = require ('/lib/simple.sjs');

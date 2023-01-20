@@ -191,8 +191,6 @@
         <div class="col-md-9">
           <h2 id="loading-data">Loading Data</h2>
 
-<p><em>TODO: replace Roxy content with marklogic-unit-test</em></p>
-
 <p>MarkLogic Unit Test simplifies loading data for your tests. Files to be loaded can be placed in a sub-directory of your test suite called <code class="highlighter-rouge">test-data</code>. The test helper provides a function which will automatically use this directory as the location of test files to be loaded.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>test:load-data-file(&lt;name-of-file-to-be-loaded-without-path&gt;,database id, &lt;URI&gt;)
@@ -209,7 +207,7 @@ setup script could look like this in JavaScript:</p>
 
 <p>… and in XQuery:</p>
 
-<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">test</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/roxy/test-helper"</span> <span class="k">at</span> <span class="s2">"/test/test-helper.xqy"</span><span class="p">;</span>
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">test</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/test"</span> <span class="k">at</span> <span class="s2">"/test/test-helper.xqy"</span><span class="p">;</span>
 <span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">lib</span> <span class="o">=</span> <span class="s2">"http://example.com/test/lib"</span> <span class="k">at</span> <span class="s2">"lib/lib.xqy"</span><span class="p">;</span>
 
 <span class="nf">test:load-test-file</span><span class="p">(</span><span class="s2">"test-article.xml"</span><span class="p">,</span> <span class="nf">xdmp:database</span><span class="p">(),</span> <span class="nv">$</span><span class="n">lib:URI</span><span class="p">)</span>

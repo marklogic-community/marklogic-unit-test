@@ -219,12 +219,12 @@ document will get updated with the new tag. In order to see it, we need to end t
 can use the semicolon operator for this.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(: tag.xqy :)
-import module namespace tag = "http://marklogic.com/roxy/tag-lib" at "/app/modules/tag-lib.xqy";
+import module namespace tag = "http://marklogic.com/tag-lib" at "/app/modules/tag-lib.xqy";
 tag:add("/test1.xml", "tag1")
 
 ;
 
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 test:assert-exists(fn:doc("/test1.xml")/doc/meta/tags/tag[./text() = "tag1"]`
 </code></pre></div></div>
 
@@ -253,7 +253,7 @@ xdmp:document-insert("/test1.xml",
 ;
 
 (: test :)
-import module namespace tag = "http://marklogic.com/roxy/tag-lib" at "/app/modules/tag-lib.xqy";
+import module namespace tag = "http://marklogic.com/tag-lib" at "/app/modules/tag-lib.xqy";
 
 try {
   tag:add("/test1.xml", "tag1")
@@ -264,7 +264,7 @@ try {
 ;
 
 (: verify :)
-import module namespace test="http://marklogic.com/roxy/test-helper" at "/test/test-helper.xqy";
+import module namespace test="http://marklogic.com/test" at "/test/test-helper.xqy";
 
 try {
   test:assert-exists(fn:doc("/test1.xml")/doc/meta/tags/tag[./text() = "tag1"])

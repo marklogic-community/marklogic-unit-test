@@ -8,7 +8,7 @@
 
     <!-- Meta -->
     <meta charset="utf-8">
-    <title>How to Include MarkLogic Unit Test - MarkLogic Unit Test</title>
+    <title>How to Include MarkLogic Unit Test</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <meta content="yes" name="apple-mobile-web-app-capable">
@@ -171,13 +171,6 @@
   
   <li  class="list-group-item"  >
     
-    <a href="/marklogic-unit-test/good-tests/">Guidelines for Writing Good Tests</a>
-    
-    
-  </li>
-  
-  <li  class="list-group-item"  >
-    
     <a href="https://github.com/marklogic-community/marklogic-unit-test">MarkLogic Unit Test on GitHub</a>
     
     
@@ -203,23 +196,25 @@ buildscript:</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>buildscript {
   repositories {
-    jcenter()
+    mavenCentral()
   }
   dependencies {
-    classpath "com.marklogic:marklogic-unit-test-client:1.0.beta"
+    classpath "com.marklogic:marklogic-unit-test-client:1.2.1"
   }
 }
 </code></pre></div></div>
 
-<p>Next, the marklogic-unit-test framework is depended on and installed as an “mlBundle” dependency (the “mlBundle”
-configuration is a feature of ml-gradle for depending on packages of MarkLogic modules):</p>
+<p>Next, the marklogic-unit-test framework is depended on and installed as an
+    <a href="https://github.com/marklogic-community/ml-gradle/wiki/Bundles">mlBundle dependency</a>, which results in
+    the marklogic-unit-test modules being downloaded and installed into your MarkLogic modules database when you
+    deploy your application:</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>repositories {
-  jcenter()
+  mavenCentral()
 }
   
 dependencies {
-  mlBundle "com.marklogic:marklogic-unit-test-modules:1.0.beta"
+  mlBundle "com.marklogic:marklogic-unit-test-modules:1.2.1"
 }
 </code></pre></div></div>
 
@@ -252,7 +247,8 @@ mlUnitTest.databaseClientConfig.password = mlPassword
 <h2 id="using-a-test-content-database">Using a Test Content Database</h2>
 
 <p>Note that you should set up a separate content database for testing, using the same configuration as your regular 
-content. Unit tests will likely insert, update, and delete data; you probably don’t want that happening in your main 
+content. This is achieved with ml-gradle by configuring the <code class="highlighter-rouge">mlTestRestPort</code> property.
+    Unit tests will likely insert, update, and delete data; you probably don’t want that happening in your main
 database.</p>
 
 
@@ -267,7 +263,7 @@ database.</p>
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                    Copyright © 2016-2018 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    Copyright © 2016-2023 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
                     </p>
                 </div>
             </div>

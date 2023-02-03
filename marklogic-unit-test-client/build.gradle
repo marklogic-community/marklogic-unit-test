@@ -1,16 +1,16 @@
 plugins {
 	// ml-gradle is used for deploying a test application so that this project itself can be tested
-	id "com.marklogic.ml-gradle" version "4.3.7"
+	id "com.marklogic.ml-gradle" version "4.4.0"
 
 	// Used to generate a license report
 	id "com.github.jk1.dependency-license-report" version "1.17"
 }
 
 dependencies {
-	api "com.marklogic:marklogic-client-api:6.0.0"
+	api "com.marklogic:marklogic-client-api:6.1.0"
   implementation "org.slf4j:slf4j-api:1.7.36"
 
-  testImplementation "org.junit.jupiter:junit-jupiter:5.9.1"
+  testImplementation "org.junit.jupiter:junit-jupiter:5.9.2"
 }
 
 test {

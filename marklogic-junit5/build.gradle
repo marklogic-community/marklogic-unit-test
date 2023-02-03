@@ -4,12 +4,15 @@ plugins {
 
 dependencies {
   api project(":marklogic-unit-test-client")
-  api "com.marklogic:ml-javaclient-util:4.3.7"   // TODO Upgrade this to 4.4.0 once it's available
+  api ("com.marklogic:ml-javaclient-util:4.4.0") {
+    // Prefer the version coming from marklogic-unit-test-client
+    exclude module: "marklogic-client-api"
+  }
   api "org.jdom:jdom2:2.0.6.1"
-  api "org.junit.jupiter:junit-jupiter:5.9.1"
+  api "org.junit.jupiter:junit-jupiter:5.9.2"
   api "org.springframework:spring-context:5.3.24"
   api "org.springframework:spring-test:5.3.24"
-  api "com.fasterxml.jackson.core:jackson-databind:2.13.4.2"
+  api "com.fasterxml.jackson.core:jackson-databind:2.14.1"
   api 'org.slf4j:slf4j-api:1.7.36'
 
   implementation "jaxen:jaxen:2.0.0"

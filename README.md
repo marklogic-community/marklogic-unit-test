@@ -31,8 +31,8 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath "com.marklogic:marklogic-unit-test-client:1.2.1"
-    classpath "com.marklogic:ml-gradle:4.3.5"
+    classpath "com.marklogic:marklogic-unit-test-client:1.3.0"
+    classpath "com.marklogic:ml-gradle:4.5.0"
   }
 }
 
@@ -43,7 +43,7 @@ repositories {
 }
 
 dependencies {
-  mlBundle "com.marklogic:marklogic-unit-test-modules:1.2.1"
+  mlBundle "com.marklogic:marklogic-unit-test-modules:1.3.0"
 }
 ```
 

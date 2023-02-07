@@ -40,7 +40,7 @@ It is not intended to be used to build this project.
     <dependency>
       <groupId>com.marklogic</groupId>
       <artifactId>marklogic-client-api</artifactId>
-      <version>6.0.0</version>
+      <version>6.1.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

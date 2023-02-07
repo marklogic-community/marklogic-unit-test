@@ -4,10 +4,7 @@ plugins {
 
 dependencies {
   api project(":marklogic-unit-test-client")
-  api ("com.marklogic:ml-javaclient-util:4.4.0") {
-    // Prefer the version coming from marklogic-unit-test-client
-    exclude module: "marklogic-client-api"
-  }
+  api "com.marklogic:ml-javaclient-util:4.5.0"
   api "org.jdom:jdom2:2.0.6.1"
   api "org.junit.jupiter:junit-jupiter:5.9.2"
   api "org.springframework:spring-context:5.3.24"

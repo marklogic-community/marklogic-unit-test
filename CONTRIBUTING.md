@@ -3,10 +3,29 @@
 marklogic-unit-test welcomes new contributors. This document will guide you through 
 the process.
 
+ - [Building and Testing](#building)
  - [Issues and Bugs](#issue)
  - [Feature Requests](#feature)
  - [Submission Guidelines](#submit)
- 
+
+## <a name="building"></a> Building and Testing
+
+After cloning this repository (or a fork of it), you can build and run the tests for marklogic-unit-test locally 
+via the following steps:
+
+```
+echo "mlPassword=your admin user password" > marklogic-junit5/gradle-local.properties
+./gradlew test
+```
+
+The `test` task will both deploy a test application to your MarkLogic instance - assumed to be running at `localhost` - 
+and run a set of tests with this application. The application will include a MarkLogic app server on port 8008, 
+which is defined by the `mlRestPort` property in marklogic-unit-test-client/gradle.properties. Some tests in 
+the marklogic-junit5 subproject will also hit the MarkLogic App-Services app server on port 8000.
+
+After running `./gradlew test`, you can also point your browser at http://localhost:8008/test to access the 
+marklogic-unit-test UI for running tests. 
+
 ## <a name="issue"></a> Found an Issue?
 If you find a bug in the source code or a mistake in the documentation, you can 
 help us by submitting an issue to our [GitHub Issue Tracker][issue tracker]. 
@@ -119,26 +138,10 @@ $ git rebase upstream/dev
 
 We are working hard to improve marklogic-unit-test's testing. If you add new functions
 then please write unit tests in `marklogic-unit-test-client/src/test/ml-modules/root/test/suites/`. 
-When finished, verify that the self-test works.
-
-To deploy the marklogic-unit-test project by itself, run the following commands:
-
-- cd marklogic-unit-test-client
-- ../gradlew -i mlDeploy
-
-That process will create an application server on port 8008 (create a file
-marklogic-unit-test-client/gradle-local.properties and copy the `mlRestPort` property 
-to change the port.)
+When finished, verify that the self-test works. See the instructions for Building and Testing at the top of this 
+guide for doing so.
 
 For modifications to code in the ./marklogic-junit 5 project, please see the README file in that project. 
-
-##### Running Tests in the GUI
-
-Point a browser to http://localhost:8008/test/. 
-
-##### Running Tests with Gradle
-
-From the `marklogic-unit-test-client` directory, run `gradle test`. 
 
 Make sure that all tests pass. Please, do not submit patches that fail.
 

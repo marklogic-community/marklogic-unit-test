@@ -189,7 +189,7 @@ declare function test:easy-url($url) as xs:string
     fn:concat($local-url, if (fn:starts-with($url, "/")) then "" else "/", $url)
 };
 
-declare function test:http-get($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:))
+declare function test:http-get($url as xs:string, $options as item()?)
 {
   let $uri := test:easy-url($url)
   return
@@ -200,45 +200,45 @@ declare function test:assert-http-get-status($url as xs:string, $options as item
   test:assert-http-get-status( $url, $options, $status-code, ())
 };
 
-declare function test:assert-http-get-status($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $status-code, $message as xs:string*)
+declare function test:assert-http-get-status($url as xs:string, $options as item()?, $status-code, $message as xs:string*)
 {
   let $response := test:http-get($url, $options)
   return
     test:assert-equal($status-code, fn:data($response[1]/*:code), $message)
 };
 
-declare function test:http-post($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?)
+declare function test:http-post($url as xs:string, $options as item()?, $data as node()?)
 {
   let $uri := test:easy-url($url)
   return
     xdmp:http-post($uri, $options, $data)
 };
 
-declare function test:assert-http-post-status($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?, $status-code)
+declare function test:assert-http-post-status($url as xs:string, $options as item()?, $data as node()?, $status-code)
 {
   assert-http-post-status($url, $options, $data, $status-code, ())
 };
 
-declare function test:assert-http-post-status($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?, $status-code, $message as xs:string*)
+declare function test:assert-http-post-status($url as xs:string, $options as item()?, $data as node()?, $status-code, $message as xs:string*)
 {
   let $response := test:http-post($url, $options, $data)
   return
     test:assert-equal($status-code, fn:data($response[1]/*:code), $message)
 };
 
-declare function test:http-put($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?)
+declare function test:http-put($url as xs:string, $options as item()?, $data as node()?)
 {
   let $uri := test:easy-url($url)
   return
     xdmp:http-put($uri, $options, $data)
 };
 
-declare function test:assert-http-put-status($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?, $status-code)
+declare function test:assert-http-put-status($url as xs:string, $options as item()?, $data as node()?, $status-code)
 {
   test:assert-http-put-status($url, $options, $data, $status-code, ())
 };
 
-declare function test:assert-http-put-status($url as xs:string, $options as item()?(:as (element(xdmp-http:options)|map:map)?:), $data as node()?, $status-code, $message as xs:string*)
+declare function test:assert-http-put-status($url as xs:string, $options as item()?, $data as node()?, $status-code, $message as xs:string*)
 {
   let $response := test:http-put($url, $options, $data)
   return
@@ -763,11 +763,7 @@ declare function test:assert-meets-minimum-threshold($minimum as xs:decimal, $ac
 };
 
 (: Deprecated.  Replaced by test:assert-greater-than-or-equal(). :)
-declare function test:assert-meets-minimum-threshold(
-  $minimum as xs:decimal,
-  $actual as xs:decimal+,
-  $message as xs:string*
-) {
+declare function test:assert-meets-minimum-threshold($minimum as xs:decimal, $actual as xs:decimal+, $message as xs:string*) {
   (
     if (every $i in 1 to fn:count($actual) satisfies $actual[$i] ge $minimum) then
       test:success()
@@ -792,11 +788,7 @@ declare function test:assert-meets-maximum-threshold($maximum as xs:decimal, $ac
 };
 
 (: Deprecated.  Replaced by test:assert-less-than-or-equal(). :)
-declare function test:assert-meets-maximum-threshold(
-  $maximum as xs:decimal,
-  $actual as xs:decimal+,
-  $message as xs:string?
-) {
+declare function test:assert-meets-maximum-threshold($maximum as xs:decimal, $actual as xs:decimal+, $message as xs:string?) {
   (
     if (every $i in 1 to fn:count($actual) satisfies $actual[$i] le $maximum) then
       test:success()
@@ -817,11 +809,7 @@ declare function test:assert-greater-than($value as xs:decimal, $actual as xs:de
   test:assert-greater-than($value, $actual, ())
 };
 
-declare function test:assert-greater-than(
-  $value as xs:decimal,
-  $actual as xs:decimal+,
-  $message as xs:string*
-) {
+declare function test:assert-greater-than($value as xs:decimal, $actual as xs:decimal+, $message as xs:string*) {
   if (every $i in 1 to fn:count($actual) satisfies $actual[$i] gt $value) then
     test:success()
   else
@@ -837,11 +825,7 @@ declare function test:assert-greater-than-or-equal($minimum as xs:decimal, $actu
   test:assert-greater-than-or-equal($minimum, $actual, ())
 };
 
-declare function test:assert-greater-than-or-equal(
-  $value as xs:decimal,
-  $actual as xs:decimal+,
-  $message as xs:string*
-) {
+declare function test:assert-greater-than-or-equal($value as xs:decimal, $actual as xs:decimal+, $message as xs:string*) {
   if (every $i in 1 to fn:count($actual) satisfies $actual[$i] ge $value) then
     test:success()
   else
@@ -857,11 +841,7 @@ declare function test:assert-less-than($value as xs:decimal, $actual as xs:decim
   test:assert-less-than($value, $actual, ())
 };
 
-declare function test:assert-less-than(
-  $value as xs:decimal,
-  $actual as xs:decimal+,
-  $message as xs:string?
-) {
+declare function test:assert-less-than($value as xs:decimal, $actual as xs:decimal+, $message as xs:string?) {
   if (every $i in 1 to fn:count($actual) satisfies $actual[$i] lt $value) then
     test:success()
   else
@@ -878,11 +858,7 @@ declare function test:assert-less-than-or-equal($maximum as xs:decimal, $actual 
   test:assert-less-than-or-equal($maximum, $actual, ())
 };
 
-declare function test:assert-less-than-or-equal(
-  $value as xs:decimal,
-  $actual as xs:decimal+,
-  $message as xs:string?
-) {
+declare function test:assert-less-than-or-equal($value as xs:decimal, $actual as xs:decimal+, $message as xs:string?) {
   if (every $i in 1 to fn:count($actual) satisfies $actual[$i] le $value) then
     test:success()
   else

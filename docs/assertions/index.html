@@ -181,30 +181,68 @@
 </div>
 
         </div>
-        <div class="col-md-9">
-          <h2 id="assert-functions">Assert Functions</h2>
 
-<p>The testing component has a <a href="https://github.com/marklogic-community/marklogic-unit-test/blob/master/marklogic-unit-test-modules/src/main/ml-modules/root/test/test-helper.xqy">helper library</a> that provides several assert functions:</p>
+          <div class="col-md-9">
+              <h2 id="assert-functions">Assert Functions</h2>
+
+              <p>
+                  The <a
+                      href="https://github.com/marklogic-community/marklogic-unit-test/blob/master/marklogic-unit-test-modules/src/main/ml-modules/root/test/test-helper.xqy">/test/test-helper.xqy</a>
+                  library module is the primary module that you will import into your test modules. This library
+                  contains several dozen functions for making assertions in your tests.
+
 <ul>
-  <li>assert-true($supposed-truths as xs:boolean*)</li>
-  <li>assert-true($supposed-truths as xs:boolean*, $msg as item()*)</li>
-  <li>assert-false($supposed-falsehoods as xs:boolean*)</li>
-  <li>assert-equal($expected as item()*, $actual as item()*)</li>
-  <li>assert-not-equal($expected as item()*, $actual as item()*)</li>
-  <li>assert-exists($item as item()*)</li>
-  <li>assert-all-exist($count as xs:unsignedInt, $item as item()*)</li>
-  <li>assert-not-exists($item as item()*)</li>
+  <li>assert-all-exist($expected-count as xs:unsignedInt, $actuals as item()*)</li>
+  <li>assert-all-exist($expected-count as xs:unsignedInt, $actuals as item()*, $message as xs:string*)</li>
   <li>assert-at-least-one-equal($expected as item()*, $actual as item()*)</li>
-  <li>assert-same-values($expected as item()*, $actual as item()*) - Return true if and only if the two sequences have the same values, regardless of order.</li>
-  <li>assert-meets-minimum-threshold($expected as xs:decimal, $actual as xs:decimal+)</li>
-  <li>assert-meets-maximum-threshold($expected as xs:decimal, $actual as xs:decimal+)</li>
+  <li>assert-at-least-one-equal($expected as item()*, $actual as item()*, $message as xs:string*)</li>
+  <li>assert-equal($expected as item()*, $actual as item()*)</li>
+  <li>assert-equal($expected as item()*, $actual as item()*, $message as xs:string*)</li>
+  <li>assert-equal-json($expected, $actual)</li>
+  <li>assert-equal-json($expected, $actual, $message as xs:string*)</li>
+  <li>assert-equal-json-recursive($object1, $object2) as xs:boolean</li>
+  <li>assert-equal-xml($expected, $actual)</li>
+  <li>assert-equal-xml($expected, $actual, $message as xs:string*)</li>
+  <li>assert-exists($item as item()*)</li>
+  <li>assert-exists($item as item()*, $message as xs:string*)</li>
+  <li>assert-false($conditions as xs:boolean*)</li>
+  <li>assert-false($conditions as xs:boolean*, $message as xs:string*)</li>
+  <li>assert-greater-than($value as xs:decimal, $actual as xs:decimal+)</li>
+  <li>assert-greater-than($value as xs:decimal, $actual as xs:decimal+, $message as xs:string*)</li>
+  <li>assert-greater-than-or-equal($minimum as xs:decimal, $actual as xs:decimal+)</li>
+  <li>assert-greater-than-or-equal($value as xs:decimal, $actual as xs:decimal+, $message as xs:string*)</li>
+  <li>assert-http-get-status($url as xs:string, $options as item()?, $status-code)</li>
+  <li>assert-http-get-status($url as xs:string, $options as item()?, $status-code, $message as xs:string*)</li>
+  <li>assert-http-post-status($url as xs:string, $options as item()?, $data as node()?, $status-code)</li>
+  <li>assert-http-post-status($url as xs:string, $options as item()?, $data as node()?, $status-code, $message as xs:string*)</li>
+  <li>assert-http-put-status($url as xs:string, $options as item()?, $data as node()?, $status-code)</li>
+  <li>assert-http-put-status($url as xs:string, $options as item()?, $data as node()?, $status-code, $message as xs:string*)</li>
+  <li>assert-less-than($value as xs:decimal, $actual as xs:decimal+)</li>
+  <li>assert-less-than($value as xs:decimal, $actual as xs:decimal+, $message as xs:string?)</li>
+  <li>assert-less-than-or-equal($maximum as xs:decimal, $actual as xs:decimal+)</li>
+  <li>assert-less-than-or-equal($value as xs:decimal, $actual as xs:decimal+, $message as xs:string?)</li>
+  <li>assert-not-equal($not-expected as item()*, $actual as item()*)</li>
+  <li>assert-not-equal($not-expected as item()*, $actual as item()*, $message as xs:string*)</li>
+  <li>assert-not-exists($item as item()*)</li>
+  <li>assert-not-exists($item as item()*, $message as xs:string*)</li>
+  <li>assert-same-values($expected as item()*, $actual as item()*)</li>
+  <li>assert-same-values($expected as item()*, $actual as item()*, $message as xs:string*)</li>
   <li>assert-throws-error($function as xdmp:function)</li>
   <li>assert-throws-error($function as xdmp:function, $error-code as xs:string?)</li>
-  <li>assert-throws-error($function as xdmp:function, $params as item()*, $error-code as xs:string?)</li>
-  <li>assert-http-get-status($url as xs:string, $options as element(xdmp-http:options), $status-code)</li>
+  <li>assert-throws-error($function as xdmp:function, $param1 as item()*, $error-code as xs:string?)</li>
+  <li>assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $error-code as xs:string?)</li>
+  <li>assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $error-code as xs:string?)</li>
+  <li>assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $error-code as xs:string?)</li>
+  <li>assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $param5 as item()*, $error-code as xs:string?)</li>
+  <li>assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $param5 as item()*, $param6 as item()*, $error-code as xs:string?)</li>
+  <li>assert-throws-error-with-message($function as xdmp:function, $expected-error-code as xs:string, $expected-message as xs:string)</li>
+  <li>assert-throws-error-with-message($function as xdmp:function, $expected-error-code as xs:string, $expected-message as xs:string, $message as xs:string*)</li>
+  <li>assert-true($conditions as xs:boolean*)</li>
+  <li>assert-true($conditions as xs:boolean*, $message as xs:string?)</li>
 </ul>
+              </p>
 
-<p>It is good practice to use a specific assert function. So rather than:</p>
+              <p>It is good practice to use a specific assert function. So rather than:</p>
 
 <div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">test:assert-equal</span><span class="p">(</span><span class="nf">fn:true</span><span class="p">(),</span> <span class="nv">$</span><span class="n">actual</span><span class="p">)</span><span class="err">`</span>
 </code></pre></div></div>

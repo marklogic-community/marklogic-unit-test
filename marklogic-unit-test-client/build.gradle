@@ -48,6 +48,7 @@ task generatePomForDependencyGraph(dependsOn: "generatePomFileForMainJavaPublica
   }
 }
 
+/*
 publishing {
   publications {
     mainJava(MavenPublication) {
@@ -93,6 +94,7 @@ publishing {
     }
   }
 }
+*/
 
 task createHttpCredentials(type: com.marklogic.gradle.task.MarkLogicTask) {
   doLast {

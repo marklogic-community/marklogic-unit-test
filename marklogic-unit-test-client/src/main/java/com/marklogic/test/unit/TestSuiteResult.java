@@ -11,17 +11,19 @@ import java.util.List;
  */
 public class TestSuiteResult {
 
-	private String xml;
-	private String name;
-	private int total;
-	private int passed;
-	private int failed;
-	private double time;
+	private final String xml;
+	private final String name;
+	private final int total;
+	private final int passed;
+	private final int failed;
+	private final double time;
+  private final int cases;
 	private List<TestResult> testResults = new ArrayList<>();
 
-	public TestSuiteResult(String xml, String name, int total, int passed, int failed, double time) {
+	public TestSuiteResult(String xml, String name, int cases, int total, int passed, int failed, double time) {
 		this.xml = xml;
 		this.name = name;
+    this.cases = cases;
 		this.total = total;
 		this.passed = passed;
 		this.failed = failed;
@@ -68,4 +70,8 @@ public class TestSuiteResult {
 	public String getXml() {
 		return xml;
 	}
+
+  public int getCases() {
+    return cases;
+  }
 }

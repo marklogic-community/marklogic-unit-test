@@ -24,4 +24,23 @@ public class RunSuiteTest {
       databaseClient.release();
     }
   }
+
+  @Test
+  public void testWithCoverage() {
+    DatabaseClient databaseClient = DatabaseClientFactory.newClient("localhost", 8008,
+      new DatabaseClientFactory.DigestAuthContext("admin", "admin"));
+
+    try {
+      List<JUnitTestSuite> suites = new TestManager(databaseClient).runAllSuites(true, true, true);
+      DefaultJUnitTestReporter reporter = new DefaultJUnitTestReporter();
+
+      String testReport = reporter.reportOnJUnitTestSuites(suites);
+      System.out.println(testReport);
+      String coverageReport = reporter.reportOnJUnitTestSuitesCoverage(suites);
+      System.out.println(coverageReport);
+    }
+    finally {
+      databaseClient.release();
+    }
+  }
 }

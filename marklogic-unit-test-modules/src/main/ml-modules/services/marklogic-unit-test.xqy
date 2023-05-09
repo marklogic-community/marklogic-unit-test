@@ -4,6 +4,8 @@ module namespace resource = "http://marklogic.com/rest-api/resource/marklogic-un
 
 import module namespace test = "http://marklogic.com/test" at "/test/test-controller.xqy";
 
+declare variable $TRACE-ID as xs:string := "UNIT-TEST";
+
 declare function get(
 	$context as map:map,
 	$params as map:map
@@ -36,7 +38,11 @@ declare private function run($params as map:map)
 	let $run-teardown as xs:boolean := map:get($params, "runteardown") eq "true"
 	let $format as xs:string := (map:get($params, "format"), "xml")[1]
 	let $calculate-coverage as xs:boolean := map:get($params, "calculatecoverage") eq "true"
-	return
+	return (
+		if (xdmp:trace-enabled($TRACE-ID))
+    then xdmp:trace($TRACE-ID,
+      fn:concat("RUN suite::", $suite,"::tests::", fn:string-join($tests,","), "::format::", $format, "::calculate-coverage::", $calculate-coverage))
+    else (),
 		if ($suite) then
 			let $result := test:run-suite($suite, $tests, $run-suite-teardown, $run-teardown, $calculate-coverage)
 			return
@@ -45,4 +51,5 @@ declare private function run($params as map:map)
 				else
 					$result
 		else ()
+  )
 };

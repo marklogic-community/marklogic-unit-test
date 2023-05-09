@@ -9,16 +9,18 @@ import java.util.List;
  */
 public class JUnitTestSuite {
 
-	private String xml;
-	private int errors;
-	private int failures;
-	private String hostname;
-	private String name;
-	private int tests;
-	private double time;
+	private final String xml;
+	private final int errors;
+	private final int failures;
+	private final String hostname;
+	private final String name;
+	private final int tests;
+	private final double time;
+  private final int cases;
+
 	private List<JUnitTestCase> testCases;
 
-	public JUnitTestSuite(String xml, int errors, int failures, String hostname, String name, int tests, double time) {
+	public JUnitTestSuite(String xml, int errors, int failures, String hostname, String name, int cases, int tests, double time) {
 		this.xml = xml;
 		this.errors = errors;
 		this.failures = failures;
@@ -26,6 +28,7 @@ public class JUnitTestSuite {
 		this.name = name;
 		this.tests = tests;
 		this.time = time;
+    this.cases = cases;
 	}
 
 	public void addTestCase(JUnitTestCase testCase) {
@@ -49,8 +52,8 @@ public class JUnitTestSuite {
 
 	@Override
 	public String toString() {
-		return String.format("[name: %s, tests: %d, errors: %d, failures: %d, hostname: %s, time: %f, testCases: %s]",
-			name, tests, errors, failures, hostname, time, testCases);
+		return String.format("[name: %s, tests: %d, cases: %d, errors: %d, failures: %d, hostname: %s, time: %f, testCases: %s]",
+			name, tests, cases, errors, failures, hostname, time, testCases);
 	}
 
 	public int getErrors() {
@@ -84,4 +87,8 @@ public class JUnitTestSuite {
 	public String getXml() {
 		return xml;
 	}
+
+  public int getCases() {
+    return cases;
+  }
 }

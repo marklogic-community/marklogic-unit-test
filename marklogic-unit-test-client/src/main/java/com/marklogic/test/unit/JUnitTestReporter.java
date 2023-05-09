@@ -9,4 +9,6 @@ import java.util.List;
 public interface JUnitTestReporter {
 
 	String reportOnJUnitTestSuites(List<JUnitTestSuite> suites);
+
+  String reportOnJUnitTestSuitesCoverage(List<JUnitTestSuite> suites);
 }

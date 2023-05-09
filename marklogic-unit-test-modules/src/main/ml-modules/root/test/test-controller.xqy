@@ -16,6 +16,7 @@ declare variable $TEST-SUITES-ROOT := "/test/suites/";
 declare variable $db-id as xs:unsignedLong := xdmp:modules-database();
 declare variable $root as xs:string := xdmp:modules-root();
 
+declare variable $TRACE-ID as xs:string := "UNIT-TEST";
 
 (:
  : Returns a list of the available tests. This list is magically computed based on the modules
@@ -144,6 +145,9 @@ declare function run-suite(
 	$run-teardown as xs:boolean,
 	$calculate-coverage as xs:boolean)
 {
+	if (xdmp:trace-enabled($TRACE-ID)) then
+    xdmp:trace($TRACE-ID, fn:concat("run-suite::", $suite, "::", $run-suite-teardown, "::", $run-teardown, "::", $calculate-coverage))
+  else(),
 	let $start-time := xdmp:elapsed-time()
 	let $tests as xs:string* :=
 		if ($tests) then $tests
@@ -151,6 +155,7 @@ declare function run-suite(
 	let $coverage :=
 		if ($calculate-coverage) then
 			(
+				xdmp:trace($TRACE-ID, fn:concat("calculate-coverage for ", fn:string-join($tests,":::"))),
 				run-suite-setup-or-teardown(fn:true(), $suite),
 				let $coverage-modules := cover:list-coverage-modules()[fn:not(fn:starts-with(., $TEST-SUITES-ROOT))]
 				let $test-modules :=	$tests ! fn:concat($TEST-SUITES-ROOT, $suite, "/", .)
@@ -193,7 +198,8 @@ declare function run(
 	$name as xs:string,
 	$module as xs:string,
 	$run-teardown as xs:boolean,
-	$coverage as map:map?)
+	$coverage as map:map?
+)
 {
 	test:log(text { "    TEST:", $name }),
 	let $start-time := xdmp:elapsed-time()
@@ -268,27 +274,50 @@ declare function format($result as element(), $format as xs:string, $suite-name 
 declare function format-junit($result as element())
 {
 	element testsuite {
-		attribute errors {"0"},
+		attribute cases {fn:count($result/test:test)},
+    attribute tests {fn:data($result/@total)},
+		attribute errors {"0"}, (:why is this 0? :)
 		attribute failures {fn:data($result/@failed)},
 		attribute hostname {fn:tokenize(xdmp:get-request-header("Host"), ":")[1]},
 		attribute name {fn:data($result/@name)},
-		attribute tests {fn:data($result/@total)},
 		attribute time {fn:data($result/@time)},
-		attribute timestamp {""},
+		attribute timestamp {fn:current-dateTime()},
 		for $test in $result/test:test
 		return
 			element testcase {
 				attribute classname {fn:data($test/@name)},
 				attribute name {fn:data($test/@name)},
 				attribute time {fn:data($test/@time)},
-				for $result in ($test/test:result)[1]
+				attribute tests {fn:count($test/test:result)},
+        attribute success {fn:count($test/test:result[@type = 'success'])},
+        attribute fail {fn:count($test/test:result[@type = 'fail'])},
+        for $result in ($test/test:result)
 				where $result/@type = "fail"
 				return
 					element failure {
 						attribute type {fn:data($result/error:error/error:name)},
 						attribute message {fn:data($result/error:error/error:message)},
 						format-result($result/error:error, ())
-					}
+					},
+			(: should we filter out all entries with wanted,covered and missing = 0? :)
+        for $coverage in $test/test:coverage
+        where fn:not($coverage/test:wanted/@count eq 0 and $coverage/test:covered/@count eq 0 and $coverage/test:missing/@count eq 0)
+        return
+          element coverage {
+            attribute module {fn:data($coverage/@uri)},
+	element wanted {
+              attribute count {fn:data($coverage/test:wanted/@count)},
+              fn:data($coverage/test:wanted)
+            },
+            element covered {
+              attribute count {fn:data($coverage/test:covered/@count)},
+              fn:data($coverage/test:covered)
+            },
+            element missing {
+              attribute count {fn:data($coverage/test:missing/@count)},
+              fn:data($coverage/test:missing)
+            }
+          }
 			}
 	}
 };

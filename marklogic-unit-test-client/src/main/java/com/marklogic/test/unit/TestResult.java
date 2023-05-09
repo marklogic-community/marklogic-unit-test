@@ -2,13 +2,13 @@ package com.marklogic.test.unit;
 
 /**
  * Captures the result for a running a single test. failureXml will be populated if the test failed. Does not yet
- * capture the number of successful assertions, just whether or not the test succeeded.
+ * capture the number of successful assertions, just whether the test succeeded.
  */
 public class TestResult {
 
-	private String name;
-	private double time;
-	private String failureXml;
+	private final String name;
+	private final double time;
+	private final String failureXml;
 
 	public TestResult(String name, double time, String failureXml) {
 		this.name = name;

@@ -5,8 +5,8 @@ package com.marklogic.test.unit;
  */
 public class TestModule {
 
-	private String test;
-	private String suite;
+	private final String test;
+	private final String suite;
 
 	public TestModule(String test, String suite) {
 		this.test = test;

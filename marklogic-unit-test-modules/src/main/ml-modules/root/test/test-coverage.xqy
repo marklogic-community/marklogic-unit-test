@@ -33,6 +33,7 @@ declare option xdmp:mapping "false";
 
 (: Half a million lines of XQuery ought to be enough for any module. :)
 declare variable $LIMIT as xs:integer := 654321 ;
+declare variable $TRACE-ID as xs:string := "UNIT-TEST";
 
 declare private function cover:_put(
     $map as map:map,
@@ -165,7 +166,7 @@ declare private function cover:_prepare(
   return map:put($results-map, $module, (map:map(), map:map()))
   ,
   (: we can't currently debug SJS modules, so in order to avoid exceptions, just skip :)
-  if (fn:ends-with($test-module, ".sjs")) then $results-map
+  if (fn:ends-with($test-module, ".sjs") or fn:ends-with($test-module, ".mjs")) then $results-map
   else
     let $request := dbg:invoke($test-module)
     let $do := (
@@ -215,15 +216,16 @@ declare function cover:results(
 {
   $results[fn:not(. instance of element(prof:report))]
   ,
+  xdmp:trace($TRACE-ID, fn:concat("modules to check:", fn:string-join( map:keys($results-map),","))),
   (: report test-level coverage data :)
   let $modules := map:keys($results-map)
-  let $do :=
+  let $do := (
     (: Populate the coverage maps from the profiler output. :)
     for $expr in $results[. instance of element(prof:report)]/prof:histogram/prof:expression[prof:uri = $modules]
     let $covered := map:get($results-map, $expr/prof:uri)[1]
     let $line := $expr/prof:line/fn:string()
     return cover:_put-new($covered, $line)
-
+  )
   for $uri in $modules
   let $seq := map:get($results-map, $uri)
   let $covered := $seq[1]
@@ -445,7 +447,6 @@ declare function cover:module-view(
 {
   cover:module-view($module, $format, $lines, $wanted, $covered, $wanted - $covered)
 };
-
 
 declare function cover:module-view(
     $module as xs:string,

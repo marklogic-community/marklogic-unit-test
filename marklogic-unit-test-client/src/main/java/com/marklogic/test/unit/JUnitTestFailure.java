@@ -5,9 +5,9 @@ package com.marklogic.test.unit;
  */
 public class JUnitTestFailure {
 
-	private String type;
-	private String message;
-	private String failureXml;
+	private final String type;
+	private final String message;
+	private final String failureXml;
 
 	public JUnitTestFailure(String type, String message, String failureXml) {
 		this.type = type;

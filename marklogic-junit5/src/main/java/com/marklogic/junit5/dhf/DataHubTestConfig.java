@@ -20,92 +20,92 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 @PropertySource(value = {"file:gradle.properties", "file:gradle-local.properties"}, ignoreResourceNotFound = true)
 public class DataHubTestConfig {
 
-  @Value("${mlHost:localhost}")
-  private String host;
+    @Value("${mlHost:localhost}")
+    private String host;
 
-  @Value("${mlTestUsername}")
-  private String username;
+    @Value("${mlTestUsername}")
+    private String username;
 
-  @Value("${mlTestPassword}")
-  private String password;
+    @Value("${mlTestPassword}")
+    private String password;
 
-  @Value("${mlTestPort:0}")
-  private Integer testPort;
+    @Value("${mlTestPort:0}")
+    private Integer testPort;
 
-  @Value("${mlTestDbName}")
-  private String testDatabaseName;
+    @Value("${mlTestDbName}")
+    private String testDatabaseName;
 
-  @Value("${mlStagingPort}")
-  private Integer stagingPort;
+    @Value("${mlStagingPort}")
+    private Integer stagingPort;
 
-  @Value("${mlStagingDbName}")
-  private String stagingDatabaseName;
+    @Value("${mlStagingDbName}")
+    private String stagingDatabaseName;
 
-  @Value("${mlJobPort}")
-  private Integer jobPort;
+    @Value("${mlJobPort}")
+    private Integer jobPort;
 
-  /**
-   * Has to be static so that Spring instantiates it first.
-   */
-  @Bean
-  public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
-    PropertySourcesPlaceholderConfigurer c = new PropertySourcesPlaceholderConfigurer();
-    c.setIgnoreResourceNotFound(true);
-    return c;
-  }
+    /**
+     * Has to be static so that Spring instantiates it first.
+     */
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
+        PropertySourcesPlaceholderConfigurer c = new PropertySourcesPlaceholderConfigurer();
+        c.setIgnoreResourceNotFound(true);
+        return c;
+    }
 
-  /**
-   * Defines the configuration details for constructing a DatabaseClient.
-   *
-   * @return
-   */
-  @Bean
-  public DatabaseClientConfig databaseClientConfig() {
-    DatabaseClientConfig config = new DatabaseClientConfig(host, testPort, username, password);
-    // DHF requires that the database name be set on the DatabaseClient
-    config.setDatabase(testDatabaseName);
-    return config;
-  }
+    /**
+     * Defines the configuration details for constructing a DatabaseClient.
+     *
+     * @return
+     */
+    @Bean
+    public DatabaseClientConfig databaseClientConfig() {
+        DatabaseClientConfig config = new DatabaseClientConfig(host, testPort, username, password);
+        // DHF requires that the database name be set on the DatabaseClient
+        config.setDatabase(testDatabaseName);
+        return config;
+    }
 
-  /**
-   * marklogic-junit5 depends on one of these for obtaining a DatabaseClient.
-   *
-   * @return
-   */
-  @Bean
-  public DatabaseClientProvider databaseClientProvider() {
-    return new SimpleDatabaseClientProvider(databaseClientConfig());
-  }
+    /**
+     * marklogic-junit5 depends on one of these for obtaining a DatabaseClient.
+     *
+     * @return
+     */
+    @Bean
+    public DatabaseClientProvider databaseClientProvider() {
+        return new SimpleDatabaseClientProvider(databaseClientConfig());
+    }
 
-  public String getUsername() {
-    return username;
-  }
+    public String getUsername() {
+        return username;
+    }
 
-  public String getPassword() {
-    return password;
-  }
+    public String getPassword() {
+        return password;
+    }
 
-  public String getHost() {
-    return host;
-  }
+    public String getHost() {
+        return host;
+    }
 
-  public Integer getTestPort() {
-    return testPort;
-  }
+    public Integer getTestPort() {
+        return testPort;
+    }
 
-  public String getTestDatabaseName() {
-    return testDatabaseName;
-  }
+    public String getTestDatabaseName() {
+        return testDatabaseName;
+    }
 
-  public String getStagingDatabaseName() {
-    return stagingDatabaseName;
-  }
+    public String getStagingDatabaseName() {
+        return stagingDatabaseName;
+    }
 
-  public Integer getStagingPort() {
-    return stagingPort;
-  }
+    public Integer getStagingPort() {
+        return stagingPort;
+    }
 
-  public Integer getJobPort() {
-    return jobPort;
-  }
+    public Integer getJobPort() {
+        return jobPort;
+    }
 }

@@ -27,48 +27,48 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {DataHubTestConfig.class})
 public abstract class AbstractDataHubTest extends AbstractMarkLogicTest {
 
-  @Autowired
-  protected DataHubTestConfig dataHubTestConfig;
+    @Autowired
+    protected DataHubTestConfig dataHubTestConfig;
 
-  @Autowired
-  protected DatabaseClientProvider databaseClientProvider;
+    @Autowired
+    protected DatabaseClientProvider databaseClientProvider;
 
-  protected DatabaseClient stagingClient;
+    protected DatabaseClient stagingClient;
 
-  @BeforeEach
-  public void setupStagingClient() {
-    stagingClient = DatabaseClientFactory.newClient(
-      dataHubTestConfig.getHost(), dataHubTestConfig.getStagingPort(), dataHubTestConfig.getStagingDatabaseName(),
-      new DatabaseClientFactory.DigestAuthContext(dataHubTestConfig.getUsername(), dataHubTestConfig.getPassword())
-    );
-  }
-
-  @AfterEach
-  public void releaseStagingClient() {
-    if (stagingClient != null) {
-      stagingClient.release();
+    @BeforeEach
+    public void setupStagingClient() {
+        stagingClient = DatabaseClientFactory.newClient(
+            dataHubTestConfig.getHost(), dataHubTestConfig.getStagingPort(), dataHubTestConfig.getStagingDatabaseName(),
+            new DatabaseClientFactory.DigestAuthContext(dataHubTestConfig.getUsername(), dataHubTestConfig.getPassword())
+        );
     }
-  }
 
-  /**
-   * The DatabaseClient returned by this method is intended to connect to the test database.
-   *
-   * @return
-   */
-  @Override
-  protected DatabaseClient getDatabaseClient() {
-    return databaseClientProvider.getDatabaseClient();
-  }
+    @AfterEach
+    public void releaseStagingClient() {
+        if (stagingClient != null) {
+            stagingClient.release();
+        }
+    }
 
-  /**
-   * Assumes digest auth - can override this via a subclass.
-   *
-   * @return
-   */
-  protected DatabaseClient newJobsDatabaseClient() {
-    return DatabaseClientFactory.newClient(
-      dataHubTestConfig.getHost(), dataHubTestConfig.getJobPort(),
-      new DatabaseClientFactory.DigestAuthContext(dataHubTestConfig.getUsername(), dataHubTestConfig.getPassword())
-    );
-  }
+    /**
+     * The DatabaseClient returned by this method is intended to connect to the test database.
+     *
+     * @return
+     */
+    @Override
+    protected DatabaseClient getDatabaseClient() {
+        return databaseClientProvider.getDatabaseClient();
+    }
+
+    /**
+     * Assumes digest auth - can override this via a subclass.
+     *
+     * @return
+     */
+    protected DatabaseClient newJobsDatabaseClient() {
+        return DatabaseClientFactory.newClient(
+            dataHubTestConfig.getHost(), dataHubTestConfig.getJobPort(),
+            new DatabaseClientFactory.DigestAuthContext(dataHubTestConfig.getUsername(), dataHubTestConfig.getPassword())
+        );
+    }
 }

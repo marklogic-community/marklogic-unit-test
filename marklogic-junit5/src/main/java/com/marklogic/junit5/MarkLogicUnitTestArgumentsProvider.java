@@ -21,19 +21,19 @@ import java.util.stream.Stream;
  */
 public class MarkLogicUnitTestArgumentsProvider extends LoggingObject implements ArgumentsProvider {
 
-	@Override
-	public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-		ApplicationContext applicationContext = SpringExtension.getApplicationContext(context);
-		DatabaseClientProvider databaseClientProvider = applicationContext.getBean(DatabaseClientProvider.class);
-    final DatabaseClient client = databaseClientProvider.getDatabaseClient();
-		TestManager testManager = new TestManager(client);
-		try {
-			List<TestModule> testModules = testManager.list();
-			return Stream.of(testModules.toArray(new TestModule[]{})).map(Arguments::of);
-		} catch (Exception ex) {
-			logger.error("Could not obtain a list of marklogic-unit-test modules; " +
-				"please verify that the ml-unit-test library has been properly loaded and that /v1/resources/marklogic-unit-test is accessible", ex);
-			return Stream.of();
-		}
-	}
+    @Override
+    public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+        ApplicationContext applicationContext = SpringExtension.getApplicationContext(context);
+        DatabaseClientProvider databaseClientProvider = applicationContext.getBean(DatabaseClientProvider.class);
+        final DatabaseClient client = databaseClientProvider.getDatabaseClient();
+        TestManager testManager = new TestManager(client);
+        try {
+            List<TestModule> testModules = testManager.list();
+            return Stream.of(testModules.toArray(new TestModule[]{})).map(Arguments::of);
+        } catch (Exception ex) {
+            logger.error("Could not obtain a list of marklogic-unit-test modules; " +
+                "please verify that the ml-unit-test library has been properly loaded and that /v1/resources/marklogic-unit-test is accessible", ex);
+            return Stream.of();
+        }
+    }
 }

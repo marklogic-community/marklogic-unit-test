@@ -25,12 +25,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  */
 public abstract class AbstractSpringMarkLogicTest extends AbstractMarkLogicTest {
 
-	@Autowired
-	protected DatabaseClientProvider databaseClientProvider;
+    @Autowired
+    protected DatabaseClientProvider databaseClientProvider;
 
-	@Override
-	protected DatabaseClient getDatabaseClient() {
-		return databaseClientProvider.getDatabaseClient();
-	}
+    @Override
+    protected DatabaseClient getDatabaseClient() {
+        return databaseClientProvider.getDatabaseClient();
+    }
 
 }

@@ -10,9 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class NonMarkLogicUnitTest {
 
-  @Test
-  public void thisShouldSucceed() {
-    assertEquals("1", "1");
-  }
+    @Test
+    public void thisShouldSucceed() {
+        assertEquals("1", "1");
+    }
 
 }

@@ -1,0 +1,18 @@
+<thesaurus xmlns="http://marklogic.com/xdmp/thesaurus">
+  <entry>
+    <term>Car</term>
+    <part-of-speech>noun</part-of-speech>
+    <synonym>
+      <term>Ford</term>
+      <part-of-speech>noun</part-of-speech>
+    </synonym>
+    <synonym>
+      <term>automobile</term>
+      <part-of-speech>noun</part-of-speech>
+    </synonym>
+    <synonym>
+      <term>Fiat</term>
+      <part-of-speech>noun</part-of-speech>
+    </synonym>
+  </entry>
+</thesaurus>

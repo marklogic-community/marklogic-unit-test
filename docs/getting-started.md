@@ -115,9 +115,34 @@ The above code will invoke the `lookupTerm` function that we wish to test with a
 application's thesaurus. Each `assertEqual` function in the test library - along with every other assertion function - 
 will return a success or failure. The test then returns an array of these successes and failures.
 
+## Configuring a connection to MarkLogic
+
+In order to run the test we've written, the test must be loaded into a modules database in MarkLogic. Both loading and
+running the test requires connecting to a MarkLogic App Server. ml-gradle supports both of these tasks, but a 
+connection must be configured so that ml-gradle knows which App Server to connect to and how to authenticate. 
+
+By default, ml-gradle will use either the App Server port defined by the `mlTestRestPort` property if set, or else it
+will use the `mlRestPort` property. It will also use the 
+[REST API server connection properties](https://github.com/marklogic/ml-gradle/wiki/Property-reference#rest-api-server-connection-properties)
+for controlling how ml-gradle authenticates with the App Server. 
+
+In the case of our example project, the following properties in `gradle.properties` are used to configure a connection
+for loading and running tests:
+
+```
+mlHost=localhost
+mlRestPort=8024
+mlUsername=admin
+mlPassword=this value will be set in gradle-local.properties
+```
+
+For more information on configuring the connection, please see this
+[example project in ml-gradle](https://github.com/marklogic/ml-gradle/tree/master/examples/unit-test-project).
+
 ## Loading tests
 
-Now that we've written a test, we need to load it into our application's modules database so that it can be run.
+Now that we've written a test and configured a connection to MarkLogic, we are ready to load the test into our 
+application's modules database.
 ml-gradle offers a variety of tasks to accomplish this with `mlLoadModules` being the simplest one. However, having to 
 execute this task every time a test module is updated slows down the development cycle. To address this, ml-gradle 
 provides support for 

@@ -4,14 +4,15 @@ title: Loading test data
 nav_order: 5
 ---
 
-marklogic-unit-test includes a simple mechanism for loading test data specific to a test suite. Doing so is useful when 
-a test or suite requires a set of documents to exist, and those documents may not apply to any other suite. 
+marklogic-unit-test includes a simple mechanism for loading test data specific to a test suite. This capability is 
+useful when a test or suite requires a set of documents to exist, and those documents may not apply to any other suite. 
 
 To use this feature, begin by creating a folder named "test-data" within a test suite directory. Each file stored in the
 "test-data" directory can then be loaded via marklogic-unit-test by specifying the name of the file.
 
-For example, if a test suite's "test data" directory contains a file named `sample-doc.json`, the following could be 
-added to either a `suiteSetup.sjs` or `setup.js` module for the test suite to load the file as a new document:
+For example, if a test suite's "test-data" directory contains a file named `sample-doc.json`, the following could be 
+added to either a `suiteSetup.sjs` or `setup.js` module for the test suite to load the file as a new document (the 
+XQuery and JavaScript Module variants of those files will work as well):
 
 ```
 const test = require("/test/test-helper.xqy");

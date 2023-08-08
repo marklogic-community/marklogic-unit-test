@@ -21,3 +21,10 @@ marklogic-unit-test includes the following components:
 
 Please see the [Getting started guide](getting-started.md) to learn how to include marklogic-unit-test in your 
 project and to start writing and running tests.
+
+If you have any questions or run into issues while using marklogic-unit-test, try one of the following:
+
+1. Check for a similar question [on Stack Overflow](https://stackoverflow.com/questions/tagged/marklogic).
+2. If you don't find a similar question, [ask one yourself](https://stackoverflow.com/questions/ask?tags=marklogic).
+3. Or [submit an issue](https://github.com/marklogic-community/marklogic-unit-test/issues/new); expect a response 
+   within a day or two. 

@@ -137,7 +137,7 @@ finishes or after each test finishes. Each of these files will be added to a tes
 
 The table below defines the name of the file to add to a test suite directory based on the desired behavior and 
 language. You are free to add any logic you would like to these files. For example, a common use case is to ensure a 
-database is in a known state before and after a test finishes by either deleting or insert certain documents.
+database is in a known state before and after a test finishes by deleting and/or inserting certain documents.
 
 | File type  | JavaScript | JavaScript Modules | XQuery |
 | --- | --- | --- | --- |
@@ -151,14 +151,14 @@ database is in a known state before and after a test finishes by either deleting
 Most modern programming languages offer multiple testing frameworks for invoking HTTP endpoints and verifying the 
 response. These frameworks can easily be used to verify the behavior of any custom HTTP endpoints you add to your 
 MarkLogic application. When considering how to complement these frameworks with a testing framework like 
-marklogic-unit-test, consider the following rule of thumb:
+marklogic-unit-test, consider the following guidelines:
 
 1. Use marklogic-unit-test to verify as many scenarios as possible, where the details of an HTTP request and 
    response do not matter. This involves identifying various kinds of inputs and ensuring the library function 
    returns the correct outputs.
-2. Use an HTTP testing framework to verify HTTP-specific details, such as HTTP status codes. 
+2. Use an HTTP testing framework to verify HTTP-specific details, such as HTTP status codes on success and on failure.
 
-The above approach suggests the following approach for organizing your custom application code that you deploy to 
+The above approach encourages the following approach for organizing your custom application modules that you deploy to 
 MarkLogic:
 
 1. Keep your HTTP endpoints as lean as possible, delegating to application libraries for all non-HTTP-specific behavior.

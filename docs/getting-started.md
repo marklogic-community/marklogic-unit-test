@@ -15,7 +15,7 @@ for this guide is a simple MarkLogic application with a
 returns thesaurus entries via the `/example/lib.sjs` module located at `src/main/ml-modules/root` in the project.
 The thesaurus entries are found in the `src/main/ml-data/thesaurus/example.xml` file which is loaded into the 
 application's content database when the application is deployed. If you would like to try running the tests in this
-application, you can deploy it by cloning this repository and running the below commands. The value of "mlPassword"
+application, you can deploy it by cloning this repository and running the below commands. The value of `mlPassword`
 should be set to that of your MarkLogic admin user's password.
 
     cd examples/getting-started
@@ -39,8 +39,8 @@ in your `build.gradle` file), run the following task to install marklogic-unit-t
 
     ./gradlew -i mlLoadModules
 
-If you would like to run your marklogic-unit-test tests via Gradle, you'll also need to include the following at the 
-top of your `build.gradle` file:
+If you would like to [run your marklogic-unit-test tests](running-tests.md) via Gradle, you'll also need to include the 
+following at the top of your `build.gradle` file:
 
 ```
 buildscript {
@@ -53,8 +53,8 @@ buildscript {
 }
 ```
 
-The above configuration includes the `marklogic-unit-test-client` library in the classpath, thus available to be used
-by Gradle tasks. The ml-gradle `mlUnitTest` task can then be run, as you will see below.
+The above configuration enables the ml-gradle `mlUnitTest` task to access the `marklogic-unit-test-client` library, 
+allowing it to run your marklogic-unit-test tests.
 
 If you are not using ml-gradle, you will need to manually add the marklogic-unit-test modules to your project. Please
 see [the marklogic-unit-test releases](https://github.com/marklogic-community/marklogic-unit-test/releases) for 
@@ -68,19 +68,19 @@ the project.
 
 ### Configuring where test modules are located
 
-Before writing the test module, we need to perform a one-time step to configure the project so that test modules can
+Before writing a test module, we need to perform a one-time step to configure the project so that test modules can
 be stored in a directory separate from the one containing application modules. This allows for the application to be 
 deployed to non-development environments without including any of the test modules. Open your project's 
 `gradle.properties` file and add the following property:
 
     mlModulePaths=src/main/ml-modules,src/test/ml-modules
 
-By default, ml-gradle will load modules only from `src/main/ml-modules`. The above configuration allows for loading
-modules from `src/test/ml-modules` as well (note that you can choose any directory you wish). This configuration can 
-later be overridden via an environment-specific Gradle properties file to only load from `src/main/ml-modules`.
+By default, ml-gradle will only load modules from `src/main/ml-modules`. The above configuration allows for loading
+modules from `src/test/ml-modules` as well (note that you can choose any directory path you wish). This configuration 
+can later be overridden via an environment-specific Gradle properties file to only load from `src/main/ml-modules`.
 
 Next, create a `src/test/ml-modules/root/test/suites` directory in your project. All test modules will be stored in 
-this directory.
+child directories of this directory.
 
 ### Writing a test module
 
@@ -97,7 +97,8 @@ const test = require("/test/test-helper.xqy");
 const lib = require("/example/lib.sjs");
 ```
 
-The first line above imports the marklogic-unit-test module containing dozens of useful assertion functions; every test
+The first line above imports the marklogic-unit-test module containing dozens of useful 
+[assertion functions](assertion-functions.md); every test
 module will need this imported. The second line imports the library module that we wish to verify. 
 
 Next, add the following text to the file:
@@ -112,8 +113,10 @@ const result = lib.lookupTerm("Car");
 ```
 
 The above code will invoke the `lookupTerm` function that we wish to test with a term that we know is in the 
-application's thesaurus. Each `assertEqual` function in the test library - along with every other assertion function - 
-will return a success or failure. The test then returns an array of these successes and failures.
+application's thesaurus. Each `assertEqual` function call - along with every other assertion function in 
+marklogic-unit-test - will return a success or failure. The test then returns an array of these successes and failures.
+The different approaches for [running tests](running-tests.md) know how to collect these results and display how many
+tests passed and how many failed.
 
 ## Configuring a connection to MarkLogic
 
@@ -124,7 +127,9 @@ connection must be configured so that ml-gradle knows which App Server to connec
 By default, ml-gradle will use either the App Server port defined by the `mlTestRestPort` property if set, or else it
 will use the `mlRestPort` property. It will also use the 
 [REST API server connection properties](https://github.com/marklogic/ml-gradle/wiki/Property-reference#rest-api-server-connection-properties)
-for controlling how ml-gradle authenticates with the App Server. 
+for controlling how ml-gradle authenticates with the App Server. Note that the use of `mlTestRestPort` is optional; 
+see [the ml-gradle docs](https://github.com/marklogic/ml-gradle/wiki/Setup-Test-Resources) for information on whether
+you want to use this feature in your project. 
 
 In the case of our example project, the following properties in `gradle.properties` are used to configure a connection
 for loading and running tests:
@@ -142,10 +147,9 @@ For more information on configuring the connection, please see this
 ## Loading tests
 
 Now that we've written a test and configured a connection to MarkLogic, we are ready to load the test into our 
-application's modules database.
-ml-gradle offers a variety of tasks to accomplish this with `mlLoadModules` being the simplest one. However, having to 
-execute this task every time a test module is updated slows down the development cycle. To address this, ml-gradle 
-provides support for 
+application's modules database. ml-gradle offers a variety of tasks to accomplish this with `mlLoadModules` being the 
+simplest one. However, having to execute this task every time a test module is updated slows down the development 
+cycle. To address this, ml-gradle provides support for 
 [watching for module changes](https://github.com/marklogic/ml-gradle/wiki/Watching-for-module-changes) and 
 automatically loading them via the `mlWatch` task. It is recommended to execute this in a terminal window and leave
 it running while you create and modify your modules:
@@ -161,8 +165,8 @@ Once you execute either `mlWatch` or `mlLoadModules`, your test will be ready to
 marklogic-unit-test provides [several ways to run tests](running-tests.md). We will look at the two primary ways to 
 run the test module we just wrote and loaded into our application's modules database.
 
-First, tests can be run via the Gradle `mlUnitTest` task, as long as you have included the `marklogic-unit-test-client`
-dependency in your `build.gradle` file as shown at the beginning of this guide:
+First, tests can be run via the ml-gradle `mlUnitTest` task, as long as you have included the 
+`marklogic-unit-test-client` dependency in your `build.gradle` file as shown at the beginning of this guide:
 
     ./gradle -i mlUnitTest
 
@@ -180,9 +184,10 @@ Done running all suites; time: 11ms
 1 tests completed, 0 failed
 ```
 
-To see the output when a test fails, simply change one of the assertions in the `simple-test.sjs` file. If you have
-the ml-gradle `mlWatch` task running, it will be loaded after you save the file; otherwise, run the `mlLoadModules`
-task again. Then run `./gradlew mlUnitTest` to re-run the test and you will see output like this:
+To see the output when a test fails, change one of the assertions in the `simple-test.sjs` file so that an incorrect
+value is expected. If you have the ml-gradle `mlWatch` task running, it will be loaded after you save the file; 
+otherwise, run the `mlLoadModules` task again. Then run `./gradlew mlUnitTest` to re-run the test, and you will see 
+output like this:
 
 ```
 > Task :mlUnitTest FAILED
@@ -197,7 +202,7 @@ simple-test.sjs > simple-test.sjs FAILED
     3 synonyms are expected for 'Car'.; expected: 4 actual: 3
 ```
 
-marklogic-unit-test also provides a very simple web interface for running tests. You can access this in your web 
+marklogic-unit-test also provides a simple web interface for running tests. You can access this in your web 
 browser via the port of your application's REST API server and the path `/test/default.xqy`. For example, for the 
 example project, you can access it at <http://localhost:8024/test/default.xqy>, assuming that your MarkLogic server 
 is accessible at "localhost". You can select the tests you wish to run and click on "Run Tests". 
@@ -212,5 +217,5 @@ This guide has covered the following topics:
 4. How to run a test.
 
 With the above information and the references on [writing tests](writing-tests.md) and 
-[running tests](running-tests.md), you can now start writing tests for all the library modules in your application, 
+[running tests](running-tests.md), you can now start writing tests for the library modules in your application, 
 ensuring that you can quickly enhance your application without breaking any existing functionality. 

@@ -17,10 +17,10 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
  */
 public abstract class MarkLogicUnitTestsTest extends AbstractSpringMarkLogicTest {
 
-	@ParameterizedTest
-	@ArgumentsSource(MarkLogicUnitTestArgumentsProvider.class)
-	public void test(TestModule testModule) {
-		runMarkLogicUnitTests(testModule);
-	}
+    @ParameterizedTest
+    @ArgumentsSource(MarkLogicUnitTestArgumentsProvider.class)
+    public void test(TestModule testModule) {
+        runMarkLogicUnitTests(testModule);
+    }
 
 }

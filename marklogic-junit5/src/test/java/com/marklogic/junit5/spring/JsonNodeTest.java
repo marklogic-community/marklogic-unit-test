@@ -8,12 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonNodeTest extends AbstractSpringMarkLogicTest {
 
-	@Test
-	public void test() {
-		getDatabaseClient().newJSONDocumentManager().write(
-			"/test/1.json", new StringHandle("{\"message\":\"Hello world\"}"));
+    @Test
+    public void test() {
+        getDatabaseClient().newJSONDocumentManager().write(
+            "/test/1.json", new StringHandle("{\"message\":\"Hello world\"}"));
 
-		JsonNode json = readJsonDocument("/test/1.json");
-		assertEquals("Hello world", json.get("message").asText());
-	}
+        JsonNode json = readJsonDocument("/test/1.json");
+        assertEquals("Hello world", json.get("message").asText());
+    }
 }

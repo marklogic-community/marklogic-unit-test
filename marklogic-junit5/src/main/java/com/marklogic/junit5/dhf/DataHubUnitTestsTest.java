@@ -19,10 +19,10 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
  */
 public abstract class DataHubUnitTestsTest extends AbstractDataHubTest {
 
-	@ParameterizedTest
-	@ArgumentsSource(MarkLogicUnitTestArgumentsProvider.class)
-	public void test(TestModule testModule) {
-		runMarkLogicUnitTests(testModule);
-	}
+    @ParameterizedTest
+    @ArgumentsSource(MarkLogicUnitTestArgumentsProvider.class)
+    public void test(TestModule testModule) {
+        runMarkLogicUnitTests(testModule);
+    }
 
 }

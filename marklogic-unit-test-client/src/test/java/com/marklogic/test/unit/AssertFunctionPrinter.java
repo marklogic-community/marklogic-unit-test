@@ -14,21 +14,21 @@ import java.util.List;
  */
 public class AssertFunctionPrinter {
 
-  public static void main(String[] args) throws IOException {
-    File file = new File("marklogic-unit-test-modules/src/main/ml-modules/root/test/test-helper.xqy");
-    List<String> signatures = new ArrayList<>();
+    public static void main(String[] args) throws IOException {
+        File file = new File("marklogic-unit-test-modules/src/main/ml-modules/root/test/test-helper.xqy");
+        List<String> signatures = new ArrayList<>();
 
-    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-      String line = reader.readLine();
-      while (line != null) {
-        if (line.contains("declare function test:assert-") && !line.contains("assert-meets")) {
-          signatures.add(line.replaceAll("declare function test:", "").replaceAll(" \\{", "").trim());
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line = reader.readLine();
+            while (line != null) {
+                if (line.contains("declare function test:assert-") && !line.contains("assert-meets")) {
+                    signatures.add(line.replaceAll("declare function test:", "").replaceAll(" \\{", "").trim());
+                }
+                line = reader.readLine();
+            }
         }
-        line = reader.readLine();
-      }
-    }
 
-    Collections.sort(signatures);
-    signatures.forEach(signature -> System.out.println("<li>" + signature + "</li>"));
-  }
+        Collections.sort(signatures);
+        signatures.forEach(signature -> System.out.println("<li>" + signature + "</li>"));
+    }
 }

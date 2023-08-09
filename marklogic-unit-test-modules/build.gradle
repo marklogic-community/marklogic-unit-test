@@ -67,11 +67,21 @@ publishing {
   }
   repositories {
     maven {
-      name = "central"
-      url = mavenCentralUrl
-      credentials {
-        username mavenCentralUsername
-        password mavenCentralPassword
+      if (project.hasProperty("mavenUser")) {
+        name = "nexus"
+        credentials {
+          username mavenUser
+          password mavenPassword
+        }
+        url publishUrl
+        allowInsecureProtocol = true
+      } else {
+        name = "central"
+        url = mavenCentralUrl
+        credentials {
+          username mavenCentralUsername
+          password mavenCentralPassword
+        }
       }
     }
   }

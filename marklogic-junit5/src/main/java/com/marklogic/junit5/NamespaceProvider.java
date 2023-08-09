@@ -7,5 +7,5 @@ import org.jdom2.Namespace;
  */
 public interface NamespaceProvider {
 
-	Namespace[] getNamespaces();
+    Namespace[] getNamespaces();
 }

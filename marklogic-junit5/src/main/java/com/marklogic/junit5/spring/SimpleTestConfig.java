@@ -16,62 +16,62 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 @PropertySource(value = {"file:gradle.properties", "file:gradle-local.properties"}, ignoreResourceNotFound = true)
 public class SimpleTestConfig {
 
-	@Value("${mlUsername}")
-	private String username;
+    @Value("${mlUsername}")
+    private String username;
 
-	@Value("${mlPassword}")
-	private String password;
+    @Value("${mlPassword}")
+    private String password;
 
-	@Value("${mlHost:localhost}")
-	private String host;
+    @Value("${mlHost:localhost}")
+    private String host;
 
-	@Value("${mlTestRestPort:0}")
-	private Integer restPort;
+    @Value("${mlTestRestPort:0}")
+    private Integer restPort;
 
-	/**
-	 * Has to be static so that Spring instantiates it first.
-	 */
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
-		PropertySourcesPlaceholderConfigurer c = new PropertySourcesPlaceholderConfigurer();
-		c.setIgnoreResourceNotFound(true);
-		return c;
-	}
+    /**
+     * Has to be static so that Spring instantiates it first.
+     */
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
+        PropertySourcesPlaceholderConfigurer c = new PropertySourcesPlaceholderConfigurer();
+        c.setIgnoreResourceNotFound(true);
+        return c;
+    }
 
-	/**
-	 * Defines the configuration details for constructing a DatabaseClient. Assumes the use of digest authentication.
-	 * Can subclass and override this method to define a different authentication strategy.
-	 *
-	 * @return
-	 */
-	@Bean
-	public DatabaseClientConfig databaseClientConfig() {
-		return new DatabaseClientConfig(getHost(), getRestPort(), getUsername(), getPassword());
-	}
+    /**
+     * Defines the configuration details for constructing a DatabaseClient. Assumes the use of digest authentication.
+     * Can subclass and override this method to define a different authentication strategy.
+     *
+     * @return
+     */
+    @Bean
+    public DatabaseClientConfig databaseClientConfig() {
+        return new DatabaseClientConfig(getHost(), getRestPort(), getUsername(), getPassword());
+    }
 
-	/**
-	 * AbstractSpringMarkLogicTest depends on an instance of DatabaseClientProvider.
-	 *
-	 * @return
-	 */
-	@Bean
-	public DatabaseClientProvider databaseClientProvider() {
-		return new SimpleDatabaseClientProvider(databaseClientConfig());
-	}
+    /**
+     * AbstractSpringMarkLogicTest depends on an instance of DatabaseClientProvider.
+     *
+     * @return
+     */
+    @Bean
+    public DatabaseClientProvider databaseClientProvider() {
+        return new SimpleDatabaseClientProvider(databaseClientConfig());
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getHost() {
-		return host;
-	}
+    public String getHost() {
+        return host;
+    }
 
-	public Integer getRestPort() {
-		return restPort;
-	}
+    public Integer getRestPort() {
+        return restPort;
+    }
 }

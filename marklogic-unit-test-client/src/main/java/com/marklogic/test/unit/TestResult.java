@@ -8,11 +8,17 @@ public class TestResult {
 
 	private String name;
 	private double time;
+  private int tests;
+  private int success;
+  private int failed;
 	private String failureXml;
 
-	public TestResult(String name, double time, String failureXml) {
+	public TestResult(String name, double time, int tests, int success, int failed, String failureXml) {
 		this.name = name;
 		this.time = time;
+    this.tests = tests;
+    this.success = success;
+    this.failed = failed;
 		this.failureXml = failureXml;
 	}
 
@@ -29,7 +35,19 @@ public class TestResult {
 		return time;
 	}
 
-	public String getFailureXml() {
+  public int getTests() {
+    return tests;
+  }
+
+  public int getSuccess() {
+    return success;
+  }
+
+  public int getFailed() {
+    return failed;
+  }
+
+  public String getFailureXml() {
 		return failureXml;
 	}
 }

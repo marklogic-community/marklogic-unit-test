@@ -255,7 +255,8 @@ declare function format($result as element(), $format as xs:string, $suite-name 
 				if (fn:matches(fn:tokenize($uri, '/')[fn:last()], '^' || $format || $XSL-PATTERN)) then $uri
 				else ()
 		return
-			if ($xsl-match) then
+			if ($xsl-match)
+      then
 				let $xsl := $xsl-match[1]
 				let $params := map:map()
 				let $_ := map:put($params, "hostname", fn:tokenize(xdmp:get-request-header("Host"), ":")[1])
@@ -280,11 +281,14 @@ declare function format-junit($result as element())
 			element testcase {
 				attribute classname {fn:data($test/@name)},
 				attribute name {fn:data($test/@name)},
+        attribute tests {fn:count($test/test:result)},
+        attribute success {fn:count($test/test:result[@type = 'success'])},
+        attribute failed {fn:count($test/test:result[@type = 'fail'])},
 				attribute time {fn:data($test/@time)},
-				for $result in ($test/test:result)[1]
-				where $result/@type = "fail"
+				for $result at $idx in $test/test:result[@type = "fail"]
 				return
 					element failure {
+            attribute idx {$idx},
 						attribute type {fn:data($result/error:error/error:name)},
 						attribute message {fn:data($result/error:error/error:message)},
 						format-result($result/error:error, ())

@@ -28,7 +28,7 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	private DocumentBuilder documentBuilder;
-	private static int ELEMENT_TYPE = 1;	
+	private static int ELEMENT_TYPE = 1;
 
 	@Override
 	public List<TestModule> parseTestList(String xml) {
@@ -67,23 +67,32 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 		for (int i = 0; i < tests.getLength(); i++) {
 			Element testNode = (Element) tests.item(i);
 			String testName = testNode.getAttribute("name");
+
 			double testTime = Double.parseDouble(testNode.getAttribute("time"));
 			NodeList resultNodes = testNode.getChildNodes();
+      int testTotal = 0;
+      List<Element> successNodes = new ArrayList<>();
+      List<Element> failedNodes = new ArrayList<>();
+      for (int j = 0; j < resultNodes.getLength(); j++) {
+        // An XQuery test module may return additional nodes, such as text nodes, which should be
+        // ignored unless they are element nodes.
+        if (resultNodes.item(j).getNodeType() == ELEMENT_TYPE) {
+          Element resultNode = (Element) resultNodes.item(j);
+          if (resultNode.getTagName().equalsIgnoreCase("test:result")) {
+            testTotal += 1;
+          }
+          if ("success".equals(resultNode.getAttribute("type"))) {
+            successNodes.add(resultNode);
+          } else if ("fail".equals(resultNode.getAttribute("type"))) {
+            failedNodes.add(resultNode);
+          }
+        }
+      }
 			String failureXml = null;
-			for (int j = 0; j < resultNodes.getLength(); j++) {
-				// An XQuery test module may return additional nodes, such as text nodes, which should be
-				// ignored unless they are element nodes. 				
-				if (resultNodes.item(j).getNodeType() == ELEMENT_TYPE) {
-					Element resultNode = (Element) resultNodes.item(j);
-					if ("fail".equals(resultNode.getAttribute("type"))) {
-						failureXml = toXml(resultNode);
-						break;						
-					}
-				} else {
-					logger.debug("Ignoring Node Type [" + resultNodes.item(j).getNodeType() + "]");
-				}
-			}
-			testSuiteResult.addTestResult(new TestResult(testName, testTime, failureXml));
+      if (!failedNodes.isEmpty()) {
+        failureXml = toXml(failedNodes.get(0));
+      }
+      testSuiteResult.addTestResult(new TestResult(testName, testTime, testTotal, successNodes.size(), failedNodes.size(), failureXml));
 		}
 
 		return testSuiteResult;
@@ -106,7 +115,10 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 			String testName = node.getAttribute("name");
 			String classname = node.getAttribute("classname");
 			double testTime = Double.parseDouble(root.getAttribute("time"));
-			JUnitTestCase testCase = new JUnitTestCase(testName, classname, testTime);
+      int tcTotal = Integer.parseInt(node.getAttribute("tests"));
+      int tcSuccess = Integer.parseInt(node.getAttribute("success"));
+      int tcFailed = Integer.parseInt(node.getAttribute("failed"));
+			JUnitTestCase testCase = new JUnitTestCase(testName, classname, testTime, tcTotal, tcSuccess, tcFailed);
 			suite.addTestCase(testCase);
 
 			NodeList failureNodes = node.getChildNodes();

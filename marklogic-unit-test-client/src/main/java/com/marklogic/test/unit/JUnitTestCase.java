@@ -12,13 +12,19 @@ public class JUnitTestCase {
 	private String classname;
 	private String name;
 	private double time;
+  private int tests;
+  private int success;
+  private int failed;
 	private List<JUnitTestFailure> testFailures;
 
-	public JUnitTestCase(String name, String classname, double time) {
-		this.name = name;
-		this.classname = classname;
-		this.time = time;
-	}
+  public JUnitTestCase(String name, String classname, double time, int tests, int success, int failed) {
+    this.name = name;
+    this.classname = classname;
+    this.time = time;
+    this.tests = tests;
+    this.success = success;
+    this.failed = failed;
+  }
 
 	public void addTestFailure(JUnitTestFailure testFailure) {
 		if (testFailures == null) {
@@ -49,7 +55,19 @@ public class JUnitTestCase {
 		return time;
 	}
 
-	public List<JUnitTestFailure> getTestFailures() {
+  public int getTests() {
+    return tests;
+  }
+
+  public int getSuccess() {
+    return success;
+  }
+
+  public int getFailed() {
+    return failed;
+  }
+
+  public List<JUnitTestFailure> getTestFailures() {
 		return testFailures;
 	}
 

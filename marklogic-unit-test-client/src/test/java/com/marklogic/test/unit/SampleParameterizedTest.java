@@ -34,12 +34,20 @@ public class SampleParameterizedTest implements ArgumentsProvider {
     @ParameterizedTest
     @ArgumentsSource(SampleParameterizedTest.class)
     public void test(TestModule testModule) {
-        TestSuiteResult result = testManager.run(testModule);
-        for (TestResult testResult : result.getTestResults()) {
-            String failureXml = testResult.getFailureXml();
-            if (failureXml != null) {
-                fail(String.format("Test %s in suite %s failed, cause: %s", testResult.getName(), testModule.getSuite(), failureXml));
-            }
+    TestSuiteResult result = testManager.run(testModule);
+    for (TestResult testResult : result.getTestResults()) {
+        String failureXml = testResult.getFailureXml();
+        if (failureXml != null) {
+            fail(String.format("Test %s in suite %s failed, cause: %s", testResult.getName(), testModule.getSuite(), failureXml));
+        }
+        int failures = testResult.getFailed();
+        if (failures > 0) {
+            fail(String.format("Nr of failed tests in case %s in suite %s > 0, count: %s", testResult.getName(), testModule.getSuite(), failures));
+        }
+        int success = testResult.getSuccess();
+        int total = testResult.getTests();
+        if (success != total) {
+            fail(String.format("Nr of succeeded tests in case %s in suite %s  ne total tests, succeeded: %s, total : %s", testResult.getName(), testModule.getSuite(), success, total));
         }
     }
 

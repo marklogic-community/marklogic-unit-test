@@ -2,7 +2,6 @@
 layout: default
 title: Getting started
 nav_order: 2
-[comment]: "/docs" is used to preserve links to previous set of docs.
 permalink: /docs
 ---
 

@@ -19,7 +19,7 @@ marklogic-unit-test includes the following components:
    popular Java testing frameworks. 
 4. A REST endpoint for integrating with testing frameworks in any language.
 
-Please see the [Getting started guide](getting-started.md) to learn how to include marklogic-unit-test in your 
+Please see the [Getting started guide](/docs) to learn how to include marklogic-unit-test in your 
 project and to start writing and running tests.
 
 If you have any questions or run into issues while using marklogic-unit-test, try one of the following:

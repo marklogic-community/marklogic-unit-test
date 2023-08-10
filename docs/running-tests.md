@@ -2,6 +2,7 @@
 layout: default
 title: Running tests
 nav_order: 4
+permalink: /docs/running
 ---
 
 Tests written using marklogic-unit-test can be run in several ways, each of which is described below. 
@@ -9,7 +10,7 @@ Tests written using marklogic-unit-test can be run in several ways, each of whic
 ## Using Gradle 
 
 The [ml-gradle plugin for Gradle](https://github.com/marklogic/ml-gradle) provides an `mlUnitTest` task for running 
-all of your marklogic-unit-test tests. As noted in the [Getting started guide](getting-started.md), you will need to 
+all of your marklogic-unit-test tests. As noted in the [Getting started guide](/docs), you will need to 
 include the following block at the top of your `build.gradle` file to ensure this task can run successfully:
 
 ```
@@ -38,9 +39,9 @@ App Server.
 ## Using the web application
 
 Once you have deployed your application along with the marklogic-unit-test modules, as described in the
-[Getting started guide](getting-started.md), you will be able to access a custom endpoint via any MarkLogic HTTP
+[Getting started guide](/docs), you will be able to access a custom endpoint via any MarkLogic HTTP
 App Server associated with the modules database containing your application modules. The path of that endpoint is
-`/test/default.xqy`. For example, since the App Server in the [Getting started guide](getting-started.md) listens on
+`/test/default.xqy`. For example, since the App Server in the [Getting started guide](/docs) listens on
 port 8024, the endpoint would be accessible at <http://localhost:8024/test/default.xqy>.
 
 The web application at this custom endpoint provides a functional, albeit antiquated-looking, interface for running

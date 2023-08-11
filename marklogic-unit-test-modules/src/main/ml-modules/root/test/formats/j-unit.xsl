@@ -22,13 +22,16 @@
 	<!-- Output test suites -->
 	<xsl:template match="test:suite">
 		<testsuite errors="0" failures="{@failed}" hostname="{$hostname}" name="{@name}" tests="{@total}" time="{@time}" timestamp="{$timestamp}">
-			<xsl:apply-templates/>
+			<xsl:apply-templates>
+        <xsl:with-param name="suite" select="@name" tunnel="yes"/>
+      </xsl:apply-templates>
 		</testsuite>
 	</xsl:template>
 
 	<!-- Output test cases within test suites -->
 	<xsl:template match="test:test">
-		<testcase classname="{@name}" name="{@name}" time="{@time}">
+    <xsl:param name="suite" select="@name" tunnel="yes"/>
+		<testcase classname="{$suite}" name="{@name}" time="{@time}">
 			<xsl:apply-templates/>
 		</testcase>
 	</xsl:template>

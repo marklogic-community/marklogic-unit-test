@@ -180,9 +180,9 @@ declare function run-suite(
 	return
 		element test:suite {
 			attribute name { $suite },
-			attribute total { fn:count($results/test:test/test:result) },
-			attribute passed { fn:count($results/test:test/test:result[@type = 'success']) },
-			attribute failed { fn:count($results/test:test/test:result[@type = 'fail']) },
+      attribute total { fn:count($results/test:test/test:result) },
+      attribute failed { fn:count($results/test:test/test:result[@type='fail']) },
+      attribute passed { fn:count($results/test:test/test:result[@type='success']) },
 			attribute time { functx:total-seconds-from-duration($end-time - $start-time) },
 			$results/test:test
 		}
@@ -245,8 +245,8 @@ declare function run(
 
 declare function format($result as element(), $format as xs:string, $suite-name as xs:string)
 {
-	if ($format eq "junit") then
-		format-junit($result)
+	if ($format eq "junit")
+  then format-junit($result)
 	else
 		let $format-uris := test:list-from-database($db-id, $root || "test/formats/")
 		let $xsl-match :=
@@ -278,11 +278,10 @@ declare function format-junit($result as element())
 		for $test in $result/test:test
 		return
 			element testcase {
-				attribute classname {fn:data($test/@name)},
+				attribute classname {fn:data($result/@name)},
 				attribute name {fn:data($test/@name)},
 				attribute time {fn:data($test/@time)},
-				for $result in ($test/test:result)[1]
-				where $result/@type = "fail"
+        for $result in $test/test:result[@type='fail'][1]
 				return
 					element failure {
 						attribute type {fn:data($result/error:error/error:name)},

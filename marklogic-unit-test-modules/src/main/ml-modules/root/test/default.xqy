@@ -107,8 +107,8 @@ declare function local:main() {
 						<tr>
 							<th><input id="checkall" type="checkbox" checked="checked"/>Run</th>
 							<th>Test Suite</th>
-							<th>Total Test Count</th>
-							<th>Tests Run</th>
+							<th>Tests</th>
+							<th>Assertions</th>
 							<th>Passed</th>
 							<th>Failed</th>
 						</tr>

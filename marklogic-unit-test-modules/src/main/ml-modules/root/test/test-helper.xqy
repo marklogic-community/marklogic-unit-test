@@ -891,32 +891,38 @@ declare function test:assert-throws-error($function as xdmp:function, $error-cod
 
 declare function test:assert-throws-error($function as xdmp:function, $param1 as item()*, $error-code as xs:string?)
 {
-  test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array('make me a sequence')), 1), $error-code, ())
+  let $_ := xdmp:log("The 'test:assert-throws-error' function with parameters is deprecated and will be removed in the 2.0 release of marklogic-unit-test. Please use the assert-throws-error function that requires a function to be passed to it.")
+  return test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array('make me a sequence')), 1), $error-code, ())
 };
 
 declare function test:assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $error-code as xs:string?)
 {
-  test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2))), $error-code, ())
+  let $_ := xdmp:log("The 'test:assert-throws-error' function with parameters is deprecated and will be removed in the 2.0 release of marklogic-unit-test. Please use the assert-throws-error function that requires a function to be passed to it.")
+  return test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2))), $error-code, ())
 };
 
 declare function test:assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $error-code as xs:string?)
 {
-  test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3))), $error-code, ())
+  let $_ := xdmp:log("The 'test:assert-throws-error' function with parameters is deprecated and will be removed in the 2.0 release of marklogic-unit-test. Please use the assert-throws-error function that requires a function to be passed to it.")
+  return test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3))), $error-code, ())
 };
 
 declare function test:assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $error-code as xs:string?)
 {
-  test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4))), $error-code, ())
+  let $_ := xdmp:log("The 'test:assert-throws-error' function with parameters is deprecated and will be removed in the 2.0 release of marklogic-unit-test. Please use the assert-throws-error function that requires a function to be passed to it.")
+  return test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4))), $error-code, ())
 };
 
 declare function test:assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $param5 as item()*, $error-code as xs:string?)
 {
-  test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4), json:to-array($param5))), $error-code, ())
+  let $_ := xdmp:log("The 'test:assert-throws-error' function with parameters is deprecated and will be removed in the 2.0 release of marklogic-unit-test. Please use the assert-throws-error function that requires a function to be passed to it.")
+  return test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4), json:to-array($param5))), $error-code, ())
 };
 
 declare function test:assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $param5 as item()*, $param6 as item()*, $error-code as xs:string?)
 {
-  test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4), json:to-array($param5), json:to-array($param6))), $error-code, ())
+  let $_ := xdmp:log("The 'test:assert-throws-error' function with parameters is deprecated and will be removed in the 2.0 release of marklogic-unit-test. Please use the assert-throws-error function that requires a function to be passed to it.")
+  return test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4), json:to-array($param5), json:to-array($param6))), $error-code, ())
 };
 
 declare private function test:assert-throws-error_($function as xdmp:function, $params as json:array, $error-code as xs:string?, $expected-error-message as xs:string?) {

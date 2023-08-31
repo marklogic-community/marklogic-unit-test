@@ -578,7 +578,7 @@ declare function test:assert-equal-xml($expected, $actual, $message as xs:string
           test:assert-equal-xml($expected, $actual/node())
     case element() return
       if (fn:empty($expected)) then
-        test:assert-true(fn:false(), ("element not found in $expected : ", xdmp:path($actual)))
+        test:fail(("element not found in $expected : ", xdmp:path($actual)))
       else typeswitch ($expected)
         case element() return (
           test:assert-equal(fn:name($expected), fn:name($actual), fn:concat("mismatched node name ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")),
@@ -592,19 +592,19 @@ declare function test:assert-equal-xml($expected, $actual, $message as xs:string
             test:assert-equal-xml($expected/*[$i], $element)
         )
         default return
-          test:assert-true(fn:false(), ("type mismatch ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
+          test:fail(("type mismatch ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
     case attribute() return
       if (fn:empty($expected)) then
-        test:assert-true(fn:false(), ("attribute not found in $expected : ", xdmp:path($actual)))
+        test:fail(("attribute not found in $expected : ", xdmp:path($actual)))
       else typeswitch ($expected)
         case attribute() return (
           test:assert-equal(fn:name($expected), fn:name($actual), fn:concat("mismatched attribute name ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")),
           test:assert-equal($expected/fn:data(), $actual/fn:data(), fn:concat("mismatched attribute text ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
         )
         default return
-          test:assert-true(fn:false(), ("type mismatch : $expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual)))
+          test:fail(("type mismatch : $expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual)))
     default return
-      test:assert-true(fn:false(), ("unsupported type in $actual : ", xdmp:path($actual)))
+      test:fail(("unsupported type in $actual : ", xdmp:path($actual)))
 };
 
 declare function test:assert-equal-json($expected, $actual) {

@@ -737,7 +737,9 @@ declare function test:assert-true($conditions as xs:boolean*) {
 };
 
 declare function test:assert-true($conditions as xs:boolean*, $message as xs:string?) {
-  if (fn:false() = $conditions) then
+  if (fn:empty($conditions)) then
+      fn:error(xs:QName("ASSERT-TRUE-FAILED"), fn:string-join(($message, "Condition was not true."), "; ") , $conditions)
+  else if (fn:false() = $conditions) then
     fn:error(xs:QName("ASSERT-TRUE-FAILED"), fn:string-join(($message, "Condition was not true."), "; ") , $conditions)
   else
     test:success()

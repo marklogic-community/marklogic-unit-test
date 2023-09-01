@@ -44,6 +44,17 @@ declare variable $test:__LINE__ as xs:int :=
 
 declare variable $test:__CALLER_FILE__ := test:get-caller();
 
+(:
+ : Returns a URI identifying the directory that contains any test data files associated with the test module that invokes this.
+ :)
+declare function test:get-test-data-directory-uri($caller-path as xs:string) as xs:string
+{
+  fn:replace(
+    fn:concat(
+      cvt:basepath($caller-path), "/test-data/"),
+    "//", "/")
+};
+
 declare function test:get-caller()
 as xs:string
 {

@@ -1,16 +1,11 @@
 package com.marklogic.test.unit;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
-import java.io.FileReader;
-import java.util.Properties;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -22,14 +17,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class SampleParameterizedTest implements ArgumentsProvider {
 
     private static TestManager testManager;
-    private static DatabaseClient databaseClient;
-
-    @AfterAll
-    public static void releaseDatabaseClient() {
-        if (databaseClient != null) {
-            databaseClient.release();
-        }
-    }
 
     @ParameterizedTest
     @ArgumentsSource(SampleParameterizedTest.class)
@@ -54,16 +41,7 @@ public class SampleParameterizedTest implements ArgumentsProvider {
      */
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
-        Properties props = new Properties();
-        props.load(new FileReader("gradle.properties"));
-        final String host = props.getProperty("mlHost");
-        final int port = Integer.parseInt(props.getProperty("mlRestPort"));
-        final String username = props.getProperty("mlUsername");
-        final String password = props.getProperty("mlPassword");
-
-        databaseClient = DatabaseClientFactory.newClient(host, port,
-            new DatabaseClientFactory.DigestAuthContext(username, password));
-        testManager = new TestManager(databaseClient);
+        testManager = new TestManager(ClientUtil.getClient());
         return Stream.of(testManager.list().toArray(new TestModule[]{})).map(Arguments::of);
     }
 }

@@ -15,6 +15,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private DocumentBuilder documentBuilder;
+    private TransformerFactory transformerFactory;
     private static int ELEMENT_TYPE = 1;
 
     @Override
@@ -91,14 +95,23 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 
     @Override
     public JUnitTestSuite parseJUnitTestSuiteResult(String xml) {
-        Element root = parse(xml).getDocumentElement();
+        Document doc = parse(xml);
+        Element root = doc.getDocumentElement();
         int errors = Integer.parseInt(root.getAttribute("errors"));
         int failures = Integer.parseInt(root.getAttribute("failures"));
         String hostname = root.getAttribute("hostname");
         String name = root.getAttribute("name");
         int tests = Integer.parseInt(root.getAttribute("tests"));
         double time = Double.parseDouble(root.getAttribute("time"));
-        JUnitTestSuite suite = new JUnitTestSuite(xml, errors, failures, hostname, name, tests, time);
+
+        String prettyXml = xml;
+        try {
+            prettyXml = prettyPrintXml(doc);
+        } catch (Exception ex) {
+            logger.warn("Unable to pretty-print XML; cause: " + ex.getMessage());
+        }
+
+        JUnitTestSuite suite = new JUnitTestSuite(prettyXml, errors, failures, hostname, name, tests, time);
 
         NodeList testCases = root.getChildNodes();
         for (int i = 0; i < testCases.getLength(); i++) {
@@ -124,8 +137,10 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
 
     protected String toXml(Node node) {
         try {
-            TransformerFactory transFactory = TransformerFactory.newInstance();
-            Transformer transformer = transFactory.newTransformer();
+            if (transformerFactory == null) {
+                transformerFactory = TransformerFactory.newInstance();
+            }
+            Transformer transformer = transformerFactory.newTransformer();
             StringWriter buffer = new StringWriter();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             transformer.transform(new DOMSource(node), new StreamResult(buffer));
@@ -156,4 +171,25 @@ public class JaxpServiceResponseUnmarshaller implements ServiceResponseUnmarshal
         }
     }
 
+    /**
+     * Added this in 1.4.0 to handle pretty-printing the entire XML document, while {@code toXml} is only for the
+     * embedded failure XML. Did not want to try reusing that for the whole XML document.
+     *
+     * @param doc
+     * @return
+     * @throws Exception
+     */
+    private String prettyPrintXml(Document doc) throws Exception {
+        if (transformerFactory == null) {
+            transformerFactory = TransformerFactory.newInstance();
+        }
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        transformer.transform(new DOMSource(doc), new StreamResult(new OutputStreamWriter(baos)));
+        return new String(baos.toByteArray());
+    }
 }

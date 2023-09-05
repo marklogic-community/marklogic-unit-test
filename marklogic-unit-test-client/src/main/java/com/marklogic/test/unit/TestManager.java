@@ -8,6 +8,8 @@ import com.marklogic.client.util.RequestParameters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Provides methods for talking to the marklogic-unit-test REST extension.
@@ -81,12 +83,13 @@ public class TestManager extends ResourceManager {
      * @return
      */
     public TestSuiteResult run(TestModule testModule, boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
-        RequestParameters params = buildRequestParameters(testModule.getSuite(), FORMAT_NONE, runTeardown, runSuiteTeardown, calculateCoverage);
-
-        String test = testModule.getTest();
-        if (test != null) {
-            params.add("tests", testModule.getTest());
-        }
+        RequestParameters params = new RunParameters()
+            .withTestNames(testModule.getTest())
+            .withFormat(FORMAT_NONE)
+            .withRunSuiteTeardown(runSuiteTeardown)
+            .withRunTeardown(runTeardown)
+            .withCalculateCoverage(calculateCoverage)
+            .toRequestParameters(testModule.getSuite());
 
         String xml = getServices().post(params, (AbstractWriteHandle) null, new StringHandle()).get();
         return unitTestXmlParser.parseTestSuiteResult(xml);
@@ -96,7 +99,7 @@ public class TestManager extends ResourceManager {
      * @return a JUnitTestSuite for every suite found in the modules database
      */
     public List<JUnitTestSuite> runAllSuites() {
-        return runAllSuites(true, true, false);
+        return runAllSuites(new RunParameters());
     }
 
     /**
@@ -104,7 +107,9 @@ public class TestManager extends ResourceManager {
      * @param runSuiteTeardown
      * @param calculateCoverage
      * @return a JUnitTestSuite for every suite found in the modules database
+     * @deprecated since 1.4.0; prefer using {@code RunParameters}
      */
+    @Deprecated
     public List<JUnitTestSuite> runAllSuites(boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
         List<String> suiteNames = listSuites();
         List<JUnitTestSuite> suites = new ArrayList<>();
@@ -119,7 +124,7 @@ public class TestManager extends ResourceManager {
      * @return a JUnitTestSuite capturing the results of running the given suite name
      */
     public JUnitTestSuite runSuite(String suite) {
-        return runSuite(suite, true, true, false);
+        return runSuite(suite, new RunParameters());
     }
 
     /**
@@ -128,25 +133,118 @@ public class TestManager extends ResourceManager {
      * @param runSuiteTeardown
      * @param calculateCoverage
      * @return
+     * @deprecated since 1.4.0; prefer using {@code RunParameters}
      */
+    @Deprecated
     public JUnitTestSuite runSuite(String suite, boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
-        RequestParameters params = buildRequestParameters(suite, FORMAT_JUNIT, runTeardown, runSuiteTeardown, calculateCoverage);
+        RequestParameters params = new RunParameters()
+            .withFormat(FORMAT_JUNIT)
+            .withRunSuiteTeardown(runSuiteTeardown)
+            .withRunTeardown(runTeardown)
+            .withCalculateCoverage(calculateCoverage)
+            .toRequestParameters(suite);
+
         String xml = getServices().post(params, (AbstractWriteHandle) null, new StringHandle()).get();
         return unitTestXmlParser.parseJUnitTestSuiteResult(xml);
     }
 
-    protected RequestParameters buildRequestParameters(String suite, String format, boolean runTeardown, boolean runSuiteTeardown, boolean calculateCoverage) {
-        RequestParameters params = new RequestParameters();
-        params.add("func", "run");
-        params.add("suite", suite);
-        params.add("format", format);
-        params.add("runsuiteteardown", String.valueOf(runSuiteTeardown));
-        params.add("runteardown", String.valueOf(runTeardown));
-        params.add("calculatecoverage", String.valueOf(calculateCoverage));
-        return params;
+    /**
+     * Run a single suite with the given parameters.
+     *
+     * @param params
+     * @return
+     * @since 1.4.0
+     */
+    public JUnitTestSuite runSuite(String suiteName, RunParameters params) {
+        String xml = getServices().post(params.toRequestParameters(suiteName), (AbstractWriteHandle) null, new StringHandle()).get();
+        return unitTestXmlParser.parseJUnitTestSuiteResult(xml);
+    }
+
+    /**
+     * Run all suites using the given parameters.
+     *
+     * @since 1.4.0
+     */
+    public List<JUnitTestSuite> runAllSuites(RunParameters params) {
+        return this.listSuites().stream().map(suite -> runSuite(suite, params)).collect(Collectors.toList());
+    }
+
+    /**
+     * Runs each suite identified by {@code suiteNames}, using the parameters in the given {@code RunParameters}
+     * instance.
+     *
+     * @since 1.4.0
+     */
+    public List<JUnitTestSuite> runSuites(List<String> suiteNames, RunParameters params) {
+        return suiteNames.stream().map(suiteName -> runSuite(suiteName, params)).collect(Collectors.toList());
     }
 
     public void setUnitTestXmlParser(ServiceResponseUnmarshaller unitTestXmlParser) {
         this.unitTestXmlParser = unitTestXmlParser;
+    }
+
+    /**
+     * Simplifies constructing a set of request parameters to pass to the marklogic-unit-test REST extension.
+     *
+     * @since 1.4.0
+     */
+    public static class RunParameters {
+
+        private String[] testNames;
+        private boolean runSuiteTeardown = true;
+        private boolean runTeardown = true;
+        private boolean calculateCoverage = false;
+        private String format = "junit";
+
+        public RunParameters() {
+        }
+
+        public RunParameters(String... testNames) {
+            this();
+            withTestNames(testNames);
+        }
+
+        public RunParameters withTestNames(String... testNames) {
+            this.testNames = testNames;
+            return this;
+        }
+
+        public RunParameters withFormat(String format) {
+            this.format = format;
+            return this;
+        }
+
+        public RunParameters withRunSuiteTeardown(boolean runSuiteTeardown) {
+            this.runSuiteTeardown = runSuiteTeardown;
+            return this;
+        }
+
+        public RunParameters withRunTeardown(boolean runTeardown) {
+            this.runTeardown = runTeardown;
+            return this;
+        }
+
+        public RunParameters withCalculateCoverage(boolean calculateCoverage) {
+            this.calculateCoverage = calculateCoverage;
+            return this;
+        }
+
+        public RequestParameters toRequestParameters(String suiteName) {
+            RequestParameters params = new RequestParameters();
+            params.add("run", "func");
+            if (suiteName != null) {
+                params.add("suite", suiteName);
+            }
+            if (format != null) {
+                params.add("format", format);
+            }
+            if (testNames != null) {
+                params.add("tests", Stream.of(testNames).collect(Collectors.joining(",")));
+            }
+            params.add("runsuiteteardown", String.valueOf(runSuiteTeardown));
+            params.add("runteardown", String.valueOf(runTeardown));
+            params.add("calculatecoverage", String.valueOf(calculateCoverage));
+            return params;
+        }
     }
 }

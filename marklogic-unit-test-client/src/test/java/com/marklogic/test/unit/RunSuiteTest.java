@@ -15,6 +15,6 @@ public class RunSuiteTest {
     public void test() {
         List<JUnitTestSuite> suites = new TestManager(ClientUtil.getClient()).runAllSuites();
         String report = new DefaultJUnitTestReporter().reportOnJUnitTestSuites(suites);
-        assertEquals("42 tests completed, 0 failed", report.trim());
+        assertEquals("45 tests completed, 0 failed", report.trim());
     }
 }

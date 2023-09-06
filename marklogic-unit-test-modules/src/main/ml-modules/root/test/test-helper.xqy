@@ -531,14 +531,8 @@ declare function test:assert-same-values($expected as item()*, $actual as item()
 
 declare function test:assert-same-values($expected as item()*, $actual as item()*, $message as xs:string*)
 {
-  let $expected-ordered :=
-    for $e in $expected
-    order by $e
-    return $e
-  let $actual-ordered :=
-    for $a in $actual
-    order by $a
-    return $a
+  let $expected-ordered := test:sort-array-or-sequence($expected)
+  let $actual-ordered := test:sort-array-or-sequence($actual)
   return test:assert-equal($expected-ordered, $actual-ordered, $message)
 };
 
@@ -989,4 +983,43 @@ declare private function test:assert-throws-error_($function as xdmp:function, $
       else
         test:success()
     }
+};
+
+(:
+ : If the description of incoming is 'array-node',
+ :   then the developer is invoking this in XQuery and is passing in an XQuery array-node.
+ : If the description is 'json:array',
+ :   then the developer is invoking this in JavaScript and is passing in a regular array,
+ :   or the developer is invoking this in XQuery and is using json:array() to build the object
+ : Otherwise, the developer is invoking this in XQuery and is passing in a regular sequence.
+ :)
+declare private function test:sort-array-or-sequence($incoming as item()*)
+{
+    if (fn:contains(xdmp:describe($incoming), "array-node")) then
+      test:sort-array-nodes($incoming)
+    else if (fn:contains(xdmp:describe($incoming), "json:array")) then
+      test:sort-json-array($incoming)
+    else
+      test:sort-sequence($incoming)
+};
+
+declare private function test:sort-sequence($incoming as item()*)
+{
+  for $element in $incoming
+  order by $element
+  return $element
+};
+
+declare private function test:sort-array-nodes($incoming as item()*)
+{
+    for $element in $incoming/*
+    order by $element/data()
+    return $element/data()
+};
+
+declare private function test:sort-json-array($incoming as item()*)
+{
+    for $i in 1 to fn:count(json:array-values($incoming))
+    order by $incoming[$i]
+    return $incoming[$i]
 };

@@ -63,7 +63,6 @@ function assertThrowsErrorWithMessage(f, errorName, errorMessage)
     test.fail('Function did not fail');
   }
   catch (e) {
-    test.success();
     xdmp.log(e, 'info');
     let actual = e.stack.substr(0, e.stack.indexOf(" at "))
     if (!e.stack.includes(errorName)) {
@@ -72,6 +71,7 @@ function assertThrowsErrorWithMessage(f, errorName, errorMessage)
     if (!e.stack.includes(errorMessage)) {
       test.fail(`Function failed, but did not contain expected message [${errorMessage}] actual [${actual}]`);
     }
+    return test.success();
   }
 }
 

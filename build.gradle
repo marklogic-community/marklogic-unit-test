@@ -16,6 +16,10 @@ subprojects {
 
     // For local development
     mavenLocal()
+
+    maven {
+      url "https://nexus.marklogic.com/repository/maven-snapshots/"
+    }
   }
 
   dependencies {

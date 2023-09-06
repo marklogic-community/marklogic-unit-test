@@ -7,6 +7,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SelectTestsToRunTest {
 
@@ -14,6 +15,12 @@ public class SelectTestsToRunTest {
     void selectTestsInSuite() {
         JUnitTestSuite suite = new TestManager(ClientUtil.getClient())
             .runSuite("Assertions", new TestManager.RunParameters("assert-all-exist.xqy", "assert-equal.xqy"));
+
+        // Simple check to verify that the XML is pretty-printed for easier manual inspection.
+        final String xml = suite.getXml();
+        final String message = "Expecting each testcase to be indented with 2 spaces; actual XML: " + xml;
+        assertTrue(xml.contains("  <testcase classname=\"assert-all-exist.xqy\""), message);
+        assertTrue(xml.contains("  <testcase classname=\"assert-equal.xqy\""), message);
 
         assertEquals("Assertions", suite.getName());
         assertEquals(2, suite.getTestCases().size());

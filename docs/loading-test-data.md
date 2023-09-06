@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Loading test data
-nav_order: 5
+nav_order: 6
 permalink: /docs/loading
 ---
 

@@ -19,7 +19,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath "com.marklogic:marklogic-unit-test-client:1.3.0"
+    classpath "com.marklogic:marklogic-unit-test-client:1.4.0"
   }
 }
 ```

@@ -15,6 +15,6 @@ test:assert-throws-error-with-message(
     test:assert-equal(("a", "b"), ("a", "c"))
   },
   "ASSERT-EQUAL-FAILED",
-  "expected: (""a"", ""b"") actual: (""a"", ""c"")"
+  "expected: ""b"" actual: ""c"""
 )
 

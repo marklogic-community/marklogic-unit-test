@@ -31,5 +31,16 @@ import module namespace test="http://marklogic.com/test" at "/test/test-helper.x
     (<A>a</A>, <B>b</B>, <D>d</D>, <C>c</C>),
     (<C>c</C>, <D>d</D>, <A>a</A>, <B>b</B>),
     "Two sequences with the same multiple XML elements, should be equal."
+  ),
+  test:assert-throws-error-with-message(
+    function() {
+      test:assert-same-values(
+        (1, 2, 4, 3),
+        (3, 5, 1, 2),
+        "Two sequences with a different atomic elements, should not be equal."
+      )
+    },
+    "ASSERT-EQUAL-FAILED",
+    "Two sequences with a different atomic elements, should not be equal.; expected: ""4"" actual: ""5"""
   )
 ))

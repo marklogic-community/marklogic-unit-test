@@ -41,7 +41,7 @@ import module namespace test="http://marklogic.com/test" at "/test/test-helper.x
       )
     },
     "ASSERT-EQUAL-FAILED",
-    "An array with a duplicate should not equal an array without that duplicate.; expected: (1, 2, 4, ...) actual: (1, 2, 4, ...)"
+    "An array with a duplicate should not equal an array without that duplicate.; Item counts do not match: expected=4 actual=5"
   )
 ,
   test:assert-throws-error-with-message(
@@ -53,7 +53,7 @@ import module namespace test="http://marklogic.com/test" at "/test/test-helper.x
       )
     },
     "ASSERT-EQUAL-FAILED",
-    "A longer Actual array should not equal a shorter Expected array.; expected: (1, 2, 4) actual: (1, 2, 4, ...)"
+    "A longer Actual array should not equal a shorter Expected array.; Item counts do not match: expected=3 actual=4"
   )
 ,
   test:assert-throws-error-with-message(
@@ -65,7 +65,7 @@ import module namespace test="http://marklogic.com/test" at "/test/test-helper.x
       )
     },
     "ASSERT-EQUAL-FAILED",
-    "A shorter Actual array should not equal a longer Expected array.; expected: (1, 2, 4) actual: (1, 2)"
+    "A shorter Actual array should not equal a longer Expected array.; Item counts do not match: expected=3 actual=2"
   )
 ,
   test:assert-throws-error-with-message(

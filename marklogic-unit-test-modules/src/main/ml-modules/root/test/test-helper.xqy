@@ -521,6 +521,53 @@ declare private function test:are-these-equal($expected as item()*, $actual as i
     fn:false()
 };
 
+
+declare private function test:build-results($success as xs:boolean, $differences as element(differences)?)
+{
+  <results>
+    <success>{if ($success) then "true" else "false"}</success>
+    {$differences}
+  </results>
+};
+
+declare private function test:deep-equal-items-in-sequence($expected as item()*, $actual as item()*)
+{
+        for $item at $i in $expected
+        let $deep-equal := fn:deep-equal($item, $actual[$i])[. = fn:true()]
+        return
+          if ($deep-equal) then
+            <equal>true</equal>
+          else
+            <equal expected="{$item}" actual="{$actual[$i]}">false</equal>
+};
+
+declare private function test:are-these-equal-with-differences($expected as item()*, $actual as item()*) {
+  if (fn:count($expected) eq fn:count($actual)) then
+    if ($expected instance of json:array and $actual instance of json:array) then
+      let $recursive-equal := test:assert-equal-json-recursive($expected, $actual)
+      let $differences :=
+        if ($recursive-equal) then
+          ()
+        else
+          <differences><message>{fn:string-join(('expected: "' || $expected || '" actual: "' || $actual || '"'))}</message></differences>
+      return test:build-results($recursive-equal, $differences)
+    else
+      let $comparisons := test:deep-equal-items-in-sequence($expected, $actual)
+      let $equal-count := fn:count($comparisons[text() eq "true"])
+      let $differences :=
+        <differences>
+          {
+            for $difference in $comparisons[text() eq "false"]
+            let $message := fn:string-join(('expected: "' || $difference/@expected || '" actual: "' || $difference/@actual || '"'))
+            return <message>{$message}</message>
+          }
+        </differences>
+      return test:build-results(($equal-count eq fn:count($expected)), $differences)
+  else
+    let $differences := <differences><message>Item counts do not match: expected={fn:count($expected)} actual={fn:count($actual)}</message></differences>
+    return test:build-results(fn:false(), $differences)
+};
+
 (: Return true if and only if the two sequences have the same values, regardless
  : of order. fn:deep-equal() returns false if items are not in the same order. :)
 
@@ -540,17 +587,20 @@ declare function test:assert-equal($expected as item()*, $actual as item()*) {
   test:assert-equal($expected, $actual, ())
 };
 
-declare function test:assert-equal($expected as item()*, $actual as item()*, $message as xs:string*) {
-  if (test:are-these-equal($expected, $actual)) then
-    test:success()
-  else
-    let $message :=
-      fn:string-join((
-        $message,
-        "expected: " || xdmp:describe($expected) || " actual: " || xdmp:describe($actual)
-      ), "; ")
-    return
-      fn:error(xs:QName("ASSERT-EQUAL-FAILED"), $message)
+declare function test:assert-equal($expected as item()*, $actual as item()*, $message as xs:string*)
+{
+  let $comparison := test:are-these-equal-with-differences($expected, $actual)
+  return
+    if ($comparison/success/text() eq "true") then
+      test:success()
+    else
+      let $difference-message := $comparison/differences/message[1]/text()
+      let $error-message :=
+        if ($message) then
+          fn:string-join(($message, "; ", $difference-message))
+        else
+          $difference-message
+      return fn:error(xs:QName("ASSERT-EQUAL-FAILED"), $error-message)
 };
 
 declare function test:assert-not-equal($not-expected as item()*, $actual as item()*) {
@@ -558,7 +608,7 @@ declare function test:assert-not-equal($not-expected as item()*, $actual as item
 };
 
 declare function test:assert-not-equal($not-expected as item()*, $actual as item()*, $message as xs:string*) {
-  if (fn:not(test:are-these-equal($not-expected, $actual))) then
+  if (fn:not(test:are-these-equal-with-differences($not-expected, $actual)/success/text() eq "true")) then
     test:success()
   else
     let $message :=

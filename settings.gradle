@@ -1,1 +1,1 @@
-include "marklogic-unit-test-modules"
+include "marklogic-unit-test-client"

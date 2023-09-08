@@ -107,8 +107,8 @@ declare function local:main() {
 						<tr>
 							<th><input id="checkall" type="checkbox" checked="checked"/>Run</th>
 							<th>Test Suite</th>
-							<th>Total Test Count</th>
-							<th>Tests Run</th>
+							<th>Test Cases</th>
+							<th>Assertions</th>
 							<th>Passed</th>
 							<th>Failed</th>
 						</tr>
@@ -128,7 +128,14 @@ declare function local:main() {
 												{fn:data($suite/@path)} <span class="spinner"><img src="img/spinner.gif"/><b>Running...</b></span>
 											</div>
 										</td>
-										<td>{fn:count($suite/test:tests/test:test)}</td>
+										<td>{
+										fn:count(
+										  for $test in $suite/test:tests/test:test
+										  let $path := $test/@path/fn:string()
+										  where fn:not(test:is-either-setup-or-teardown-module($path))
+										  return $test
+										)
+										}</td>
 										<td class="tests-run">-</td>
 										<td class="passed">-</td>
 										<td class="right failed">-</td>
@@ -139,15 +146,16 @@ declare function local:main() {
 												<div class="wrapper"><input class="check-all-tests" type="checkbox" checked="checked"/>Run All Tests</div>
 												<ul class="tests">
 													{
-														for $test in ($suite/test:tests/test:test)
+														for $test in $suite/test:tests/test:test
+														let $path := $test/@path/fn:string()
 														return
-															<li class="tests {if (fn:matches($test/@path, '(S|s)etup\.')) then 'setup-module-hidden' else if (fn:matches($test/@path, '(T|t)eardown\.')) then 'teardown-module-hidden' else ()}">
+															<li class="tests {if (test:is-either-setup-module($path)) then 'setup-module-hidden' else if (test:is-either-teardown-module($path)) then 'teardown-module-hidden' else ()}">
 																{
-																	if (fn:matches($test/@path, "^suite((-s|S)etup|(-t|T)eardown\.)")) then
-																		<input type="hidden" value="{fn:data($test/@path)}"/>
+																	if (test:is-suite-setup-module($path) or test:is-suite-teardown-module($path)) then
+																		<input type="hidden" value="{$path}"/>
 																	else
-																		<input class="test-cb" type="checkbox" checked="checked" value="{fn:data($test/@path)}"/>,
-																	fn:string($test/@path)
+																		<input class="test-cb" type="checkbox" checked="checked" value="{$path}"/>,
+																	$path
 																}<span class="outcome"></span>
 															</li>
 													}

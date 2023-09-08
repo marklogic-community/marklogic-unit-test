@@ -354,18 +354,30 @@ declare function invoke-setup-teardown-module($start-time as xs:dayTimeDuration,
 };
 
 (: setup/teardown checks :)
-declare function is-setup-module($file-name as xs:string) {
-  fn:matches($file-name, "(^|/)setup\.")
+declare function is-setup-module($path as xs:string) as xs:boolean {
+  fn:matches($path, "(^|/)setup\.")
 };
 
-declare function is-teardown-module($file-name as xs:string) {
-  fn:matches($file-name, "(^|/)teardown\.")
+declare function is-teardown-module($path as xs:string) as xs:boolean {
+  fn:matches($path, "(^|/)teardown\.")
 };
 
-declare function is-suite-setup-module($file-name as xs:string) {
-  fn:matches($file-name, "(^|/)suite(-s|S)etup\.")
+declare function is-suite-setup-module($path as xs:string) as xs:boolean {
+  fn:matches($path, "(^|/)suite(-s|S)etup\.")
 };
 
-declare function is-suite-teardown-module($file-name as xs:string) {
-  fn:matches($file-name, "(^|/)suite(-t|T)eardown\.")
+declare function is-suite-teardown-module($path as xs:string) as xs:boolean {
+  fn:matches($path, "(^|/)suite(-t|T)eardown\.")
+};
+
+declare function is-either-setup-module($path as xs:string) as xs:boolean {
+  is-setup-module($path) or is-suite-setup-module($path)
+};
+
+declare function is-either-teardown-module($path as xs:string) as xs:boolean {
+  is-teardown-module($path) or is-suite-teardown-module($path)
+};
+
+declare function is-either-setup-or-teardown-module($path as xs:string) as xs:boolean {
+  is-either-setup-module($path) or is-either-teardown-module($path)
 };

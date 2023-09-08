@@ -44,6 +44,17 @@ declare variable $test:__LINE__ as xs:int :=
 
 declare variable $test:__CALLER_FILE__ := test:get-caller();
 
+(:
+ : Returns a URI identifying the directory that contains any test data files associated with the test module that invokes this.
+ :)
+declare function test:get-test-data-directory-uri($caller-path as xs:string) as xs:string
+{
+  fn:replace(
+    fn:concat(
+      cvt:basepath($caller-path), "/test-data/"),
+    "//", "/")
+};
+
 declare function test:get-caller()
 as xs:string
 {
@@ -520,14 +531,8 @@ declare function test:assert-same-values($expected as item()*, $actual as item()
 
 declare function test:assert-same-values($expected as item()*, $actual as item()*, $message as xs:string*)
 {
-  let $expected-ordered :=
-    for $e in $expected
-    order by $e
-    return $e
-  let $actual-ordered :=
-    for $a in $actual
-    order by $a
-    return $a
+  let $expected-ordered := test:sort-array-or-sequence($expected)
+  let $actual-ordered := test:sort-array-or-sequence($actual)
   return test:assert-equal($expected-ordered, $actual-ordered, $message)
 };
 
@@ -578,7 +583,7 @@ declare function test:assert-equal-xml($expected, $actual, $message as xs:string
           test:assert-equal-xml($expected, $actual/node())
     case element() return
       if (fn:empty($expected)) then
-        test:assert-true(fn:false(), ("element not found in $expected : ", xdmp:path($actual)))
+        test:fail(("element not found in $expected : ", xdmp:path($actual)))
       else typeswitch ($expected)
         case element() return (
           test:assert-equal(fn:name($expected), fn:name($actual), fn:concat("mismatched node name ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")),
@@ -592,19 +597,19 @@ declare function test:assert-equal-xml($expected, $actual, $message as xs:string
             test:assert-equal-xml($expected/*[$i], $element)
         )
         default return
-          test:assert-true(fn:false(), ("type mismatch ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
+          test:fail(("type mismatch ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
     case attribute() return
       if (fn:empty($expected)) then
-        test:assert-true(fn:false(), ("attribute not found in $expected : ", xdmp:path($actual)))
+        test:fail(("attribute not found in $expected : ", xdmp:path($actual)))
       else typeswitch ($expected)
         case attribute() return (
           test:assert-equal(fn:name($expected), fn:name($actual), fn:concat("mismatched attribute name ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")")),
           test:assert-equal($expected/fn:data(), $actual/fn:data(), fn:concat("mismatched attribute text ($expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual), ")"))
         )
         default return
-          test:assert-true(fn:false(), ("type mismatch : $expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual)))
+          test:fail(("type mismatch : $expected=", xdmp:path($expected), ", $actual=", xdmp:path($actual)))
     default return
-      test:assert-true(fn:false(), ("unsupported type in $actual : ", xdmp:path($actual)))
+      test:fail(("unsupported type in $actual : ", xdmp:path($actual)))
 };
 
 declare function test:assert-equal-json($expected, $actual) {
@@ -737,7 +742,9 @@ declare function test:assert-true($conditions as xs:boolean*) {
 };
 
 declare function test:assert-true($conditions as xs:boolean*, $message as xs:string?) {
-  if (fn:false() = $conditions) then
+  if (fn:empty($conditions)) then
+      fn:error(xs:QName("ASSERT-TRUE-FAILED"), fn:string-join(($message, "Condition was not true."), "; ") , $conditions)
+  else if (fn:false() = $conditions) then
     fn:error(xs:QName("ASSERT-TRUE-FAILED"), fn:string-join(($message, "Condition was not true."), "; ") , $conditions)
   else
     test:success()
@@ -891,32 +898,38 @@ declare function test:assert-throws-error($function as xdmp:function, $error-cod
 
 declare function test:assert-throws-error($function as xdmp:function, $param1 as item()*, $error-code as xs:string?)
 {
-  test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array('make me a sequence')), 1), $error-code, ())
+  let $_ := xdmp:log("The 'test:assert-throws-error' function with parameters is deprecated and will be removed in the 2.0 release of marklogic-unit-test. Please use the assert-throws-error function that requires a function to be passed to it.")
+  return test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array('make me a sequence')), 1), $error-code, ())
 };
 
 declare function test:assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $error-code as xs:string?)
 {
-  test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2))), $error-code, ())
+  let $_ := xdmp:log("The 'test:assert-throws-error' function with parameters is deprecated and will be removed in the 2.0 release of marklogic-unit-test. Please use the assert-throws-error function that requires a function to be passed to it.")
+  return test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2))), $error-code, ())
 };
 
 declare function test:assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $error-code as xs:string?)
 {
-  test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3))), $error-code, ())
+  let $_ := xdmp:log("The 'test:assert-throws-error' function with parameters is deprecated and will be removed in the 2.0 release of marklogic-unit-test. Please use the assert-throws-error function that requires a function to be passed to it.")
+  return test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3))), $error-code, ())
 };
 
 declare function test:assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $error-code as xs:string?)
 {
-  test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4))), $error-code, ())
+  let $_ := xdmp:log("The 'test:assert-throws-error' function with parameters is deprecated and will be removed in the 2.0 release of marklogic-unit-test. Please use the assert-throws-error function that requires a function to be passed to it.")
+  return test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4))), $error-code, ())
 };
 
 declare function test:assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $param5 as item()*, $error-code as xs:string?)
 {
-  test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4), json:to-array($param5))), $error-code, ())
+  let $_ := xdmp:log("The 'test:assert-throws-error' function with parameters is deprecated and will be removed in the 2.0 release of marklogic-unit-test. Please use the assert-throws-error function that requires a function to be passed to it.")
+  return test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4), json:to-array($param5))), $error-code, ())
 };
 
 declare function test:assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $param5 as item()*, $param6 as item()*, $error-code as xs:string?)
 {
-  test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4), json:to-array($param5), json:to-array($param6))), $error-code, ())
+  let $_ := xdmp:log("The 'test:assert-throws-error' function with parameters is deprecated and will be removed in the 2.0 release of marklogic-unit-test. Please use the assert-throws-error function that requires a function to be passed to it.")
+  return test:assert-throws-error_($function, json:to-array((json:to-array($param1), json:to-array($param2), json:to-array($param3), json:to-array($param4), json:to-array($param5), json:to-array($param6))), $error-code, ())
 };
 
 declare private function test:assert-throws-error_($function as xdmp:function, $params as json:array, $error-code as xs:string?, $expected-error-message as xs:string?) {
@@ -970,4 +983,43 @@ declare private function test:assert-throws-error_($function as xdmp:function, $
       else
         test:success()
     }
+};
+
+(:
+ : If the description of incoming is 'array-node',
+ :   then the developer is invoking this in XQuery and is passing in an XQuery array-node.
+ : If the description is 'json:array',
+ :   then the developer is invoking this in JavaScript and is passing in a regular array,
+ :   or the developer is invoking this in XQuery and is using json:array() to build the object
+ : Otherwise, the developer is invoking this in XQuery and is passing in a regular sequence.
+ :)
+declare private function test:sort-array-or-sequence($incoming as item()*)
+{
+    if (fn:contains(xdmp:describe($incoming), "array-node")) then
+      test:sort-array-nodes($incoming)
+    else if (fn:contains(xdmp:describe($incoming), "json:array")) then
+      test:sort-json-array($incoming)
+    else
+      test:sort-sequence($incoming)
+};
+
+declare private function test:sort-sequence($incoming as item()*)
+{
+  for $element in $incoming
+  order by $element
+  return $element
+};
+
+declare private function test:sort-array-nodes($incoming as item()*)
+{
+    for $element in $incoming/*
+    order by $element/data()
+    return $element/data()
+};
+
+declare private function test:sort-json-array($incoming as item()*)
+{
+    for $i in 1 to fn:count(json:array-values($incoming))
+    order by $incoming[$i]
+    return $incoming[$i]
 };

@@ -25,4 +25,11 @@ test:assert-throws-error-with-message(
   },
   "ASSERT-TRUE-FAILED",
   "Failure message; Condition was not true."
+),
+
+test:assert-throws-error(
+  function() {
+    test:assert-true(())
+  },
+  "ASSERT-TRUE-FAILED"
 )

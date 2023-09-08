@@ -6,30 +6,30 @@ package com.marklogic.test.unit;
  */
 public class TestResult {
 
-	private String name;
-	private double time;
-	private String failureXml;
+    private String name;
+    private double time;
+    private String failureXml;
 
-	public TestResult(String name, double time, String failureXml) {
-		this.name = name;
-		this.time = time;
-		this.failureXml = failureXml;
-	}
+    public TestResult(String name, double time, String failureXml) {
+        this.name = name;
+        this.time = time;
+        this.failureXml = failureXml;
+    }
 
-	@Override
-	public String toString() {
-		return String.format("[name: %s, time: %f, failureXml: %s]", name, time, failureXml);
-	}
+    @Override
+    public String toString() {
+        return String.format("[name: %s, time: %f, failureXml: %s]", name, time, failureXml);
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public double getTime() {
-		return time;
-	}
+    public double getTime() {
+        return time;
+    }
 
-	public String getFailureXml() {
-		return failureXml;
-	}
+    public String getFailureXml() {
+        return failureXml;
+    }
 }

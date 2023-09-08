@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
   api project(":marklogic-unit-test-client")
-  api "com.marklogic:ml-javaclient-util:4.6-SNAPSHOT"
+  api "com.marklogic:ml-javaclient-util:4.6.0"
   api "org.jdom:jdom2:2.0.6.1"
   api "org.junit.jupiter:junit-jupiter:5.10.0"
   api "org.springframework:spring-context:5.3.29"

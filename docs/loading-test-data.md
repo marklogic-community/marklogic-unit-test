@@ -2,7 +2,6 @@
 layout: default
 title: Loading test data
 nav_order: 6
-permalink: /docs/loading
 ---
 
 marklogic-unit-test includes a simple mechanism for loading test data specific to a test suite. This capability is 
@@ -33,7 +32,7 @@ test:load-test-file("sample-doc.json", xdmp:database(), "/sample-doc.json")
 ```
 
 The above examples can also be implemented in either `suiteSetup.sjs` or `suite-setup.xqy` if desired - see the 
-[guide on writing tests](/docs/writing) for more information on setup and teardown modules.
+[guide on writing tests](writing-tests.md) for more information on setup and teardown modules.
 
 You can also use a teardown module to delete the data that was loaded. However, leaving data in place after a test 
 concludes is often helpful for both manually verifying what it's in the database and for debugging test failures. 

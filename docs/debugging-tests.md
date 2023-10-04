@@ -2,7 +2,6 @@
 layout: default
 title: Debugging tests
 nav_order: 5
-permalink: /docs/debugging
 ---
 
 Like all unit testing frameworks, marklogic-unit-test is intended to speed up the cycle of developing, testing, and 
@@ -13,7 +12,7 @@ team.
 ## Development setup
 
 Before looking at how to write tests, you should ensure that you can change your application code and test the 
-changes as quickly as possible. As mentioned in the [Getting started guide](/docs), ml-gradle supports 
+changes as quickly as possible. As mentioned in the [Getting started guide](getting-started.md), ml-gradle supports 
 [watching for module changes](https://github.com/marklogic/ml-gradle/wiki/Watching-for-module-changes) so that when 
 you modify either an application module file or test module file, the file will be immediately loaded into your 
 application's modules database. This allows you to test your changes as quickly as possible.
@@ -27,7 +26,7 @@ MarkLogic.
 
 ## Test assertion messages
 
-Each [assertion function](/docs/assertions) in marklogic-unit-test supports an assertion message as its final argument. 
+Each [assertion function](assertion-functions.md) in marklogic-unit-test supports an assertion message as its final argument. 
 These are recommended for when the intent of an assertion is not readily apparent from the two values being compared. 
 
 For example, consider the following assertion:

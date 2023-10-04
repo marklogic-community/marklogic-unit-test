@@ -2,7 +2,6 @@
 layout: default
 title: Assertion functions
 nav_order: 7
-permalink: /docs/assertions
 ---
 
 The list below captures the assertion functions available in the marklogic-unit-test `/test/test-helper.xqy` module.

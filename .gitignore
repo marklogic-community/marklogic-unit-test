@@ -10,3 +10,4 @@ out
 marklogic-unit-test-client/bin/
 gradle-local.properties
 .vscode
+bin

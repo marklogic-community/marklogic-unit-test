@@ -2,7 +2,6 @@
 layout: default
 title: Getting started
 nav_order: 2
-permalink: /docs
 ---
 
 This guide walks you through adding marklogic-unit-test to an existing project, followed by writing, loading, and 
@@ -30,7 +29,7 @@ adding the following configuration to the project's `build.gradle` file:
 
 ```
 dependencies {
-  mlBundle "com.marklogic:marklogic-unit-test-modules:1.3.0"
+  mlBundle "com.marklogic:marklogic-unit-test-modules:1.4.0"
 }
 ```
 
@@ -40,7 +39,7 @@ in your `build.gradle` file), run the following task to install marklogic-unit-t
 
     ./gradlew -i mlLoadModules
 
-If you would like to [run your marklogic-unit-test tests](/docs/running) via Gradle, you'll also need to include the 
+If you would like to [run your marklogic-unit-test tests](running-tests.md) via Gradle, you'll also need to include the 
 following at the top of your `build.gradle` file:
 
 ```
@@ -49,7 +48,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath "com.marklogic:marklogic-unit-test-client:1.3.0"
+    classpath "com.marklogic:marklogic-unit-test-client:1.4.0"
   }
 }
 ```
@@ -90,7 +89,7 @@ therefore be stored in the `src/test/ml-modules/root/test/suites/(name of suite)
 
 A test suite can have any name; for this example, we will use "thesaurus" as the name. Test modules can have any name
 as well with a few exceptions for setup and teardown modules; those exceptions are covered in the 
-[guide for writing tests](/docs/writing). We will use "simple-test.sjs" for this example, so we create a
+[guide for writing tests](writing-tests.md). We will use "simple-test.sjs" for this example, so we create a
 file at `src/test/ml-modules/root/test/suites/thesaurus/simple-test.sjs` with the following initial content:
 
 ```
@@ -99,7 +98,7 @@ const lib = require("/example/lib.sjs");
 ```
 
 The first line above imports the marklogic-unit-test module containing dozens of useful 
-[assertion functions](/docs/assertions); every test
+[assertion functions](assertion-functions.md); every test
 module will need this imported. The second line imports the library module that we wish to verify. 
 
 Next, add the following text to the file:
@@ -116,7 +115,7 @@ const result = lib.lookupTerm("Car");
 The above code will invoke the `lookupTerm` function that we wish to test with a term that we know is in the 
 application's thesaurus. Each `assertEqual` function call - along with every other assertion function in 
 marklogic-unit-test - will return a success or failure. The test then returns an array of these successes and failures.
-The different approaches for [running tests](/docs/running) know how to collect these results and display how many
+The different approaches for [running tests](running-tests.md) know how to collect these results and display how many
 tests passed and how many failed.
 
 ## Configuring a connection to MarkLogic
@@ -163,7 +162,7 @@ Once you execute either `mlWatch` or `mlLoadModules`, your test will be ready to
 
 ## Running a test
 
-marklogic-unit-test provides [several ways to run tests](/docs/running). We will look at the two primary ways to 
+marklogic-unit-test provides [several ways to run tests](running-tests.md). We will look at the two primary ways to 
 run the test module we just wrote and loaded into our application's modules database.
 
 First, tests can be run via the ml-gradle `mlUnitTest` task, as long as you have included the 
@@ -217,6 +216,6 @@ This guide has covered the following topics:
 3. How to load a test.
 4. How to run a test.
 
-With the above information and the references on [writing tests](/docs/writing) and 
-[running tests](/docs/running), you can now start writing tests for the library modules in your application, 
+With the above information and the references on [writing tests](writing-tests.md) and 
+[running tests](running-tests.md), you can now start writing tests for the library modules in your application, 
 ensuring that you can quickly enhance your application without breaking any existing functionality. 

@@ -21,7 +21,9 @@ public class AssertFunctionPrinter {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine();
             while (line != null) {
-                if (line.contains("declare function test:assert-") && !line.contains("assert-meets")) {
+                if (line.contains("declare function test:assert-throws-error") && line.contains("param1") && !line.contains("assert-meets")) {
+                    signatures.add("DEPRECATED - " + line.replaceAll("declare function test:", "").replaceAll(" \\{", "").trim());
+                } else if (line.contains("declare function test:assert-") && !line.contains("assert-meets")) {
                     signatures.add(line.replaceAll("declare function test:", "").replaceAll(" \\{", "").trim());
                 }
                 line = reader.readLine();

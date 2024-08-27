@@ -1,8 +1,7 @@
 ---
 layout: default
 title: Assertion functions
-nav_order: 6
-permalink: /docs/assertions
+nav_order: 7
 ---
 
 The list below captures the assertion functions available in the marklogic-unit-test `/test/test-helper.xqy` module.
@@ -47,14 +46,15 @@ assert-same-values($expected as item()*, $actual as item()*)
 assert-same-values($expected as item()*, $actual as item()*, $message as xs:string*)
 assert-throws-error($function as xdmp:function)
 assert-throws-error($function as xdmp:function, $error-code as xs:string?)
-assert-throws-error($function as xdmp:function, $param1 as item()*, $error-code as xs:string?)
-assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $error-code as xs:string?)
-assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $error-code as xs:string?)
-assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $error-code as xs:string?)
-assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $param5 as item()*, $error-code as xs:string?)
-assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $param5 as item()*, $param6 as item()*, $error-code as xs:string?)
+* assert-throws-error($function as xdmp:function, $param1 as item()*, $error-code as xs:string?)
+* assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $error-code as xs:string?)
+* assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $error-code as xs:string?)
+* assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $error-code as xs:string?)
+* assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $param5 as item()*, $error-code as xs:string?)
+* assert-throws-error($function as xdmp:function, $param1 as item()*, $param2 as item()*, $param3 as item()*, $param4 as item()*, $param5 as item()*, $param6 as item()*, $error-code as xs:string?)
 assert-throws-error-with-message($function as xdmp:function, $expected-error-code as xs:string, $expected-message as xs:string)
 assert-throws-error-with-message($function as xdmp:function, $expected-error-code as xs:string, $expected-message as xs:string, $message as xs:string*)
 assert-true($conditions as xs:boolean*)
 assert-true($conditions as xs:boolean*, $message as xs:string?)
 ```
+- Note: Functions marked with * are deprecated and will be removed in the 2.0 release of marklogic-unit-test. Please use the assert-throws-error function that requires a function to be passed to it.

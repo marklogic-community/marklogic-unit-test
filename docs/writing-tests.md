@@ -2,7 +2,6 @@
 layout: default
 title: Writing tests
 nav_order: 3
-permalink: /docs/writing
 ---
 
 This guide is a reference on the different kinds of test modules, setup modules, and teardown modules you can write 
@@ -12,7 +11,7 @@ in the `src/test/ml-modules/root/test/suites/thesaurus` directory in the
 
 ## Location of test files
 
-As described in the [Getting started guide](/docs), marklogic-unit-test requires the URI of each module
+As described in the [Getting started guide](getting-started.md), marklogic-unit-test requires the URI of each module
 to begin with `/test/suites/(name of suite)/`. Thus, all test files should be located in an 
 [ml-gradle modules directory](https://github.com/marklogic/ml-gradle/wiki/How-modules-are-loaded) under 
 `root/test/suites/(name of suite)/`. 
@@ -42,7 +41,7 @@ the test helper library to be followed by an import of the application module be
     const test = require("/test/test-helper.xqy");
     const lib = require("/example/lib.sjs");
 
-The test should then return the output of one or more [assertion functions](/docs/assertions) 
+The test should then return the output of one or more [assertion functions](assertion-functions.md) 
 found in the `test-helper` module. This can be done via a single array:
 
 ```
@@ -97,7 +96,7 @@ import module namespace ex="http://example.org" at "/example/lib.xqy";
 ```
 
 The test will then call the function to be tested and use the helper library to invoke one or more
-[assertion functions](/docs/assertions), returning the results of those assertions:
+[assertion functions](assertion-functions.md), returning the results of those assertions:
 
 ```
 let $result := ex:lookup-term("Car", "elements")

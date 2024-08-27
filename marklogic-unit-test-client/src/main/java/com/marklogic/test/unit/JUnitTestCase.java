@@ -9,51 +9,51 @@ import java.util.List;
  */
 public class JUnitTestCase {
 
-	private String classname;
-	private String name;
-	private double time;
-	private List<JUnitTestFailure> testFailures;
+    private String classname;
+    private String name;
+    private double time;
+    private List<JUnitTestFailure> testFailures;
 
-	public JUnitTestCase(String name, String classname, double time) {
-		this.name = name;
-		this.classname = classname;
-		this.time = time;
-	}
+    public JUnitTestCase(String name, String classname, double time) {
+        this.name = name;
+        this.classname = classname;
+        this.time = time;
+    }
 
-	public void addTestFailure(JUnitTestFailure testFailure) {
-		if (testFailures == null) {
-			testFailures = new ArrayList<>();
-		}
-		testFailures.add(testFailure);
-	}
+    public void addTestFailure(JUnitTestFailure testFailure) {
+        if (testFailures == null) {
+            testFailures = new ArrayList<>();
+        }
+        testFailures.add(testFailure);
+    }
 
-	public boolean hasTestFailures() {
-		return testFailures != null && !testFailures.isEmpty();
-	}
+    public boolean hasTestFailures() {
+        return testFailures != null && !testFailures.isEmpty();
+    }
 
-	@Override
-	public String toString() {
-		return String.format("[name: %s, classname: %s, time: %f, testFailures: %s]",
-			name, classname, time, testFailures);
-	}
+    @Override
+    public String toString() {
+        return String.format("[name: %s, classname: %s, time: %f, testFailures: %s]",
+            name, classname, time, testFailures);
+    }
 
-	public String getClassname() {
-		return classname;
-	}
+    public String getClassname() {
+        return classname;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public double getTime() {
-		return time;
-	}
+    public double getTime() {
+        return time;
+    }
 
-	public List<JUnitTestFailure> getTestFailures() {
-		return testFailures;
-	}
+    public List<JUnitTestFailure> getTestFailures() {
+        return testFailures;
+    }
 
-	public void setTestFailures(List<JUnitTestFailure> testFailures) {
-		this.testFailures = testFailures;
-	}
+    public void setTestFailures(List<JUnitTestFailure> testFailures) {
+        this.testFailures = testFailures;
+    }
 }

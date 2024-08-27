@@ -8,9 +8,9 @@ import java.util.List;
  */
 public interface ServiceResponseUnmarshaller {
 
-	List<TestModule> parseTestList(String xml);
+    List<TestModule> parseTestList(String xml);
 
-	TestSuiteResult parseTestSuiteResult(String xml);
+    TestSuiteResult parseTestSuiteResult(String xml);
 
-	JUnitTestSuite parseJUnitTestSuiteResult(String xml);
+    JUnitTestSuite parseJUnitTestSuiteResult(String xml);
 }

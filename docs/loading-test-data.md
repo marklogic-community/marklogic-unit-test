@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Loading test data
-nav_order: 5
+nav_order: 6
 ---
 
 marklogic-unit-test includes a simple mechanism for loading test data specific to a test suite. This capability is 

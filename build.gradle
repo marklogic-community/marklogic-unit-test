@@ -4,7 +4,7 @@ subprojects {
   apply plugin: "signing"
 
   group = "com.marklogic"
-  version = "1.3.0"
+  version = "1.4.0"
 
   java {
     sourceCompatibility = 1.8
@@ -16,6 +16,10 @@ subprojects {
 
     // For local development
     mavenLocal()
+
+    maven {
+      url "https://nexus.marklogic.com/repository/maven-snapshots/"
+    }
   }
 
   dependencies {

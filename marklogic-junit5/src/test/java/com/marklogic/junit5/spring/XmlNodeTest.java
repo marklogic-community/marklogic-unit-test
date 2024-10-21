@@ -4,22 +4,30 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.junit5.MarkLogicNamespaceProvider;
 import com.marklogic.junit5.NamespaceProvider;
 import com.marklogic.junit5.XmlNode;
+import org.jdom2.Namespace;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class XmlNodeTest extends AbstractSpringMarkLogicTest {
+class XmlNodeTest extends AbstractSpringMarkLogicTest {
+
+    private static final String TEST_URI = "/test/1.xml";
+
+    private boolean useCustomNamespaceProvider = true;
 
     @Override
     protected NamespaceProvider getNamespaceProvider() {
-        return new MarkLogicNamespaceProvider("m", "org:example");
+        return useCustomNamespaceProvider ?
+            new MarkLogicNamespaceProvider("m", "org:example") :
+            super.getNamespaceProvider();
     }
 
-    @Test
-    public void test() {
-        getDatabaseClient().newXMLDocumentManager().write("/test/1.xml",
+    @BeforeEach
+    void setup() {
+        getDatabaseClient().newXMLDocumentManager().write(TEST_URI,
             new StringHandle("" +
                 "<message xmlns='org:example'>" +
                 "<color important='true'>red</color>" +
@@ -27,10 +35,13 @@ public class XmlNodeTest extends AbstractSpringMarkLogicTest {
                 "<size>medium</size>" +
                 "<parent><kid>hello</kid></parent>" +
                 "</message>"));
+    }
 
-        XmlNode xml = readXmlDocument("/test/1.xml");
+    @Test
+    public void test() {
+        XmlNode xml = readXmlDocument(TEST_URI);
 
-        assertEquals("/test/1.xml", xml.getUri());
+        assertEquals(TEST_URI, xml.getUri());
         xml.assertElementValue("/m:message/m:size", "medium");
         assertEquals("medium", xml.getElementValue("/m:message/m:size"));
         assertEquals("true", xml.getAttributeValue("/m:message/m:color[. = 'red']", "important"));
@@ -46,5 +57,12 @@ public class XmlNodeTest extends AbstractSpringMarkLogicTest {
 
         xml.prettyPrint();
         assertNotNull(xml.getPrettyXml());
+    }
+
+    @Test
+    void readWithNamespaces() {
+        useCustomNamespaceProvider = false;
+        XmlNode xml = readXmlDocument(TEST_URI, Namespace.getNamespace("m", "org:example"));
+        xml.assertElementValue("/m:message/m:size", "medium");
     }
 }

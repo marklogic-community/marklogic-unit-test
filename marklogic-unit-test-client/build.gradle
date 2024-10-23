@@ -54,6 +54,25 @@ publishing {
       }
     }
   }
+  repositories {
+    maven {
+      if (project.hasProperty("mavenUser")) {
+        credentials {
+          username mavenUser
+          password mavenPassword
+        }
+        url publishUrl
+        allowInsecureProtocol = true
+      } else {
+        name = "central"
+        url = mavenCentralUrl
+        credentials {
+          username mavenCentralUsername
+          password mavenCentralPassword
+        }
+      }
+    }
+  }
 }
 
 task createHttpCredentials(type: com.marklogic.gradle.task.MarkLogicTask) {

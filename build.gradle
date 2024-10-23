@@ -31,26 +31,4 @@ subprojects {
   javadoc.failOnError = false
   // Ignores warnings on params that don't have descriptions, which is a little too noisy
   javadoc.options.addStringOption('Xdoclint:none', '-quiet')
-
-  publishing {
-    repositories {
-      maven {
-        if (project.hasProperty("mavenUser")) {
-          credentials {
-            username mavenUser
-            password mavenPassword
-          }
-          url publishUrl
-          allowInsecureProtocol = true
-        } else {
-          name = "central"
-          url = mavenCentralUrl
-          credentials {
-            username mavenCentralUsername
-            password mavenCentralPassword
-          }
-        }
-      }
-    }
-  }
 }

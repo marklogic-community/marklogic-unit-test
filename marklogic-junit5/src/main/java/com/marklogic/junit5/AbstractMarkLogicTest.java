@@ -12,9 +12,11 @@ import com.marklogic.test.unit.TestManager;
 import com.marklogic.test.unit.TestModule;
 import com.marklogic.test.unit.TestResult;
 import com.marklogic.test.unit.TestSuiteResult;
+import org.jdom2.Namespace;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -75,6 +77,15 @@ public abstract class AbstractMarkLogicTest extends LoggingObject {
     }
 
     /**
+     * Read an XML document without making any assertions on its collections.
+     *
+     * @since 1.5.0
+     */
+    protected XmlNode readXmlDocument(String uri) {
+        return readXmlDocument(uri, (String[]) null);
+    }
+
+    /**
      * Read the XML document at the given URI and return an XmlNode for making assertions on the contents of the XML.
      *
      * @param uri
@@ -87,6 +98,23 @@ public abstract class AbstractMarkLogicTest extends LoggingObject {
             assertInCollections(uri, expectedCollections);
         }
         return new XmlNode(uri, xml, getNamespaceProvider().getNamespaces());
+    }
+
+    /**
+     * Read an XML document with the given namespaces included in the returned {@code XmlNode}.
+     *
+     * @since 1.5.0
+     */
+    protected XmlNode readXmlDocument(String uri, Namespace... namespaces) {
+        String xml = getDatabaseClient().newXMLDocumentManager().read(uri, new StringHandle()).get();
+        List<Namespace> list = new ArrayList<>();
+        for (Namespace ns : getNamespaceProvider().getNamespaces()) {
+            list.add(ns);
+        }
+        for (Namespace ns : namespaces) {
+            list.add(ns);
+        }
+        return new XmlNode(uri, xml, list.toArray(new Namespace[0]));
     }
 
     /**

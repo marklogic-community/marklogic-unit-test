@@ -31,7 +31,7 @@ import java.util.List;
  * This class depends on a DatabaseClient, and how that is provided must be defined by the subclass.
  * </p>
  */
-public abstract class AbstractMarkLogicTest extends LoggingObject {
+public abstract class AbstractMarkLogicTest extends LoggingObject implements HasMarkLogicVersion {
 
     /**
      * Subclass must define how a connection is made to (presumably) the test database.
@@ -39,6 +39,15 @@ public abstract class AbstractMarkLogicTest extends LoggingObject {
      * @return
      */
     protected abstract DatabaseClient getDatabaseClient();
+
+    /**
+     * @return
+     * @since 1.5.0
+     */
+    @Override
+    public MarkLogicVersion getMarkLogicVersion() {
+        return MarkLogicVersion.getVersion(getDatabaseClient());
+    }
 
     /**
      * Before a test method runs, delete all of the documents in the database that match the query defined by

@@ -26,10 +26,10 @@ public abstract class VersionExecutionCondition implements ExecutionCondition {
             if (!testInstance.isPresent()) {
                 throw new RuntimeException(getClass() + " can only be used when a test instance is present.");
             }
-            if (!(testInstance.get() instanceof HasMarkLogicVersion)) {
-                throw new RuntimeException(testInstance.getClass() + " must implement " + HasMarkLogicVersion.class.getName());
+            if (!(testInstance.get() instanceof MarkLogicVersionSupplier)) {
+                throw new RuntimeException(testInstance.getClass() + " must implement " + MarkLogicVersionSupplier.class.getName());
             }
-            markLogicVersion = ((HasMarkLogicVersion) context.getTestInstance().get()).getMarkLogicVersion();
+            markLogicVersion = ((MarkLogicVersionSupplier) context.getTestInstance().get()).getMarkLogicVersion();
         }
         return evaluateVersion(markLogicVersion);
     }

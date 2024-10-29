@@ -3,8 +3,6 @@
  */
 package com.marklogic.junit5;
 
-import com.marklogic.client.DatabaseClient;
-
 /**
  * Parses a MarkLogic version string - i.e. from xdmp.version() - into its major, minor, and patch values.
  */
@@ -14,9 +12,8 @@ public class MarkLogicVersion {
     private final static String SEMVER_PATTERN = "^[0-9]+\\.[0-9]+\\.[0-9]+";
     private final static String NIGHTLY_SEMVER_PATTERN = "^[0-9]+\\.[0-9]+\\.[0-9]{8}";
 
-    // For non-semver releases.
+    // For non-semver releases, such as MarkLogic 10 and earlier..
     private final static String MAJOR_WITH_MINOR_PATTERN = "^.*-(.+)$";
-
     private final static String VERSION_WITH_PATCH_PATTERN = "^.*-(.+)\\..*";
     private final static String NIGHTLY_BUILD_PATTERN = "[^-]+-(\\d{4})(\\d{2})(\\d{2})";
 
@@ -24,11 +21,6 @@ public class MarkLogicVersion {
     private final Integer minor;
     private final Integer patch;
     private final boolean nightly;
-    
-    public static MarkLogicVersion getVersion(DatabaseClient client) {
-        String version = client.newServerEval().javascript("xdmp.version()").evalAs(String.class);
-        return new MarkLogicVersion(version);
-    }
 
     public MarkLogicVersion(String version) {
         if (version.matches(NIGHTLY_SEMVER_PATTERN)) {

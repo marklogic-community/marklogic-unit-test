@@ -6,7 +6,7 @@ package com.marklogic.junit5;
 /**
  * @since 1.5.0
  */
-public interface HasMarkLogicVersion {
+public interface MarkLogicVersionSupplier {
 
     MarkLogicVersion getMarkLogicVersion();
 }

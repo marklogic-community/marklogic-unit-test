@@ -31,7 +31,7 @@ import java.util.List;
  * This class depends on a DatabaseClient, and how that is provided must be defined by the subclass.
  * </p>
  */
-public abstract class AbstractMarkLogicTest extends LoggingObject implements HasMarkLogicVersion {
+public abstract class AbstractMarkLogicTest extends LoggingObject implements MarkLogicVersionSupplier {
 
     /**
      * Subclass must define how a connection is made to (presumably) the test database.
@@ -46,7 +46,8 @@ public abstract class AbstractMarkLogicTest extends LoggingObject implements Has
      */
     @Override
     public MarkLogicVersion getMarkLogicVersion() {
-        return MarkLogicVersion.getVersion(getDatabaseClient());
+        String version = getDatabaseClient().newServerEval().javascript("xdmp.version()").evalAs(String.class);
+        return new MarkLogicVersion(version);
     }
 
     /**

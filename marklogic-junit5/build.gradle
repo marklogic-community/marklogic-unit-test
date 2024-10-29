@@ -1,17 +1,12 @@
-plugins {
-	id "com.github.jk1.dependency-license-report" version "1.17"
-}
-
 dependencies {
   api project(":marklogic-unit-test-client")
-  api "com.marklogic:ml-javaclient-util:4.6.0"
+  api "com.marklogic:ml-javaclient-util:5.0.0"
   api "org.jdom:jdom2:2.0.6.1"
-  api "org.junit.jupiter:junit-jupiter:5.10.0"
-  api "org.springframework:spring-context:5.3.29"
-  api "org.springframework:spring-test:5.3.29"
-  api "com.fasterxml.jackson.core:jackson-databind:2.15.2"
-  api 'org.slf4j:slf4j-api:1.7.36'
-
+  api "org.junit.jupiter:junit-jupiter:5.11.2"
+  api "org.springframework:spring-context:5.3.39"
+  api "org.springframework:spring-test:5.3.39"
+  api "com.fasterxml.jackson.core:jackson-databind:2.17.2"
+  api 'org.slf4j:slf4j-api:2.0.16'
   implementation "jaxen:jaxen:2.0.0"
 }
 
@@ -19,40 +14,18 @@ test {
 	useJUnitPlatform()
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-  classifier 'sources'
-  from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-  classifier "javadoc"
-  from javadoc
-}
-
-artifacts {
-  archives javadocJar, sourcesJar
-}
-signing {
-  sign configurations.archives
-}
-
-task generatePomForDependencyGraph(dependsOn: "generatePomFileForMainJavaPublication") {
-  description = "Prepare for a release by making a copy of the generated pom file in the root directory so that it " +
-    "can enable Github's Dependency Graph feature, which does not yet support Gradle"
-  doLast {
-    def preamble = '<?xml version="1.0" encoding="UTF-8"?>'
-    def comment = "<!--\n" +
-      "This file was generated via Gradle and is being used primarily for github's Dependency Graph feature.\n" +
-      "It is not intended to be used to build this project.\n" +
-      "-->"
-    def fileText = file("build/publications/mainJava/pom-default.xml").getText()
-    file("pom.xml").setText(fileText.replace(preamble, preamble + comment))
-  }
+// Publishing setup - see https://docs.gradle.org/current/userguide/publishing_setup.html .
+java {
+  withJavadocJar()
+  withSourcesJar()
 }
 
 publishing {
   publications {
     mainJava(MavenPublication) {
+      groupId = group
+      version = version
+      from components.java
       pom {
         name = "${group}:${project.name}"
         description = "Supports testing MarkLogic applications"
@@ -79,15 +52,11 @@ publishing {
           developerConnection = "scm:git@github.com:marklogic-community/${project.name}.git"
         }
       }
-      from components.java
-      artifact sourcesJar
-      artifact javadocJar
     }
   }
   repositories {
     maven {
       if (project.hasProperty("mavenUser")) {
-        name = "nexus"
         credentials {
           username mavenUser
           password mavenPassword

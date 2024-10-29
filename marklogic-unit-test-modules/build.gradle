@@ -1,34 +1,31 @@
 // Defines a configuration for the MarkLogic modules; used by the modulesJar task below
 configurations {
-	modules
+  modules
 }
 
 task sourcesJar(type: Jar) {
-	description = "Create a jar of the modules to meet Maven Central's requirements for publishing"
-	classifier "sources"
-	from "src/main/ml-modules"
-  destinationDir file("build/libs")
+  description = "Create a jar of the modules to meet Maven Central's requirements for publishing"
+  archiveClassifier = "sources"
+  from "src/main/ml-modules"
+  destinationDirectory = file("build/libs")
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-  classifier "javadoc"
+  archiveClassifier = "javadoc"
   from javadoc
 }
 
 task modulesJar(type: Jar) {
-	description = "Jar up the marklogic-unit-test MarkLogic modules into a package that can be published"
-	from("src/main/ml-modules") {
-		into("marklogic-unit-test-modules/ml-modules")
-	}
-  destinationDir file("build/libs")
-	baseName "marklogic-unit-test-modules"
+  description = "Jar up the marklogic-unit-test MarkLogic modules into a package that can be published"
+  from("src/main/ml-modules") {
+    into("marklogic-unit-test-modules/ml-modules")
+  }
+  destinationDirectory = file("build/libs")
+  archiveBaseName = "marklogic-unit-test-modules"
 }
 
 artifacts {
-	archives sourcesJar, javadocJar, modulesJar
-}
-signing {
-  sign configurations.archives
+  archives sourcesJar, javadocJar, modulesJar
 }
 
 publishing {
@@ -68,7 +65,6 @@ publishing {
   repositories {
     maven {
       if (project.hasProperty("mavenUser")) {
-        name = "nexus"
         credentials {
           username mavenUser
           password mavenPassword

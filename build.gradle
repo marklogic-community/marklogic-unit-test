@@ -1,10 +1,9 @@
 subprojects {
   apply plugin: "java-library"
   apply plugin: "maven-publish"
-  apply plugin: "signing"
 
   group = "com.marklogic"
-  version = "1.4.0"
+  version = "1.5.0"
 
   java {
     sourceCompatibility = 1.8
@@ -18,15 +17,15 @@ subprojects {
     mavenLocal()
 
     maven {
-      url "https://nexus.marklogic.com/repository/maven-snapshots/"
+      url "https://bed-artifactory.bedford.progress.com:443/artifactory/ml-maven-snapshots/"
     }
   }
 
   dependencies {
     // Forcing Spring to use logback instead of commons-logging
-    testImplementation "ch.qos.logback:logback-classic:1.3.5" // Not using 1.4.x yet as it requires Java 11
-    testImplementation 'org.slf4j:jcl-over-slf4j:1.7.36'
-    testImplementation 'org.slf4j:slf4j-api:1.7.36'
+    testImplementation "ch.qos.logback:logback-classic:1.3.14" // Not using 1.4.x yet as it requires Java 11
+    testImplementation 'org.slf4j:jcl-over-slf4j:2.0.16'
+    testImplementation 'org.slf4j:slf4j-api:2.0.16'
   }
 
   javadoc.failOnError = false

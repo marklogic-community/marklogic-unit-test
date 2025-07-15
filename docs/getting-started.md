@@ -33,6 +33,15 @@ dependencies {
 }
 ```
 
+The above dependency is downloaded from the [Maven Central repository](https://central.sonatype.com/artifact/com.marklogic/marklogic-unit-test-modules), 
+so you will need to ensure that your `build.gradle` file has that repository registered - i.e.:
+
+```
+repositories {
+  mavenCentral()
+}
+```
+
 This uses the [ml-gradle bundle feature](https://github.com/marklogic/ml-gradle/wiki/Bundles) for sharing and reusing
 MarkLogic modules. After adding the above configuration (which you may instead add to an existing `dependencies` block
 in your `build.gradle` file), run the following task to install marklogic-unit-test into your MarkLogic application:

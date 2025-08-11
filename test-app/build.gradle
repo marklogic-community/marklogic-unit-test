@@ -1,0 +1,52 @@
+plugins {
+  id "net.saliman.properties" version "1.5.2"
+  id "com.marklogic.ml-gradle" version "5.0.0"
+}
+
+task createHttpCredentials(type: com.marklogic.gradle.task.MarkLogicTask) {
+  doLast {
+    def client = getAppConfig().newAppServicesDatabaseClient("Security")
+    String xquery = """
+xquery version "1.0-ml";
+
+import module namespace sec = "http://marklogic.com/xdmp/security"
+      at "/MarkLogic/security.xqy";
+
+declare option xdmp:mapping "false";
+
+try {
+  sec:remove-credential("marklogic-unit-test-credentials")
+} catch (\$e) {()};
+
+xquery version "1.0-ml";
+
+import module namespace sec = "http://marklogic.com/xdmp/security"
+      at "/MarkLogic/security.xqy";
+
+declare option xdmp:mapping "false";
+
+sec:create-credential(
+   "marklogic-unit-test-credentials",
+   "Credentials for ML Rest Helper Calls",
+   "${mlUsername}",
+   "${mlPassword}",
+   (),
+   (),
+   fn:false(),
+   sec:uri-credential-target("http://localhost:${mlRestPort}/.*","digest"),
+   xdmp:default-permissions()
+)
+""";
+    try {
+      String result
+      result = client.newServerEval().xquery(xquery).evalAs(String.class);
+      if (result != null) {
+        println result
+      }
+    } finally {
+      client.release()
+    }
+  }
+}
+
+mlPostDeploy.dependsOn createHttpCredentials

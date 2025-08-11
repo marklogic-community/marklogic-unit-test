@@ -1,3 +1,7 @@
+plugins {
+  id "net.saliman.properties" version "1.5.2"
+}
+
 dependencies {
   api project(":marklogic-unit-test-client")
   api "com.marklogic:ml-javaclient-util:5.0.0"
@@ -11,7 +15,17 @@ dependencies {
 }
 
 test {
-	useJUnitPlatform()
+  if(project.hasProperty("mlPassword")) {
+    systemProperties = System.properties + [
+      'mlPassword': "${mlPassword}"
+    ]
+  }
+  if(project.hasProperty("mlUsername")) {
+    systemProperties = System.properties + [
+      'mlUsername': "${mlUsername}"
+    ]
+  }
+  useJUnitPlatform()
 }
 
 // Publishing setup - see https://docs.gradle.org/current/userguide/publishing_setup.html .
@@ -58,8 +72,8 @@ publishing {
     maven {
       if (project.hasProperty("mavenUser")) {
         credentials {
-          username mavenUser
-          password mavenPassword
+          username = mavenUser
+          password = mavenPassword
         }
         url publishUrl
         allowInsecureProtocol = true
@@ -67,8 +81,8 @@ publishing {
         name = "central"
         url = mavenCentralUrl
         credentials {
-          username mavenCentralUsername
-          password mavenCentralPassword
+          username = mavenCentralUsername
+          password = mavenCentralPassword
         }
       }
     }

@@ -1,4 +1,25 @@
 @Library('shared-libraries') _
+
+def setupDockerMarkLogic(String image){
+  cleanupDocker()
+  sh label:'mlsetup', script: '''#!/bin/bash
+  echo "Removing any running MarkLogic server and clean up MarkLogic data directory"
+    sudo /usr/local/sbin/mladmin remove
+    sudo /usr/local/sbin/mladmin cleandata
+    cd marklogic-unit-test
+    docker compose down -v || true
+    docker volume prune -f
+    echo "Using image: "'''+image+'''
+    docker pull '''+image+'''
+    MARKLOGIC_IMAGE='''+image+''' MARKLOGIC_LOGS_VOLUME=marklogicLogs docker compose up -d --build
+    echo "Waiting for MarkLogic server to initialize."
+    sleep 60s
+    export GRADLE_USER_HOME=$WORKSPACE/$GRADLE_DIR
+    export PATH=$GRADLE_USER_HOME:$JAVA_HOME/bin:$PATH
+    ./gradlew mlTestConnections
+  '''
+}
+
 pipeline{
   agent {label 'devExpLinuxPool'}
   options {
@@ -14,26 +35,26 @@ pipeline{
   stages{
     stage('tests'){
       steps{
-        copyRPM 'Release','11.0.0'
-        setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+        setupDockerMarkLogic("ml-docker-db-dev-tierpoint.bed-artifactory.bedford.progress.com/marklogic/marklogic-server-ubi-rootless:12.0.0-ubi-rootless-2.2.0")
         sh label:'test', script: '''#!/bin/bash
           export JAVA_HOME=$JAVA_HOME_DIR
           export GRADLE_USER_HOME=$WORKSPACE/$GRADLE_DIR
           export PATH=$GRADLE_USER_HOME:$JAVA_HOME/bin:$PATH
           cd marklogic-unit-test
+          ./gradlew mlDeploy
           echo "mlPassword=admin" > marklogic-junit5/gradle-local.properties
-          ./gradlew test  -PmlPassword=admin || true
+          ./gradlew test || true
         '''
         junit '**/build/**/*.xml'
       }
     }
     stage('publish'){
-			when {
-      	branch 'develop'
+      when {
+        branch 'develop'
       }
       steps{
-      	sh label:'publish', script: '''#!/bin/bash
-        	export JAVA_HOME=$JAVA_HOME_DIR
+        sh label:'publish', script: '''#!/bin/bash
+          export JAVA_HOME=$JAVA_HOME_DIR
           export GRADLE_USER_HOME=$WORKSPACE/$GRADLE_DIR
           export PATH=$GRADLE_USER_HOME:$JAVA_HOME/bin:$PATH
           cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;

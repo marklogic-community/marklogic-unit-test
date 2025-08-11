@@ -16,7 +16,7 @@ public class ClientUtil {
      */
     public static DatabaseClient getClient() {
         if (client == null) {
-            client = DatabaseClientFactory.newClient("localhost", 8008,
+            client = DatabaseClientFactory.newClient("localhost", 8003,
                 new DatabaseClientFactory.DigestAuthContext("admin", "admin"));
         }
         return client;

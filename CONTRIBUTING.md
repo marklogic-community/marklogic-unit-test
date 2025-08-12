@@ -1,7 +1,6 @@
 # Contributing to marklogic-unit-test
 
-marklogic-unit-test welcomes new contributors. This document will guide you through 
-the process.
+marklogic-unit-test welcomes new contributors. This document will guide you through the process.
 
  - [Building and Testing](#building)
  - [Issues and Bugs](#issue)
@@ -10,20 +9,24 @@ the process.
 
 ## <a name="building"></a> Building and Testing
 
-After cloning this repository (or a fork of it), you can build and run the tests for marklogic-unit-test locally 
-via the following steps:
+After cloning this repository (or a fork of it), you can build and run the tests for marklogic-unit-test
+locally.
+
+Then create a Docker MarkLogic container, deploy the test-app to the container, and then run the tests via
+the following steps:
 
 ```
-echo "mlPassword=your admin user password" > marklogic-junit5/gradle-local.properties
+docker compose up -d --build
+./gradlew mlDeploy
 ./gradlew test
 ```
 
-The `test` task will both deploy a test application to your MarkLogic instance - assumed to be running at `localhost` - 
-and run a set of tests with this application. The application will include a MarkLogic app server on port 8008, 
-which is defined by the `mlRestPort` property in marklogic-unit-test-client/gradle.properties. Some tests in 
-the marklogic-junit5 subproject will also hit the MarkLogic App-Services app server on port 8000.
+The `mlDeploy` task will deploy a test application to your MarkLogic container. Then the `test` task will run
+a set of tests with this application. The test application will include a MarkLogic app server on port 8003, 
+which is defined by the `mlRestPort` property in test-app/gradle.properties. Some tests in the
+marklogic-junit5 subproject will also hit the MarkLogic App-Services app server on port 8000.
 
-After running `./gradlew test`, you can also point your browser at http://localhost:8008/test to access the 
+After running `./gradlew test`, you can also point your browser at http://localhost:8003/test to access the 
 marklogic-unit-test UI for running tests. 
 
 ## Testing the documentation locally

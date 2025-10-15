@@ -22,6 +22,9 @@ marklogic-unit-test includes the following components:
 Please see the [Getting started guide](getting-started.md) to learn how to include marklogic-unit-test in your 
 project and to start writing and running tests.
 
+If you wish to use the Java-based support, you will need to use Java 17 or higher when using either `marklogic-junit5`
+or `marklogic-unit-test-client` version 2.0.0 or higher. Prior to 2.0.0, Java 8 is required.
+
 If you have any questions or run into issues while using marklogic-unit-test, try one of the following:
 
 1. Check for a similar question [on Stack Overflow](https://stackoverflow.com/questions/tagged/marklogic).

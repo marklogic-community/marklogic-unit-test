@@ -7,32 +7,34 @@ To the extent required by the applicable open-source license, a complete machine
 Third Party Notices
 
 jackson-databind 2.20.0 (Apache-2.0)
-jaxen 2.0.0 (BSD-3-Clause)
+jaxen 2.0.0 (Jaxen Custom BSD-like License)
 jdom2 2.0.6.1 (Apache-2.0)
 junit-jupiter 5.14.0 (Eclipse Public License v2.0)
 marklogic-client-api 8.0.0 (Apache-2.0)
-ml-javaclient-util 8.0.0 (Apache-2.0)
-slf4j-api 2.0.17 (Apache-2.0)
+ml-javaclient-util 6.1.0 (Apache-2.0)
+slf4j-api 2.0.17 (MIT)
 spring-context 6.2.11 (Apache-2.0)
 spring-test 6.2.11 (Apache-2.0)
 
 Common Licenses
 
 Apache License 2.0 (Apache-2.0)
-BSD 3-Clause License (BSD-3-Clause)
 Eclipse Public License v2.0
+Jaxen Custom BSD-Like License
+MIT License (MIT) for slf4j
+
 
 Third-Party Components
 
-The following is a list of the third-party components used by the MarkLogic® Connector for Kafka 1.11.0 (last updated August 12, 2025):
+The following is a list of the third-party components used by marklogic-unit-test 2.0.0 (last updated October 15th, 2025):
 
 jackson-databind 2.20.0 (Apache-2.0)
 https://repo1.maven.org/maven2/com/fasterxml/jackson/jackson-databind
 For the full text of the Apache-2.0 license, see Apache License 2.0 (Apache-2.0)
 
-jaxen 2.0.0 (BSD-3-Clause)
-https://repo1.maven.org/maven2/jaxen, jaxen/
-For the full text of the BSD-3-Clause license, see BSD 3-Clause License (BSD-3-Clause)
+jaxen 2.0.0 (Jaxen custom BSD-like license)
+https://repo1.maven.org/maven2/jaxen/jaxen/
+For the full text of the Jaxen Custom BSD-like License, see Jaxen Custom BSD-like License
 
 jdom2 2.0.6.1 (Apache-2.0)
 https://repo1.maven.org/maven2/org/jdom/jdom2/
@@ -50,9 +52,9 @@ ml-javaclient-util 6.1.0 (Apache-2.0)
 https://repo1.maven.org/maven2/com/marklogic/ml-gradle/
 For the full text of the Apache-2.0 license, see Apache License 2.0 (Apache-2.0)
 
-slf4j-api 2.0.17 (Apache-2.0)
+slf4j-api 2.0.17 (MIT)
 https://repo1.maven.org/maven2/org/slf4j/slf4j-api/
-For the full text of the Apache-2.0 license, see Apache License 2.0 (Apache-2.0)
+For the full text of the MIT license, see MIT license (MIT)
 
 spring-context 6.2.11 (Apache-2.0)
 https://repo1.maven.org/maven2/org/springframework/spring-context/
@@ -64,7 +66,7 @@ For the full text of the Apache-2.0 license, see Apache License 2.0 (Apache-2.0)
 
 Common Licenses
 
-This section shows the text of common third-party licenses used by MarkLogic® Connector for Kafka 1.11.0 (last updated August 12, 2025):
+This section shows the text of common third-party licenses used by marklogic-unit-test 2.0.0 (last updated October 15th, 2025):
 
 Apache License 2.0 (Apache-2.0)
 https://spdx.org/licenses/Apache-2.0.html
@@ -143,27 +145,33 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-BSD 3-Clause License (BSD-3-Clause)
 
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+The MIT License for slf4j
+https://www.slf4j.org/license.html
 
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Copyright (c) 2004-2025 QOS.ch
 
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
-disclaimer in the documentation and/or other materials provided with the distribution.
+Permission is hereby granted, free of charge,
+to any person obtaining a copy of this software and
+associated documentation files (the "Software"), to
+deal in the Software without restriction, including
+without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom
+the Software is furnished to do so,
+subject to the following conditions:
 
-3. Neither the name of the [OWNER] nor the names of its contributors may be used to endorse or promote products
-derived from this software without specific prior written permission.
+The above copyright notice and this permission notice
+shall be included in all copies or substantial portions of the Software.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-For more information, see: https://opensource.org/license/bsd-3-clause/
 
 Eclipse Public License v2.0
 
@@ -248,3 +256,37 @@ Simply including a copy of this Agreement, including this Exhibit A is not suffi
 If it is not possible or desirable to put the notice in a particular file, then You may include the notice in a location (such as a LICENSE file in a relevant directory) where a recipient would be likely to look for such a notice.
 
 You may add additional accurate notices of copyright ownership.
+
+
+Jaxen Custom BSD-like License
+https://github.com/jaxen-xpath/jaxen/blob/master/LICENSE.txt
+
+Copyright 2003-2006 The Werken Company. All Rights Reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are
+ met:
+
+  * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+  * Neither the name of the Jaxen Project nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+

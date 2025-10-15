@@ -1,6 +1,6 @@
 plugins {
   id "net.saliman.properties" version "1.5.2"
-  id "com.marklogic.ml-gradle" version "6.0.1"
+  id "com.marklogic.ml-gradle" version "6.1.0"
 }
 
 task createHttpCredentials(type: com.marklogic.gradle.task.MarkLogicTask) {

@@ -33,6 +33,8 @@ declare option xdmp:mapping "false";
 
 (: Half a million lines of XQuery ought to be enough for any module. :)
 declare variable $LIMIT as xs:integer := 654321 ;
+declare variable $TIMEOUT := "%%mlDebugWaitTimeout%%";
+declare variable $DEFAULT_TIMEOUT := 10;
 
 declare private function cover:_put(
     $map as map:map,
@@ -71,8 +73,8 @@ declare private function cover:_task-cancel-safe(
     for $breakpoint in dbg:breakpoints($id)
     return dbg:clear($id, $breakpoint),
     dbg:detach($id),
-    if (fn:empty(dbg:wait($id, 10))) then
-      fn:error(xs:QName("FAILED-TO-CANCEL"), "unable to cancel a debugging request")
+    if (fn:empty(dbg:wait($id, if ($TIMEOUT eq "%%mlDebugWaitTimeout%%") then $DEFAULT_TIMEOUT else $TIMEOUT)))
+    then fn:error(xs:QName("FAILED-TO-CANCEL"), "unable to cancel a debugging request")
     else ()
   }
   catch ($ex) {
